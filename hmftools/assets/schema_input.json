@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/hmftools/master/assets/schema_input.json",
+    "title": "nf-core/hmftools pipeline - params.input schema",
+    "description": "Schema for the file provided with params.input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "subject_name": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Subject name must be provided and cannot contain spaces"
+            },
+            "sample_name": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Sample name must be provided and cannot contain spaces"
+            },
+            "sample_type": {
+                "type": "string",
+                "pattern": "^(tumor|normal)$",
+                "errorMessage": "Sample type for input must be provided and be one of 'tumor' or 'normal'"
+            },
+            "filetype": {
+                "type": "string",
+                "pattern": "^(bam|vcf)$",
+                "errorMessage": "Filetype must be provided"
+            },
+            "filepath": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Filepath must be provided"
+            }
+        },
+        "required": ["subject_name", "sample_name", "sample_type", "filetype", "filepath"]
+    }
+}

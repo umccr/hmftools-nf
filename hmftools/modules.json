@@ -1,0 +1,49 @@
+{
+    "name": "nf-core/hmftools",
+    "homePage": "https://github.com/nf-core/hmftools",
+    "repos": {
+        "nf-core/modules": {
+            "custom/dumpsoftwareversions": {
+                "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
+            }
+        },
+        "scwatts/nextflow_modules": {
+            "amber": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "cobalt": {
+                "git_sha": "5c5b8542fd7b6581de6d094861a4e7cd6fc0a03a"
+            },
+            "gpgr/linx_report": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "gridss/annotate": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "gridss/assemble": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "gridss/call": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "gridss/extract_fragments": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "gridss/preprocess": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "gripss": {
+                "git_sha": "5c5b8542fd7b6581de6d094861a4e7cd6fc0a03a"
+            },
+            "linx/annotation": {
+                "git_sha": "5c5b8542fd7b6581de6d094861a4e7cd6fc0a03a"
+            },
+            "linx/visualiser": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            },
+            "purple": {
+                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+subject_name	sample_name	sample_type	filetype	filepath
+SUBJECT_ONE	SAMPLE_ONE_TUMOR	tumor	bam	/path/to/tumor_bam/sample_one_tumor.bam
+SUBJECT_ONE	SAMPLE_ONE_TUMOR	tumor	sv	/path/to/tumor_sv_vcf/sample_one_tumor.vcf.gz
+SUBJECT_ONE	SAMPLE_ONE_NORMAL	normal	bam	/path/to/normal_bam/sample_one_normal.bam
+SUBJECT_TWO	SAMPLE_TWO_TUMOR	tumor	bam	/path/to/tumor_bam/sample_two_tumor.bam
+SUBJECT_TWO	SAMPLE_TWO_TUMOR	tumor	smlv_vcf	/path/to/tumor_bam/sample_two_smlv.vcf.gz
+SUBJECT_TWO	SAMPLE_TWO_NORMAL	normal	bam	/path/to/normal_bam/sample_two_normal.bam
+SUBJECT_THREE	SAMPLE_THREE_TUMOR	tumor	bam	/path/to/tumor_bam/sample_three_tumor.bam
+SUBJECT_THREE	SAMPLE_THREE_TUMOR	tumor	sv	/path/to/tumor_sv_vcf/sample_three_tumor.vcf.gz
+SUBJECT_THREE	SAMPLE_THREE_NORMAL	normal	bam	/path/to/normal_bam/sample_three_normal.bam
+SUBJECT_THREE	SAMPLE_THREE_TUMOR	tumor	smlv_vcf	/path/to/tumor_bam/sample_three_smlv.vcf.gz
+SUBJECT_THREE	SAMPLE_THREE_NORMAL	normal	smlv_vcf	/path/to/normal_bam/sample_three_smlv.vcf.gz

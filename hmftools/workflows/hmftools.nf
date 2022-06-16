@@ -77,8 +77,22 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-ref_data_genome_dir = file(params.ref_data_genome).parent
-ref_data_genome_fn = file(params.ref_data_genome).name
+ref_data_genome = new File(params.ref_data_genome).absolutePath
+ref_data_genome_dir = file(ref_data_genome).parent
+ref_data_genome_fn = file(ref_data_genome).name
+
+ref_data_amber_loci            = new File(params.ref_data_amber_loci).absolutePath
+ref_data_cobalt_gc_profile     = new File(params.ref_data_cobalt_gc_profile).absolutePath
+ref_data_gridss_blacklist      = new File(params.ref_data_gridss_blacklist).absolutePath
+ref_data_gridss_breakend_pon   = new File(params.ref_data_gridss_breakend_pon).absolutePath
+ref_data_gridss_breakpoint_pon = new File(params.ref_data_gridss_breakpoint_pon).absolutePath
+ref_data_linx_fragile_sites    = new File(params.ref_data_linx_fragile_sites).absolutePath
+ref_data_linx_line_elements    = new File(params.ref_data_linx_line_elements).absolutePath
+ref_data_ensembl_data_dir      = new File(params.ref_data_ensembl_data_dir).absolutePath
+ref_data_known_hotspots        = new File(params.ref_data_known_hotspots).absolutePath
+ref_data_known_fusions         = new File(params.ref_data_known_fusions).absolutePath
+ref_data_known_fusion_data     = new File(params.ref_data_known_fusion_data).absolutePath
+ref_data_driver_gene_panel     = new File(params.ref_data_driver_gene_panel).absolutePath
 
 workflow HMFTOOLS {
   // Set input objects
@@ -100,7 +114,7 @@ workflow HMFTOOLS {
   //
   AMBER(
     ch_bams_and_indices,
-    params.ref_data_amber_loci,
+    ref_data_amber_loci,
   )
   ch_versions = ch_versions.mix(AMBER.out.versions)
 
@@ -109,7 +123,7 @@ workflow HMFTOOLS {
   //
   COBALT(
     ch_bams_and_indices,
-    params.ref_data_cobalt_gc_profile,
+    ref_data_cobalt_gc_profile,
   )
   ch_versions = ch_versions.mix(COBALT.out.versions)
 
@@ -123,7 +137,7 @@ workflow HMFTOOLS {
     ch_gridss_svs_input,
     ref_data_genome_dir,
     ref_data_genome_fn,
-    params.ref_data_gridss_blacklist,
+    ref_data_gridss_blacklist,
   )
   ch_versions = ch_versions.mix(GRIDSS.out.versions)
 
@@ -134,9 +148,9 @@ workflow HMFTOOLS {
     GRIDSS.out.results,
     ref_data_genome_dir,
     ref_data_genome_fn,
-    params.ref_data_gridss_breakend_pon,
-    params.ref_data_gridss_breakpoint_pon,
-    params.ref_data_known_fusions,
+    ref_data_gridss_breakend_pon,
+    ref_data_gridss_breakpoint_pon,
+    ref_data_known_fusions,
   )
   ch_versions = ch_versions.mix(GRIPSS.out.versions)
 
@@ -158,10 +172,10 @@ workflow HMFTOOLS {
     ch_purple_inputs,
     ref_data_genome_dir,
     ref_data_genome_fn,
-    params.ref_data_cobalt_gc_profile,
-    params.ref_data_known_hotspots,
-    params.ref_data_driver_gene_panel,
-    params.ref_data_ensembl_data_dir,
+    ref_data_cobalt_gc_profile,
+    ref_data_known_hotspots,
+    ref_data_driver_gene_panel,
+    ref_data_ensembl_data_dir,
   )
   ch_versions = ch_versions.mix(PURPLE.out.versions)
 
@@ -170,11 +184,11 @@ workflow HMFTOOLS {
   //
   LINX(
     PURPLE.out.purple_dir,
-    params.ref_data_linx_fragile_sites,
-    params.ref_data_linx_line_elements,
-    params.ref_data_ensembl_data_dir,
-    params.ref_data_known_fusion_data,
-    params.ref_data_driver_gene_panel,
+    ref_data_linx_fragile_sites,
+    ref_data_linx_line_elements,
+    ref_data_ensembl_data_dir,
+    ref_data_known_fusion_data,
+    ref_data_driver_gene_panel,
   )
   ch_versions = ch_versions.mix(LINX.out.versions)
 

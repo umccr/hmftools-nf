@@ -9,40 +9,40 @@
         },
         "scwatts/nextflow_modules": {
             "amber": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
             },
             "cobalt": {
-                "git_sha": "5c5b8542fd7b6581de6d094861a4e7cd6fc0a03a"
+                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
             },
             "gpgr/linx_report": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
             },
             "gridss/annotate": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
             },
             "gridss/assemble": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
             },
             "gridss/call": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
             },
             "gridss/extract_fragments": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
             },
             "gridss/preprocess": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
             },
             "gripss": {
-                "git_sha": "5c5b8542fd7b6581de6d094861a4e7cd6fc0a03a"
+                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
             },
             "linx/annotation": {
-                "git_sha": "5c5b8542fd7b6581de6d094861a4e7cd6fc0a03a"
+                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
             },
             "linx/visualiser": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
             },
             "purple": {
-                "git_sha": "6217a53fd494df6c35f3785f2777b67a3a6a0f65"
+                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
             }
         }
     }

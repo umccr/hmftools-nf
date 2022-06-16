@@ -14,6 +14,7 @@
 * [Installation](#installation)
 * [Usage](#usage)
 * [Outputs](#outputs)
+* [Run tests](#run-tests)
 * [Requirements](#requirements)
 * [Reference data](#reference-data)
 * [License](#license)
@@ -30,6 +31,17 @@ First you'll need to obtain reference data as described [here](#reference-data).
 an example see: [`nextflow.config`](nextflow.config)). To execute the pipeline:
 
 ```bash
+# Pull in reference data
+git clone https://github.com/umccr/reference_data -b dev reference_data_gitrepo/ && cd reference_data_gitrepo/
+dvc pull reference_data/{genomes,hmftools}/ -r storage-s3 && cd ../
+ln -s reference_data_gitrepo/reference_data/ reference_data
+
+# Install modules
+mkdir -p ./modules/
+nf-core modules install
+nf-core modules -g scwatts/nextflow_modules -b main install
+
+# Launch pipeline
 nextflow run ./main.nf -profile docker --input /path/to/samplesheet.tsv --outdir ./output/
 ```
 
@@ -63,14 +75,32 @@ nextflow run ./main.nf -profile docker --input /path/to/samplesheet.tsv --outdir
 | `nextflow/nextflow.config`                | Pipeline configuration used in run        |
 | `nextflow/reports/timeline.html`          | Stage execution durations as a timeline   |
 
+## Run tests
+
+```bash
+# Pull in reference data
+git clone https://github.com/umccr/reference_data -b dev reference_data_gitrepo/ && cd reference_data_gitrepo/
+dvc pull reference_data/{genomes,hmftools}/ -r storage-s3 && cd ../
+ln -s reference_data_gitrepo/reference_data/ reference_data
+
+# Install modules
+mkdir -p ./modules/
+nf-core modules install
+nf-core modules -g scwatts/nextflow_modules -b main install
+
+# Run test
+nextflow run ./main.nf -profile docker,test --outdir output/
+```
+
 ## Requirements
 
 > Software versions only indicate what is currently in use rather than strict requirements
 
 ### Pipeline
 
-* [Docker](https://www.docker.com/get-started) (v20.10.11)
 * [Nextflow](https://www.nextflow.io/) (v22.04.3)
+* [nf-core](https://nf-co.re) (v2.4.1)
+* [Docker](https://www.docker.com/get-started) (v20.10.11)
 * [BCFtools](https://www.htslib.org/) (v1.15.1)
 
 ### GPL toolkit
@@ -81,12 +111,6 @@ nextflow run ./main.nf -profile docker --input /path/to/samplesheet.tsv --outdir
 * [GRIPSS](https://github.com/hartwigmedical/hmftools/blob/master/gripss/) (v2.1)
 * [PURPLE](https://github.com/hartwigmedical/hmftools/blob/master/purple/) (v3.4)
 * [LINX](https://github.com/hartwigmedical/hmftools/blob/master/linx/) (v1.19)
-
-## Reference data
-
-The GPL toolkit requires a number of reference files. These can be obtained from the HMF Nextcloud instance
-[here](https://nextcloud.hartwigmedicalfoundation.nl/s/LTiKTd8XxBqwaiC?path=%2FHMFTools-Resources). Alternatively, I've
-precompiled the required files on S3, located at `s3://umccr-refdata-dev/gpl-nf/`.
 
 ## License
 

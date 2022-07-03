@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the workflow/hmftools.nf in the nf-core/hmftools pipeline
+// This file holds several functions specific to the workflows/hmftools.nf in the nf-core/hmftools pipeline
 //
 
 import nextflow.Channel
@@ -12,26 +12,94 @@ class WorkflowHmftools {
   public static void initialise(params, log) {
   }
 
-  public static prepare_inputs(samplesheet_fp, stub_run, log) {
-    return Channel.fromPath(samplesheet_fp)
+
+  public static List set_stages(mode, log) {
+    def stages = []
+    switch(mode) {
+      case 'full':
+        stages = Stage.values()
+        break
+      case 'gridss-purple-linx':
+        stages = [
+          Stage.AMBER,
+          Stage.COBALT,
+          Stage.GRIDSS,
+          Stage.GRIPSS,
+          Stage.PURPLE,
+          Stage.LINX,
+        ]
+        break
+      case 'lilac':
+        stages = [
+          Stage.LILAC
+        ]
+        break
+      case 'teal':
+        stages = [
+          Stage.TEAL
+        ]
+        break
+      case 'gridss':
+        stages = [
+          Stage.GRIDSS,
+          Stage.GRIPSS,
+        ]
+        break
+      default:
+        log.error "\nERROR: recieved invalid mode '${mode}'"
+        System.exit(1)
+    }
+    return stages
+  }
+
+  enum Stage {
+    AMBER,
+    COBALT,
+    GRIDSS,
+    GRIPSS,
+    LILAC,
+    LINX,
+    PAVE,
+    PURPLE,
+    SAGE,
+    TEAL,
+  }
+
+  public static prepare_inputs(ch, stub_run, log) {
+    return ch
       .splitCsv(header: true, strip: true, sep: '\t')
-      .map { [it.subject_name, it] }
+      .map { [it.id, it] }
       .groupTuple()
-      .map { subject_name, inputs ->
+      .map { id, inputs ->
         def meta = [
-          'subject_name': subject_name,
+          'id': id,
         ]
         inputs.each {
-          assert meta.subject_name == it.subject_name
-          // Add sample name
-          def key_sample_name = ['sample_name', it.sample_type]
-          if (meta.containsKey(key_sample_name)) {
-            assert meta.get(key_sample_name) == it.sample_name
+          assert meta.id == it.id
+          // Add subject name if not already present
+          if (meta.containsKey('subject_name')) {
+              assert meta.subject_name == it.subject_name
           } else {
-            meta[key_sample_name] = it.sample_name
+              meta.subject_name = it.subject_name
           }
+
+          // Set sample name
+          def key = []
+          if (it.sample_type == 'tumor') {
+            key = ['sample_name', 'tumor']
+          } else if (it.sample_type == 'normal') {
+            key = ['sample_name', 'normal']
+          } else {
+            assert false
+          }
+          if (meta.containsKey(key)) {
+            assert meta[key] == it.sample_name
+          } else {
+            meta[key] = it.sample_name
+          }
+
           // Add file
-          def key_file = [it.sample_type, it.filetype]
+          def key_file = [it.filetype, it.sample_type]
           assert ! meta.containsKey(key_file)
           meta[key_file] = it.filepath
           // For BAM file inputs, required that it has a co-located index; ignore for stub runs
@@ -41,6 +109,17 @@ class WorkflowHmftools {
               log.error "\nERROR: No index found for ${it.filepath}"
               System.exit(1)
             }
+          }
+
+          // Set sample type: tumor_normal, tumor_only, normal_only
+          if (meta.containsKey(['sample_name', 'tumor']) && meta.containsKey(['sample_name', 'normal'])) {
+            meta.sample_type = 'tumor_normal'
+          } else if (meta.containsKey(['sample_name', 'tumor'])) {
+            meta.sample_type = 'tumor_only'
+          } else if (meta.containsKey(['sample_name', 'normal'])) {
+            meta.sample_type = 'normal_only'
+          } else {
+            assert false
           }
         }
         return meta
@@ -89,28 +168,28 @@ class WorkflowHmftools {
     return [process.exitValue(), stdout, stderr]
   }
 
-  public static get_gridss_reads_input(ch) {
-    return get_gridss_input(ch, 'bam').map { meta, sample_name, filepath ->
-      [meta, sample_name, filepath, filepath + '.bai']
-    }
-  }
+  //public static get_gridss_reads_input(ch) {
+  //  return get_gridss_input(ch, 'bam').map { meta, sample_name, filepath ->
+  //    [meta, sample_name, filepath, filepath + '.bai']
+  //  }
+  //}
 
-  public static get_gridss_svs_input(ch) {
-    return get_gridss_input(ch, 'sv')
-  }
+  //public static get_gridss_svs_input(ch) {
+  //  return get_gridss_input(ch, 'sv')
+  //}
 
-  public static get_gridss_input(ch, filetype) {
-    // Gets filepath if it exists otherwise Map.get returns null, and channel items with null
-    // filepaths are subsequently filtered.
-    def sample_types = ['tumor', 'normal']
-    return ch.flatMap { meta ->
-      sample_types.collect { sample_type ->
-        [
-          meta,
-          meta.get(['sample_name', sample_type]),
-          meta.get([sample_type, filetype]),
-        ]
-      }
-    }.filter { meta, sample_name, filepath -> filepath }
-  }
+  //public static get_gridss_input(ch, filetype) {
+  //  // Gets filepath if it exists otherwise Map.get returns null, and channel items with null
+  //  // filepaths are subsequently filtered.
+  //  def sample_types = ['tumor', 'normal']
+  //  return ch.flatMap { meta ->
+  //    sample_types.collect { sample_type ->
+  //      [
+  //        meta,
+  //        meta.get(['sample_name', sample_type]),
+  //        meta.get([sample_type, filetype]),
+  //      ]
+  //    }
+  //  }.filter { meta, sample_name, filepath -> filepath }
+  //}
 }

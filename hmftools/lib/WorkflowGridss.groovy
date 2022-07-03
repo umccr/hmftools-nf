@@ -1,23 +1,96 @@
 //
-// This file holds several functions specific to the subworkflow/gridss.nf in the nf-core/hmftools pipeline
+// This file holds several functions specific to the subworkflows/gridss.nf in the nf-core/hmftools pipeline
 //
-
-import groovyx.gpars.dataflow.DataflowWriteChannel
-import nextflow.Channel
 
 class WorkflowGridss {
 
-  public static Map<String, DataflowWriteChannel> split_by_sample_type(channel) {
+  public static get_inputs(ch) {
     def sample_types = ['tumor', 'normal']
-    def d = channel.map { meta, sample_name, filepath ->
-      def sample_type = sample_types
-        .collectEntries { [meta.get(['sample_name', it]), it] }
-        .get(sample_name)
-      return [sample_type, meta, filepath]
-    }
-    return sample_types
-      .collectEntries { sample_type ->
-        [sample_type, d.filter { it[0] == sample_type }.map { it[1..-1] }]
+    def d = ch
+      .flatMap { meta ->
+        sample_types
+          .collect { sample_type ->
+            def key_sname = ['sample_name', sample_type]
+            def key_bam = ['bam', sample_type]
+            def key_sv = ['sv', sample_type]
+            if (! meta.containsKey(key_sname) && ! meta.containsKey(key_bam)) {
+              return []
+            }
+            def meta_gridss = [
+              id: meta.get(key_sname),
+              group_key: meta.id,
+              sample_type: sample_type,
+              subject_name: meta.subject_name,
+            ]
+            def v = [meta_gridss, meta.get(key_bam)]
+            def has_sv = meta.containsKey(key_sv)
+            if (has_sv) {
+              v = v + ["${meta.get(key_bam)}.bai", meta.get(key_sv)]
+            }
+            return [has_sv, v]
+          }
       }
+      return d
+  }
+
+  public static get_unique_input_files(ch) {
+    def d = ch
+      .map { [it[1..-1], it[0]] }
+      .groupTuple()
+      .map { filepaths, meta_gridsss ->
+        def (sample_names, ids, sample_types, subject_names) = meta_gridsss
+          .collect {
+            [it.id, it.group_key, it.sample_type, it.subject_name]
+          }
+          .transpose()
+
+        def sample_name = sample_names.unique(false)
+        def sample_type = sample_types.unique(false)
+        def subject_name = subject_names.unique(false)
+        assert sample_name.size() == 1
+        assert sample_type.size() == 1
+        assert subject_name.size() == 1
+
+        def meta_gridss_new = [
+          id: ids.join('__'),
+          id_list: ids,
+          sample_name: sample_name[0],
+          sample_type: sample_type[0],
+          subject_name: subject_name[0],
+        ]
+        return [meta_gridss_new, *filepaths]
+      }
+    return d
+  }
+
+  public static get_assemble_inputs(ch) {
+    def d = ch
+      .map { subject_name, other ->
+        def data = [:]
+        def ids = [] as Set
+
+        // NOTE(SW): must determine whether input ordering is determininistic here
+
+        other
+          .each { meta_gridss, bam, preprocess_dir ->
+            data.get([meta_gridss.sample_type, 'label'], []) << meta_gridss.sample_name
+            data.get([meta_gridss.sample_type, 'bam'], []) << bam
+            data.get([meta_gridss.sample_type, 'preprocess_dir'], []) << preprocess_dir
+            ids += meta_gridss.id_list
+          }
+        def meta_gridss_new = [
+          id: subject_name,
+          id_list: ids,
+        ]
+
+        def sample_types = ['normal', 'tumor']
+        return [
+          meta_gridss_new,
+          sample_types.inject([]) { d, sample_type -> d + data.get([sample_type, 'bam'], []) },
+          sample_types.inject([]) { d, sample_type -> d + data.get([sample_type, 'preprocess_dir'], []) },
+          sample_types.inject([]) { d, sample_type -> d + data.get([sample_type, 'label'], []) },
+        ]
+      }
+    return d
   }
 }

@@ -27,8 +27,7 @@ git clone https://github.com/scwatts/nextflow_pipelines && cd ./nextflow_pipelin
 
 ## Usage
 
-First you'll need to obtain reference data as described [here](#reference-data). Then create a configuration file (for
-an example see: [`nextflow.config`](nextflow.config)). To execute the pipeline:
+Configure inputs and pipeline (see [`nextflow.config`](nextflow.config) for example) then execute:
 
 ```bash
 # Pull in reference data

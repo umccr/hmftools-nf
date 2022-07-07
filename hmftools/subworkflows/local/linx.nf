@@ -2,9 +2,9 @@
 // Linx is an annotation, interpretation and visualisation tool for structural variants.
 //
 
-include { LINX_GERMLINE } from '../modules/scwatts/nextflow_modules/linx/germline/main'
-include { LINX_SOMATIC  } from '../modules/scwatts/nextflow_modules/linx/somatic/main'
-include { VISUALISER    } from '../modules/scwatts/nextflow_modules/linx/visualiser/main'
+include { LINX_GERMLINE } from '../../modules/scwatts/nextflow_modules/linx/germline/main'
+include { LINX_SOMATIC  } from '../../modules/scwatts/nextflow_modules/linx/somatic/main'
+include { VISUALISER    } from '../../modules/scwatts/nextflow_modules/linx/visualiser/main'
 
 workflow LINX {
   take:

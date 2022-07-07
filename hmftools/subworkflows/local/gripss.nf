@@ -2,8 +2,8 @@
 // GRIPSS performs SV filtering.
 //
 
-include { GRIPSS_GERMLINE } from '../modules/scwatts/nextflow_modules/gripss/germline/main'
-include { GRIPSS_SOMATIC  } from '../modules/scwatts/nextflow_modules/gripss/somatic/main'
+include { GRIPSS_GERMLINE } from '../../modules/scwatts/nextflow_modules/gripss/germline/main'
+include { GRIPSS_SOMATIC  } from '../../modules/scwatts/nextflow_modules/gripss/somatic/main'
 
 workflow GRIPSS {
   take:

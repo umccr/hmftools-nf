@@ -2,9 +2,9 @@
 // LILAC is a WGS tool for HLA typing and somatic CNV and SNV calling
 //
 
-include { SAMBAMBA_SLICE } from '../modules/scwatts/nextflow_modules/sambamba/slice/main'
+include { SAMBAMBA_SLICE } from '../../modules/scwatts/nextflow_modules/sambamba/slice/main'
 
-include { LILAC as LILAC_PROCESS } from '../modules/scwatts/nextflow_modules/lilac/main'
+include { LILAC as LILAC_PROCESS } from '../../modules/scwatts/nextflow_modules/lilac/main'
 
 workflow LILAC {
   take:

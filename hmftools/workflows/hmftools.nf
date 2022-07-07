@@ -78,13 +78,13 @@ include { PURPLE      } from '../modules/scwatts/nextflow_modules/purple/main'
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { GRIDSS } from '../subworkflows/gridss'
-include { GRIPSS } from '../subworkflows/gripss'
-include { LILAC  } from '../subworkflows/lilac'
-include { LINX   } from '../subworkflows/linx'
-include { PAVE   } from '../subworkflows/pave'
-include { SAGE   } from '../subworkflows/sage'
-include { TEAL   } from '../subworkflows/teal'
+include { GRIDSS } from '../subworkflows/local/gridss'
+include { GRIPSS } from '../subworkflows/local/gripss'
+include { LILAC  } from '../subworkflows/local/lilac'
+include { LINX   } from '../subworkflows/local/linx'
+include { PAVE   } from '../subworkflows/local/pave'
+include { SAGE   } from '../subworkflows/local/sage'
+include { TEAL   } from '../subworkflows/local/teal'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

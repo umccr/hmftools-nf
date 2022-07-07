@@ -2,11 +2,11 @@
 // GRIDSS is a software suite containing tools useful for the detection of genomic rearrangements.
 //
 
-include { ANNOTATE          } from '../modules/scwatts/nextflow_modules/gridss/annotate/main'
-include { ASSEMBLE          } from '../modules/scwatts/nextflow_modules/gridss/assemble/main'
-include { CALL              } from '../modules/scwatts/nextflow_modules/gridss/call/main'
-include { EXTRACT_FRAGMENTS } from '../modules/scwatts/nextflow_modules/gridss/extract_fragments/main'
-include { PREPROCESS        } from '../modules/scwatts/nextflow_modules/gridss/preprocess/main'
+include { ANNOTATE          } from '../../modules/scwatts/nextflow_modules/gridss/annotate/main'
+include { ASSEMBLE          } from '../../modules/scwatts/nextflow_modules/gridss/assemble/main'
+include { CALL              } from '../../modules/scwatts/nextflow_modules/gridss/call/main'
+include { EXTRACT_FRAGMENTS } from '../../modules/scwatts/nextflow_modules/gridss/extract_fragments/main'
+include { PREPROCESS        } from '../../modules/scwatts/nextflow_modules/gridss/preprocess/main'
 
 workflow GRIDSS {
   take:

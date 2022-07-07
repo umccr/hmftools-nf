@@ -19,6 +19,12 @@ class WorkflowHmftools {
       case 'full':
         stages = Stage.values()
         break
+      case 'gridss':
+        stages = [
+          Stage.GRIDSS,
+          Stage.GRIPSS,
+        ]
+        break
       case 'gridss-purple-linx':
         stages = [
           Stage.AMBER,
@@ -37,12 +43,6 @@ class WorkflowHmftools {
       case 'teal':
         stages = [
           Stage.TEAL
-        ]
-        break
-      case 'gridss':
-        stages = [
-          Stage.GRIDSS,
-          Stage.GRIPSS,
         ]
         break
       default:

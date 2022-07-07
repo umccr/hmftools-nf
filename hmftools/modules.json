@@ -12,40 +12,67 @@
         },
         "scwatts/nextflow_modules": {
             "amber": {
-                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "cobalt": {
-                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gpgr/linx_report": {
-                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gridss/annotate": {
-                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gridss/assemble": {
-                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gridss/call": {
-                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gridss/extract_fragments": {
-                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gridss/preprocess": {
-                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
-            "gripss": {
-                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
+            "gripss/germline": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
-            "linx/annotation": {
-                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
+            "gripss/somatic": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "lilac": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "linx/germline": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "linx/somatic": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "linx/visualiser": {
-                "git_sha": "10b555d780b1acb0ca39b5a0ab10defac98db4d9"
+                "git_sha": "3a7bd8429ec2fc2fcbc16920e549f2a7d6fbc231"
+            },
+            "pave/germline": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "pave/somatic": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "purple": {
-                "git_sha": "ef60c1746d8e20ff91488794b6c01dd0d3db4701"
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "sage/germline": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "sage/somatic": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "sambamba/slice": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+            },
+            "teal": {
+                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             }
         }
     }

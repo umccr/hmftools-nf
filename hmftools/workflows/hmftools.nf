@@ -15,33 +15,35 @@ def checkPathParamList = [
   params.gridss_config,
 
   params.ref_data_genome,
+
   params.ref_data_amber_loci,
+
   params.ref_data_cobalt_gc_profile,
+
   params.ref_data_gridss_blacklist,
   params.ref_data_gridss_breakend_pon,
   params.ref_data_gridss_breakpoint_pon,
+
   params.ref_data_linx_fragile_sites,
-  params.ref_data_linx_line_elements,
-  params.ref_data_ensembl_data_dir,
-
-  params.ref_data_sage_known_hotspots_somatic,
-  params.ref_data_sage_known_hotspots_germline,
-
-  params.ref_data_sage_coding_panel_germline,
-  params.ref_data_sage_coding_panel_somatic,
-  params.ref_data_sage_high_confidence,
-  params.ref_data_sage_pon_file,
-  params.ref_data_mappability_bed,
+  params.ref_data_linx_lines,
 
   params.ref_data_sage_blacklist_bed,
   params.ref_data_sage_blacklist_vcf,
-  params.ref_data_clinvar_vcf,
+  params.ref_data_sage_coding_panel_germline,
+  params.ref_data_sage_coding_panel_somatic,
+  params.ref_data_sage_high_confidence,
+  params.ref_data_sage_known_hotspots_germline,
+  params.ref_data_sage_known_hotspots_somatic,
+  params.ref_data_sage_pon_file,
 
   params.ref_data_lilac_resource_dir,
 
-  params.ref_data_known_fusions,
-  params.ref_data_known_fusion_data,
+  params.ref_data_clinvar_vcf,
   params.ref_data_driver_gene_panel,
+  params.ref_data_ensembl_data_dir,
+  params.ref_data_known_fusion_data,
+  params.ref_data_known_fusions,
+  params.ref_data_mappability_bed,
 ]
 
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
@@ -63,20 +65,17 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 */
 
 //
-// MODULE: Loaded from modules/local/
+// MODULES
 //
 include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet'
 
-//
-// MODULE: Loaded from modules/scwatts/
-//
 include { AMBER       } from '../modules/scwatts/nextflow_modules/amber/main'
 include { COBALT      } from '../modules/scwatts/nextflow_modules/cobalt/main'
 include { LINX_REPORT } from '../modules/scwatts/nextflow_modules/gpgr/linx_report/main'
 include { PURPLE      } from '../modules/scwatts/nextflow_modules/purple/main'
 
 //
-// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
+// SUBWORKFLOWS
 //
 include { GRIDSS } from '../subworkflows/local/gridss'
 include { GRIPSS } from '../subworkflows/local/gripss'
@@ -93,7 +92,7 @@ include { TEAL   } from '../subworkflows/local/teal'
 */
 
 //
-// MODULE: Installed directly from nf-core/modules
+// MODULES
 //
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/dumpsoftwareversions/main'
 
@@ -103,39 +102,40 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+gridss_config         = params.gridss_config ? new File(params.gridss_config).absolutePath : []
+
 ref_data_genome = new File(params.ref_data_genome).absolutePath
 ref_data_genome_dir = file(ref_data_genome).parent
 ref_data_genome_fn = file(ref_data_genome).name
 
 ref_data_amber_loci            = new File(params.ref_data_amber_loci).absolutePath
+
 ref_data_cobalt_gc_profile     = new File(params.ref_data_cobalt_gc_profile).absolutePath
+
 ref_data_gridss_blacklist      = new File(params.ref_data_gridss_blacklist).absolutePath
 ref_data_gridss_breakend_pon   = new File(params.ref_data_gridss_breakend_pon).absolutePath
 ref_data_gridss_breakpoint_pon = new File(params.ref_data_gridss_breakpoint_pon).absolutePath
+
 ref_data_linx_fragile_sites    = new File(params.ref_data_linx_fragile_sites).absolutePath
-ref_data_linx_line_elements    = new File(params.ref_data_linx_line_elements).absolutePath
-ref_data_ensembl_data_dir      = new File(params.ref_data_ensembl_data_dir).absolutePath
-
-ref_data_sage_known_hotspots_somatic = new File(params.ref_data_sage_known_hotspots_somatic).absolutePath
-ref_data_sage_known_hotspots_germline = new File(params.ref_data_sage_known_hotspots_germline).absolutePath
-
-ref_data_sage_coding_panel_germline = new File(params.ref_data_sage_coding_panel_germline).absolutePath
-ref_data_sage_coding_panel_somatic = new File(params.ref_data_sage_coding_panel_somatic).absolutePath
-ref_data_sage_high_confidence = new File(params.ref_data_sage_high_confidence).absolutePath
-ref_data_sage_pon_file = new File(params.ref_data_sage_pon_file).absolutePath
-ref_data_mappability_bed = new File(params.ref_data_mappability_bed).absolutePath
+ref_data_linx_lines = new File(params.ref_data_linx_lines).absolutePath
 
 ref_data_sage_blacklist_bed = new File(params.ref_data_sage_blacklist_bed).absolutePath
 ref_data_sage_blacklist_vcf = new File(params.ref_data_sage_blacklist_vcf).absolutePath
-ref_data_clinvar_vcf = new File(params.ref_data_clinvar_vcf).absolutePath
+ref_data_sage_coding_panel_germline = new File(params.ref_data_sage_coding_panel_germline).absolutePath
+ref_data_sage_coding_panel_somatic = new File(params.ref_data_sage_coding_panel_somatic).absolutePath
+ref_data_sage_high_confidence = new File(params.ref_data_sage_high_confidence).absolutePath
+ref_data_sage_known_hotspots_germline = new File(params.ref_data_sage_known_hotspots_germline).absolutePath
+ref_data_sage_known_hotspots_somatic = new File(params.ref_data_sage_known_hotspots_somatic).absolutePath
+ref_data_sage_pon_file = new File(params.ref_data_sage_pon_file).absolutePath
 
 ref_data_lilac_resource_dir = new File(params.ref_data_lilac_resource_dir).absolutePath
 
-ref_data_known_fusions         = new File(params.ref_data_known_fusions).absolutePath
-ref_data_known_fusion_data     = new File(params.ref_data_known_fusion_data).absolutePath
+ref_data_clinvar_vcf = new File(params.ref_data_clinvar_vcf).absolutePath
 ref_data_driver_gene_panel     = new File(params.ref_data_driver_gene_panel).absolutePath
-
-gridss_config         = params.gridss_config ? new File(params.gridss_config).absolutePath : []
+ref_data_ensembl_data_dir      = new File(params.ref_data_ensembl_data_dir).absolutePath
+ref_data_known_fusion_data     = new File(params.ref_data_known_fusion_data).absolutePath
+ref_data_known_fusions         = new File(params.ref_data_known_fusions).absolutePath
+ref_data_mappability_bed = new File(params.ref_data_mappability_bed).absolutePath
 
 
 // NOTE(SW): move to initialise
@@ -166,7 +166,7 @@ workflow HMFTOOLS {
   )
   ch_inputs = WorkflowHmftools.prepare_inputs(CHECK_SAMPLESHEET.out, workflow.stubRun, log)
 
-  // Set up channel for AMBER and COBALT
+  // Set up channel with common inputs for several stages
   def run_amber = WorkflowHmftools.Stage.AMBER in stages
   def run_cobalt = WorkflowHmftools.Stage.COBALT in stages
   def run_pave = WorkflowHmftools.Stage.PAVE in stages
@@ -454,7 +454,7 @@ workflow HMFTOOLS {
       ch_linx_germline_inputs,
       ch_linx_somatic_inputs,
       ref_data_linx_fragile_sites,
-      ref_data_linx_line_elements,
+      ref_data_linx_lines,
       ref_data_ensembl_data_dir,
       ref_data_known_fusion_data,
       ref_data_driver_gene_panel,

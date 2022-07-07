@@ -111,7 +111,7 @@
           "description": "Path to LINX fragile sites file.",
           "fa_icon": "far fa-file-code"
         },
-        "ref_data_linx_line_elements": {
+        "ref_data_linx_lines": {
           "type": "string",
           "format": "file-path",
           "pattern": "^\\S+\\.csv$",

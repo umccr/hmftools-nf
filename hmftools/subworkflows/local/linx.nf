@@ -11,7 +11,7 @@ workflow LINX {
     ch_linx_germline_inputs     // channel: [meta, purple]
     ch_linx_somatic_inputs      // channel: [meta, gripss_sv]
     ref_data_linx_fragile_sites // file: /path/to/linx/fragile/sites.csv
-    ref_data_linx_line_elements // file: /path/to/linx/lines.csv
+    ref_data_linx_lines         // file: /path/to/linx/lines.csv
     ref_data_ensembl_data_dir   // file: /path/to/hmf/ensembl/data/dir/
     ref_data_known_fusion_data  // file: /path/to/hmf/known/fusion/data.csv
     ref_data_driver_gene_panel  // file: /path/to/hmf/driver/gene/panel.tsv
@@ -24,7 +24,7 @@ workflow LINX {
     LINX_GERMLINE(
       ch_linx_germline_inputs,
       ref_data_linx_fragile_sites,
-      ref_data_linx_line_elements,
+      ref_data_linx_lines,
       ref_data_ensembl_data_dir,
       ref_data_driver_gene_panel,
     )
@@ -34,7 +34,7 @@ workflow LINX {
     LINX_SOMATIC(
       ch_linx_somatic_inputs,
       ref_data_linx_fragile_sites,
-      ref_data_linx_line_elements,
+      ref_data_linx_lines,
       ref_data_ensembl_data_dir,
       ref_data_known_fusion_data,
       ref_data_driver_gene_panel,

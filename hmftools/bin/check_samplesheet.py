@@ -21,8 +21,11 @@ class FileType(enum.Enum):
     BAM = 'bam'
     SV_VCF = 'sv'
     SMLV_VCF = 'smlv'
-    PURPLE_DIR = 'purple_dir'
+    GRIPSS_SOFT_SV_VCF = 'gripss_soft_sv'
+    GRIPSS_HARD_SV_VCF = 'gripss_hard_sv'
+    AMBER_DIR = 'amber_dir'
     COBALT_DIR = 'cobalt_dir'
+    PURPLE_DIR = 'purple_dir'
 
     def __repr__(self):
         return self.value
@@ -48,6 +51,37 @@ FILETYPES_EXPECTED = {
             (SampleType.NORMAL, FileType.SV_VCF),
         ],
     },
+    'gridss': {
+        'required': [
+            (SampleType.TUMOR, FileType.BAM),
+            (SampleType.NORMAL, FileType.BAM),
+        ],
+        'optional': [
+            (SampleType.TUMOR, FileType.SV_VCF),
+            (SampleType.NORMAL, FileType.SV_VCF),
+        ],
+    },
+    'purple': {
+        'required': [
+            (SampleType.TUMOR, FileType.AMBER_DIR),
+            (SampleType.TUMOR, FileType.COBALT_DIR),
+            (SampleType.TUMOR, FileType.GRIPSS_HARD_SV_VCF),
+            (SampleType.TUMOR, FileType.GRIPSS_SOFT_SV_VCF),
+        ],
+        'optional': [
+            (SampleType.TUMOR, FileType.SMLV_VCF),
+            (SampleType.NORMAL, FileType.SMLV_VCF),
+        ],
+    },
+    # NOTE(SW): expectation that we always at least want to run LINX somatic
+    'linx': {
+        'required': [
+            (SampleType.TUMOR, FileType.PURPLE_DIR),
+        ],
+        'optional': [
+            (SampleType.NORMAL, FileType.GRIPSS_HARD_SV_VCF),
+        ],
+    },
     'gridss-purple-linx': {
         'required': [
             (SampleType.TUMOR, FileType.BAM),
@@ -58,16 +92,6 @@ FILETYPES_EXPECTED = {
             (SampleType.NORMAL, FileType.SV_VCF),
             (SampleType.TUMOR, FileType.SMLV_VCF),
             (SampleType.NORMAL, FileType.SMLV_VCF)
-        ],
-    },
-    'gridss': {
-        'required': [
-            (SampleType.TUMOR, FileType.BAM),
-            (SampleType.NORMAL, FileType.BAM),
-        ],
-        'optional': [
-            (SampleType.TUMOR, FileType.SV_VCF),
-            (SampleType.NORMAL, FileType.SV_VCF),
         ],
     },
     'lilac': {
@@ -162,10 +186,16 @@ def check_bam_sample_names(records):
     record_tumor_bam = None
     record_normal_bam = None
     for record in records:
+        if record['filetype_enum'] != FileType.BAM:
+            continue
         if record['sample_type_enum'] == SampleType.TUMOR:
             record_tumor_bam = record
         elif record['sample_type_enum'] == SampleType.NORMAL:
             record_normal_bam = record
+
+    if record_tumor_bam is None and record_normal_bam is None:
+        return
+
     if record_tumor_bam['sample_name'] == record_normal_bam['sample_name']:
         sample_name = record_tumor_bam['sample_name']
         print(f'Got identical same names for BAMs: {sample_name}', file=sys.stderr)

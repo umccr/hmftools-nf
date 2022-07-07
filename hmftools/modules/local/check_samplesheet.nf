@@ -14,7 +14,6 @@ process CHECK_SAMPLESHEET {
 
   script:
   def args = task.ext.args ?: ''
-  //def mode_arg = mode ? '--
 
   """
   check_samplesheet.py \

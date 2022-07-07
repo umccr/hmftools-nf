@@ -296,7 +296,7 @@ workflow HMFTOOLS {
   ch_purple_out = Channel.empty()
   if (WorkflowHmftools.Stage.PURPLE in stages) {
 
-    // Collect smlv VCFs either from PAVE or samplesheet/meta
+    // Mode: full
     if (WorkflowHmftools.Stage.PAVE in stages) {
       ch_purple_inputs = WorkflowHmftools.group_by_meta(
         ch_amber_out,
@@ -305,7 +305,8 @@ workflow HMFTOOLS {
         ch_pave_somatic_out,
         ch_pave_germline_out,
       )
-    } else {
+    // Mode: gridss-purple-linx
+    } else if (WorkflowHmftools.Stage.AMBER in stages && WorkflowHmftools.Stage.COBALT in stages) {
       ch_purple_inputs = WorkflowHmftools.group_by_meta(
         ch_amber_out,
         ch_cobalt_out,
@@ -317,6 +318,24 @@ workflow HMFTOOLS {
           return [
             meta,
             *fps,
+            meta.get(['smlv', 'tumor'], []),
+            meta.get(['smlv', 'normal'], []),
+          ]
+        }
+    // Mode: purple
+    } else {
+      ch_purple_inputs = ch_inputs
+        .map { meta ->
+          def sv_hard_vcf = meta[['gripss_hard_sv', 'tumor']]
+          def sv_soft_vcf = meta[['gripss_soft_sv', 'tumor']]
+          return [
+            meta,
+            meta[['amber_dir', 'tumor']],
+            meta[['cobalt_dir', 'tumor']],
+            sv_hard_vcf,
+            "${sv_hard_vcf}.tbi",
+            sv_soft_vcf,
+            "${sv_soft_vcf}.tbi",
             meta.get(['smlv', 'tumor'], []),
             meta.get(['smlv', 'normal'], []),
           ]
@@ -342,18 +361,19 @@ workflow HMFTOOLS {
   //
   if (WorkflowHmftools.Stage.TEAL in stages) {
 
-    // Collect COBALT and PURPLE output directories from respective processes or samplesheet/meta
     ch_teal_inputs_base = ch_inputs
       .map { meta ->
         [meta, meta.get(['bam', 'tumor']), meta.get(['bam', 'normal'])]
       }
 
+    // Mode: full
     if (run_cobalt && WorkflowHmftools.Stage.PURPLE in stages) {
       ch_teal_inputs = WorkflowHmftools.group_by_meta(
         ch_teal_inputs_base,
         ch_cobalt_out,
         ch_purple_out,
       )
+    // Mode: teal
     } else {
       ch_teal_inputs = ch_teal_inputs_base
         .map { data ->
@@ -380,12 +400,13 @@ workflow HMFTOOLS {
   //
   if (run_lilac) {
 
-    // Collect PURPLE output directory from either from PURPLE or samplesheet/meta
+    // Mode: full
     if (WorkflowHmftools.Stage.PURPLE in stages) {
       ch_lilac_inputs = WorkflowHmftools.group_by_meta(
         ch_bams_and_indices,
         ch_purple_out,
       )
+    // Mode: lilac
     } else {
       ch_lilac_inputs = ch_bams_and_indices
         .map { data ->
@@ -413,9 +434,25 @@ workflow HMFTOOLS {
   //
   ch_linx_somatic_out = Channel.empty()
   if (WorkflowHmftools.Stage.LINX in stages) {
+
+    // Mode: full
+    if (WorkflowHmftools.Stage.PURPLE in stages && WorkflowHmftools.Stage.GRIPSS in stages) {
+      ch_linx_germline_inputs = ch_gripss_germline_out.map { meta, h, hi, s, si -> [meta, h] }
+      ch_linx_somatic_inputs = ch_purple_out
+    // Mode: linx
+    } else {
+      ch_linx_germline_inputs = ch_inputs
+        .map { meta ->
+          def sv = meta.get(['gripss_hard_sv', 'normal'], false)
+          return sv ? [meta, sv] : false
+        }
+        .filter { it }
+      ch_linx_somatic_inputs = ch_inputs.map { meta -> [meta, meta.get(['purple_dir', 'tumor'], []) ] }
+    }
+
     LINX(
-      ch_gripss_germline_out.map { meta, h, hi, s, si -> [meta, h] },
-      ch_purple_out,
+      ch_linx_germline_inputs,
+      ch_linx_somatic_inputs,
       ref_data_linx_fragile_sites,
       ref_data_linx_line_elements,
       ref_data_ensembl_data_dir,

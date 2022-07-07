@@ -2,6 +2,8 @@
 // This file holds several functions specific to the workflows/hmftools.nf in the nf-core/hmftools pipeline
 //
 
+import static groovy.io.FileType.FILES
+
 import nextflow.Channel
 
 class WorkflowHmftools {
@@ -23,6 +25,16 @@ class WorkflowHmftools {
         stages = [
           Stage.GRIDSS,
           Stage.GRIPSS,
+        ]
+        break
+      case 'purple':
+        stages = [
+          Stage.PURPLE,
+        ]
+        break
+      case 'linx':
+        stages = [
+          Stage.LINX,
         ]
         break
       case 'gridss-purple-linx':
@@ -102,26 +114,56 @@ class WorkflowHmftools {
           def key_file = [it.filetype, it.sample_type]
           assert ! meta.containsKey(key_file)
           meta[key_file] = it.filepath
-          // For BAM file inputs, required that it has a co-located index; ignore for stub runs
-          if (it.filepath.endsWith('.bam') && ! stub_run) {
-            def bam_index_fp = new File("${it.filepath}.bai")
-            if (! bam_index_fp.exists()) {
-              log.error "\nERROR: No index found for ${it.filepath}"
-              System.exit(1)
+
+          if (! stub_run) {
+            // For BAM file inputs, require co-located index
+            if (it.filepath.endsWith('.bam')) {
+              def bam_index_fp = new File("${it.filepath}.bai")
+              if (! bam_index_fp.exists()) {
+                log.error "\nERROR: No index found for ${it.filepath}"
+                System.exit(1)
+              }
+            }
+
+            // For GRIPSS SV VCFs, require co-located index
+            if (it.filetype.startsWith('gripss')) {
+              def vcf_index_fp = new File("${it.filepath}.tbi")
+              if (! vcf_index_fp.exists()) {
+                log.error "\nERROR: No index found for ${it.filepath}"
+                System.exit(1)
+              }
             }
           }
 
-          // Set sample type: tumor_normal, tumor_only, normal_only
-          if (meta.containsKey(['sample_name', 'tumor']) && meta.containsKey(['sample_name', 'normal'])) {
-            meta.sample_type = 'tumor_normal'
-          } else if (meta.containsKey(['sample_name', 'tumor'])) {
-            meta.sample_type = 'tumor_only'
-          } else if (meta.containsKey(['sample_name', 'normal'])) {
-            meta.sample_type = 'normal_only'
-          } else {
-            assert false
-          }
+          // NOTE(SW): CHECK_SAMPLESHEET curently enforces T/N; this may be relevant in the future
+          //// Set sample type: tumor_normal, tumor_only, normal_only
+          //if (meta.containsKey(['sample_name', 'tumor']) && meta.containsKey(['sample_name', 'normal'])) {
+          //  meta.sample_type = 'tumor_normal'
+          //} else if (meta.containsKey(['sample_name', 'tumor'])) {
+          //  meta.sample_type = 'tumor_only'
+          //} else if (meta.containsKey(['sample_name', 'normal'])) {
+          //  meta.sample_type = 'normal_only'
+          //} else {
+          //  assert false
+          //}
         }
+
+        // For PURPLE only runs, we must get normal sample name from inputs since there is no way to provide this
+        // in the samplesheet
+        if (meta.containsKey(['cobalt_dir', 'tumor']) && ! meta.containsKey(['sample_name', 'normal'])) {
+          // Discover files
+          def normal_ratio_fps = []
+          new File(meta[['cobalt_dir', 'tumor']])
+            .eachFileMatch(groovy.io.FileType.FILES, ~/.+\.cobalt\.gc\.median\.tsv/, { normal_ratio_fps << it })
+          // Select normal sample file
+          def normal_ratio_fp = normal_ratio_fps
+            .findAll { ! it.getName().contains(meta[['sample_name', 'tumor']]) }
+          assert normal_ratio_fp.size() == 1
+          // Set normal sample name
+          def m = (normal_ratio_fp =~ /.+\/(.+)\.cobalt\.gc\.median\.tsv/)
+          meta[['sample_name', 'normal']] = m[0][1]
+        }
+
         return meta
       }
   }

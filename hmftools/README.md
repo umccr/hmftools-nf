@@ -7,7 +7,7 @@
 
 # HMFtools
 
-> Currently only the GRIDSS/PURPLE/LINX TN workflow is supported.
+> TDB
 
 ## Table of contents
 
@@ -18,6 +18,10 @@
 * [Requirements](#requirements)
 * [Reference data](#reference-data)
 * [License](#license)
+
+## Overview
+
+> TDB
 
 ## Installation
 
@@ -44,37 +48,47 @@ nf-core modules -g scwatts/nextflow_modules -b main install
 nextflow run ./main.nf -profile docker --input /path/to/samplesheet.tsv --outdir ./output/
 ```
 
+## Pipeline modes
+
+> TBD
+
+Several modes of execution are offered and can be accessed using the `--mode` argument.
+
+| Name                  | Description                           |
+| ---                   | ---                                   |
+| `full`                |                                       |
+| `gridss`              |                                       |
+| `purple`              |                                       |
+| `linx`                |                                       |
+| `gridss-purple-linx`  |                                       |
+| `lilac`               |                                       |
+| `teal`                |                                       |
+
+> Currently only T/N inputs are offered
+
+
 ## Outputs
 
 ### Directories
 
-| Name                  | Contents                              |
-| ---                   | ---                                   |
-| `gridss/`             | GRIDSS final output                   |
-| `gripss/`             | Filtered SVs                          |
-| `linx_annotation/`    | Data for clustered and annotated SVs  |
-| `linx_visualiser/`    | Plots for clustered and annotated SVs |
-| `nextflow/`           | Pipeline config, logs, and reports    |
-| `nextflow/work/`      | Intermediary work files               |
-| `purple/`             | CNA calls, purity, ploidy             |
+> TBD
 
 ### Useful files
 
-| Name                                      | Description                               |
-| ---                                       | ---                                       |
-| `<tumor_name>_linx.html`                  | gpgr LINX Rmd report                      |
-| `linx_annotation/*tsv`                    | Grouped and annotated SV events           |
-| `linx_visualiser/plot/*png`               | SV event plots                            |
-| `purple/plot/*png`                        | Purity, ploidy, circos, etc plots         |
-| `purple/<tumor_name>.<vcf_type>.vcf.gz`   | VCF provided to and annotated by PURPLE   |
-| `gridss/sv_annotated.vcf.gz`              | Final GRIDSS output SV VCF                |
-| `gripps/<prefix>.gripps.filtered.vcf.gz`  | Hard filtered SV VCF                      |
-| `gripps/<prefix>.gripss.vcf.gz`           | Soft filtered SV VCF                      |
-| `nextflow/nextflow_log.txt`               | Pipeline log file                         |
-| `nextflow/nextflow.config`                | Pipeline configuration used in run        |
-| `nextflow/reports/timeline.html`          | Stage execution durations as a timeline   |
+> TDB
 
 ## Run tests
+The internal pipeline logic can be tested using a stub run. No actual outputs are generated in a stub run and
+only the `stub` section of a process is executed. Hence, it completes in a short amount of time but does not test
+validity of actual processes beyond declared inputs and outputs.
+
+```bash
+nextflow run main.nf --input ./assets/samplesheet.tsv --outdir output/ --max_memory '1.GB' -stub
+```
+
+A more comprehensive test that involves both the process `script` section and internal pipeline logic can be run with
+the supplied downsampled test dataset. This of course takes longer (on the order of minutes) but replicates a full run
+and generates 'real' process outputs.
 
 ```bash
 # Pull in reference data
@@ -88,10 +102,12 @@ nf-core modules install
 nf-core modules -g scwatts/nextflow_modules -b main install
 
 # Run test
-nextflow run ./main.nf -profile docker,test --outdir output/
+nextflow run ./main.nf -profile docker,test --outdir output/ --max_memory '6.GB'
 ```
 
 ## Requirements
+
+> TDB
 
 > Software versions only indicate what is currently in use rather than strict requirements
 

@@ -8,13 +8,13 @@ include { VISUALISER    } from '../../modules/scwatts/nextflow_modules/linx/visu
 
 workflow LINX {
   take:
-    ch_linx_germline_inputs     // channel: [meta, purple]
-    ch_linx_somatic_inputs      // channel: [meta, gripss_sv]
-    ref_data_linx_fragile_sites // file: /path/to/linx/fragile/sites.csv
-    ref_data_linx_lines         // file: /path/to/linx/lines.csv
-    ref_data_ensembl_data_dir   // file: /path/to/hmf/ensembl/data/dir/
-    ref_data_known_fusion_data  // file: /path/to/hmf/known/fusion/data.csv
-    ref_data_driver_gene_panel  // file: /path/to/hmf/driver/gene/panel.tsv
+    ch_linx_germline_inputs     // channel: [val(meta), purple]
+    ch_linx_somatic_inputs      // channel: [val(meta), gripss_hard_vcf]
+    ref_data_linx_fragile_sites //    file: /path/to/linx_fragile_sites
+    ref_data_linx_lines         //    file: /path/to/linx_lines
+    ref_data_ensembl_data_dir   //    file: /path/to/ensembl_data_dir/
+    ref_data_known_fusion_data  //    file: /path/to/known_fusion_data
+    ref_data_driver_gene_panel  //    file: /path/to/driver_gene_panel
 
   main:
     // Channel for versions.yml files
@@ -47,14 +47,15 @@ workflow LINX {
     )
     ch_versions = ch_versions.mix(VISUALISER.out.versions)
 
+    // channel: [val(meta), linx_annotation_dir, linx_visualiser_dir]
     ch_linx_somatic_out = WorkflowHmftools.group_by_meta(
       LINX_SOMATIC.out.annotation_dir,
       VISUALISER.out.visualiser_dir,
     )
 
   emit:
-    somatic  = ch_linx_somatic_out              // channel: [meta, linx_annotation, linx_visualiser]
-    germline = LINX_GERMLINE.out.annotation_dir // channel: [meta, linx_annotation]
+    somatic  = ch_linx_somatic_out              // channel: [val(meta), linx_annotation_dir, linx_visualiser_dir]
+    germline = LINX_GERMLINE.out.annotation_dir // channel: [val(meta), linx_annotation_dir]
 
     versions = ch_versions                      // channel: [versions.yml]
 }

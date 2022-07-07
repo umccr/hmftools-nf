@@ -5,6 +5,7 @@
 class WorkflowTeal {
 
   public static get_metrics_inputs(ch) {
+    // channel: [val(meta_teal), bam]
     def d = ch
       .flatMap { meta, tbam, nbam, cobalt_dir, purple_dir ->
         def sample_types = ['tumor': tbam, 'normal': nbam]
@@ -25,6 +26,7 @@ class WorkflowTeal {
   }
 
   public static get_unique_input_files(ch) {
+    // channel: [val(meta_teal), bam]
     def d = ch
       .map { [it[1..-1], it[0]] }
       .groupTuple()
@@ -50,6 +52,8 @@ class WorkflowTeal {
   }
 
   public static sort_bams_and_metrics(ch) {
+    // Collect T/N pairs into single channel element
+    // channel: [val(meta), tumor_bam, normal_bam, tumor_wgs_metrics, normal_wgs_metrics]
     def d = ch
       .flatMap{ data ->
         def meta_teal = data[0]

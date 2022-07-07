@@ -12,21 +12,20 @@ WorkflowHmftools.initialise(params, log)
 // Check input path parameters to see if they exist
 def checkPathParamList = [
   params.input,
-  params.gridss_config,
-
+  // Reference genome
   params.ref_data_genome,
-
+  // AMBER and COBALT
   params.ref_data_amber_loci,
-
   params.ref_data_cobalt_gc_profile,
-
+  // GRIDSS
+  params.gridss_config,
   params.ref_data_gridss_blacklist,
   params.ref_data_gridss_breakend_pon,
   params.ref_data_gridss_breakpoint_pon,
-
+  // LINX
   params.ref_data_linx_fragile_sites,
   params.ref_data_linx_lines,
-
+  // SAGE, PAVE
   params.ref_data_sage_blacklist_bed,
   params.ref_data_sage_blacklist_vcf,
   params.ref_data_sage_coding_panel_germline,
@@ -35,9 +34,9 @@ def checkPathParamList = [
   params.ref_data_sage_known_hotspots_germline,
   params.ref_data_sage_known_hotspots_somatic,
   params.ref_data_sage_pon_file,
-
+  // LILAC
   params.ref_data_lilac_resource_dir,
-
+  // Other
   params.ref_data_clinvar_vcf,
   params.ref_data_driver_gene_panel,
   params.ref_data_ensembl_data_dir,
@@ -102,61 +101,51 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-gridss_config         = params.gridss_config ? new File(params.gridss_config).absolutePath : []
-
-ref_data_genome = new File(params.ref_data_genome).absolutePath
-ref_data_genome_dir = file(ref_data_genome).parent
-ref_data_genome_fn = file(ref_data_genome).name
-
-ref_data_amber_loci            = new File(params.ref_data_amber_loci).absolutePath
-
-ref_data_cobalt_gc_profile     = new File(params.ref_data_cobalt_gc_profile).absolutePath
-
-ref_data_gridss_blacklist      = new File(params.ref_data_gridss_blacklist).absolutePath
-ref_data_gridss_breakend_pon   = new File(params.ref_data_gridss_breakend_pon).absolutePath
-ref_data_gridss_breakpoint_pon = new File(params.ref_data_gridss_breakpoint_pon).absolutePath
-
-ref_data_linx_fragile_sites    = new File(params.ref_data_linx_fragile_sites).absolutePath
-ref_data_linx_lines = new File(params.ref_data_linx_lines).absolutePath
-
-ref_data_sage_blacklist_bed = new File(params.ref_data_sage_blacklist_bed).absolutePath
-ref_data_sage_blacklist_vcf = new File(params.ref_data_sage_blacklist_vcf).absolutePath
-ref_data_sage_coding_panel_germline = new File(params.ref_data_sage_coding_panel_germline).absolutePath
-ref_data_sage_coding_panel_somatic = new File(params.ref_data_sage_coding_panel_somatic).absolutePath
-ref_data_sage_high_confidence = new File(params.ref_data_sage_high_confidence).absolutePath
-ref_data_sage_known_hotspots_germline = new File(params.ref_data_sage_known_hotspots_germline).absolutePath
-ref_data_sage_known_hotspots_somatic = new File(params.ref_data_sage_known_hotspots_somatic).absolutePath
-ref_data_sage_pon_file = new File(params.ref_data_sage_pon_file).absolutePath
-
-ref_data_lilac_resource_dir = new File(params.ref_data_lilac_resource_dir).absolutePath
-
-ref_data_clinvar_vcf = new File(params.ref_data_clinvar_vcf).absolutePath
-ref_data_driver_gene_panel     = new File(params.ref_data_driver_gene_panel).absolutePath
-ref_data_ensembl_data_dir      = new File(params.ref_data_ensembl_data_dir).absolutePath
-ref_data_known_fusion_data     = new File(params.ref_data_known_fusion_data).absolutePath
-ref_data_known_fusions         = new File(params.ref_data_known_fusions).absolutePath
-ref_data_mappability_bed = new File(params.ref_data_mappability_bed).absolutePath
-
-
-// NOTE(SW): move to initialise
-stages =  WorkflowHmftools.set_stages(params.mode, log)
-
-
-def check_labels(d, log) {
-  def labels_seen = []
-  def labels_duplicated = []
-  d.collect { label, fp ->
-    labels_seen.contains(label) ? labels_duplicated << label : labels_seen << label
-  }
-  if (labels_duplicated) {
-      log.error "\nERROR: got duplicate label(s) ${labels_duplicated.join(', ')}"
-      System.exit(1)
-  }
+// Get absolute file paths
+def get_absolute_path(path) {
+  return path ? new File(path).absolutePath : []
 }
 
+// Reference genome
+ref_data_genome                       = get_absolute_path(params.ref_data_genome)
+ref_data_genome_dir                   = file(ref_data_genome).parent
+ref_data_genome_fn                    = file(ref_data_genome).name
+// AMBER and COBALT
+ref_data_amber_loci                   = get_absolute_path(params.ref_data_amber_loci)
+ref_data_cobalt_gc_profile            = get_absolute_path(params.ref_data_cobalt_gc_profile)
+// GRIDSS
+gridss_config                         = get_absolute_path(params.gridss_config)
+ref_data_gridss_blacklist             = get_absolute_path(params.ref_data_gridss_blacklist)
+ref_data_gridss_breakend_pon          = get_absolute_path(params.ref_data_gridss_breakend_pon)
+ref_data_gridss_breakpoint_pon        = get_absolute_path(params.ref_data_gridss_breakpoint_pon)
+// LINX
+ref_data_linx_fragile_sites           = get_absolute_path(params.ref_data_linx_fragile_sites)
+ref_data_linx_lines                   = get_absolute_path(params.ref_data_linx_lines)
+// SAGE, PAVE
+ref_data_sage_blacklist_bed           = get_absolute_path(params.ref_data_sage_blacklist_bed)
+ref_data_sage_blacklist_vcf           = get_absolute_path(params.ref_data_sage_blacklist_vcf)
+ref_data_sage_coding_panel_germline   = get_absolute_path(params.ref_data_sage_coding_panel_germline)
+ref_data_sage_coding_panel_somatic    = get_absolute_path(params.ref_data_sage_coding_panel_somatic)
+ref_data_sage_high_confidence         = get_absolute_path(params.ref_data_sage_high_confidence)
+ref_data_sage_known_hotspots_germline = get_absolute_path(params.ref_data_sage_known_hotspots_germline)
+ref_data_sage_known_hotspots_somatic  = get_absolute_path(params.ref_data_sage_known_hotspots_somatic)
+ref_data_sage_pon_file                = get_absolute_path(params.ref_data_sage_pon_file)
+// LILAC
+ref_data_lilac_resource_dir           = get_absolute_path(params.ref_data_lilac_resource_dir)
+// Other
+ref_data_clinvar_vcf                  = get_absolute_path(params.ref_data_clinvar_vcf)
+ref_data_driver_gene_panel            = get_absolute_path(params.ref_data_driver_gene_panel)
+ref_data_ensembl_data_dir             = get_absolute_path(params.ref_data_ensembl_data_dir)
+ref_data_known_fusion_data            = get_absolute_path(params.ref_data_known_fusion_data)
+ref_data_known_fusions                = get_absolute_path(params.ref_data_known_fusions)
+ref_data_mappability_bed              = get_absolute_path(params.ref_data_mappability_bed)
+
+// Set stages to run
+stages = WorkflowHmftools.set_stages(params.mode, log)
 
 workflow HMFTOOLS {
   // Create channel for versions
+  // channel: [versions.yml]
   ch_versions = Channel.empty()
 
   // Check samplesheet and prepare input channel
@@ -164,6 +153,7 @@ workflow HMFTOOLS {
     params.input,
     params.mode,
   )
+  // channel: [val(meta)]
   ch_inputs = WorkflowHmftools.prepare_inputs(CHECK_SAMPLESHEET.out, workflow.stubRun, log)
 
   // Set up channel with common inputs for several stages
@@ -172,6 +162,7 @@ workflow HMFTOOLS {
   def run_pave = WorkflowHmftools.Stage.PAVE in stages
   def run_lilac = WorkflowHmftools.Stage.LILAC in stages
   if (run_amber || run_cobalt || run_pave || run_lilac) {
+    // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
     ch_bams_and_indices = ch_inputs
       .map { meta ->
         def tumor_bam = meta.get(['bam', 'tumor'])
@@ -183,6 +174,7 @@ workflow HMFTOOLS {
   //
   // MODULE: Run AMBER to obtain b-allele frequencies
   //
+  // channel: [val(meta), amber_dir]
   ch_amber_out = Channel.empty()
   if (run_amber) {
     AMBER(
@@ -196,6 +188,7 @@ workflow HMFTOOLS {
   //
   // MODULE: Run COBALT to obtain read ratios
   //
+  // channel: [val(meta), cobalt_dir]
   ch_cobalt_out = Channel.empty()
   if (run_cobalt) {
     COBALT(
@@ -209,6 +202,7 @@ workflow HMFTOOLS {
   //
   // SUBWORKFLOW: Call structural variants with GRIDSS
   //
+  // channel: [val(meta), gridss_vcf]
   ch_gridss_out = Channel.empty()
   if (WorkflowHmftools.Stage.GRIDSS in stages) {
     GRIDSS(
@@ -225,7 +219,9 @@ workflow HMFTOOLS {
   //
   // MODULE: Run GRIPSS to filter GRIDSS SV calls
   //
+  // channel: [val(meta), hard_vcf, hard_tbi, soft_vcf, soft_tbi]
   ch_gripss_germline_out = Channel.empty()
+  // channel: [val(meta), hard_vcf, hard_tbi, soft_vcf, soft_tbi]
   ch_gripss_somatic_out = Channel.empty()
   if (WorkflowHmftools.Stage.GRIPSS in stages) {
     GRIPSS(
@@ -244,7 +240,9 @@ workflow HMFTOOLS {
   //
   // SUBWORKFLOW: call SNV, MNV, and small INDELS with SAGE
   //
+  // channel: [val(meta), sage_vcf]
   ch_sage_germline_out = Channel.empty()
+  // channel: [val(meta), sage_vcf]
   ch_sage_somatic_out = Channel.empty()
   if (WorkflowHmftools.Stage.SAGE in stages) {
     SAGE(
@@ -269,7 +267,9 @@ workflow HMFTOOLS {
   //
   // SUBWORKFLOW: Annotate variants with PAVE
   //
+  // channel: [val(meta), pave_vcf]
   ch_pave_germline_out = Channel.empty()
+  // channel: [val(meta), pave_vcf]
   ch_pave_somatic_out = Channel.empty()
   if (run_pave) {
     PAVE(
@@ -293,6 +293,7 @@ workflow HMFTOOLS {
   //
   // MODULE: Run PURPLE for CNV calling, purity and ploidy inference, SV recovery
   //
+  // channel: [val(meta), purple_dir]
   ch_purple_out = Channel.empty()
   if (WorkflowHmftools.Stage.PURPLE in stages) {
 
@@ -432,6 +433,7 @@ workflow HMFTOOLS {
   //
   // SUBWORKFLOW: Group structural variants into higher order events with LINX
   //
+  // channel: [val(meta), linx_annotation_dir, linx_visuliaser_dir]
   ch_linx_somatic_out = Channel.empty()
   if (WorkflowHmftools.Stage.LINX in stages) {
 

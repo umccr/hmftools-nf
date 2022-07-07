@@ -5,6 +5,8 @@
 class WorkflowGridss {
 
   public static get_inputs(ch) {
+    // channel (a): [val(meta_gridss), bam, bai, sv]
+    // channel (b): [val(meta_gridss), bam]
     def sample_types = ['tumor', 'normal']
     def d = ch
       .flatMap { meta ->
@@ -34,6 +36,8 @@ class WorkflowGridss {
   }
 
   public static get_unique_input_files(ch) {
+    // channel (a): [val(meta_gridss), bam, bai, sv]
+    // channel (b): [val(meta_gridss), bam]
     def d = ch
       .map { [it[1..-1], it[0]] }
       .groupTuple()
@@ -64,6 +68,8 @@ class WorkflowGridss {
   }
 
   public static get_assemble_inputs(ch) {
+    // NOTE(SW): elements in the bams, preprocess_dirs, and labels are linked with via consistent ordering
+    // channel: [val(meta_gridss), [bams], [preprocess_dirs], [labels]]
     def d = ch
       .map { subject_name, other ->
         def data = [:]

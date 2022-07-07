@@ -7,17 +7,17 @@ include { PAVE_SOMATIC  } from '../../modules/scwatts/nextflow_modules/pave/soma
 
 workflow PAVE {
   take:
-    ch_inputs_germline                   // channel: [meta, sage_germline_vcf]
-    ch_inputs_somatic                    // channel: [meta, sage_somatic_vcf]
-    ref_data_genome_dir
-    ref_data_genome_fn
-    ref_data_sage_pon_file
-    ref_data_sage_blacklist_bed
-    ref_data_sage_blacklist_vcf
-    ref_data_clinvar_vcf
-    ref_data_mappability_bed
-    ref_data_driver_gene_panel
-    ref_data_ensembl_data_dir
+    ch_inputs_germline          // channel: [val(meta), sage_germline_vcf]
+    ch_inputs_somatic           // channel: [val(meta), sage_somatic_vcf]
+    ref_data_genome_dir         //    file: /path/to/genome_dir/
+    ref_data_genome_fn          //     val: genome name
+    ref_data_sage_pon_file      //    file: /path/to/sage_pon_file
+    ref_data_sage_blacklist_bed //    file: /path/to/sage_blacklist_bed
+    ref_data_sage_blacklist_vcf //    file: /path/to/sage_black_list_vcf
+    ref_data_clinvar_vcf        //    file: /path/to/clinvar_vcf
+    ref_data_mappability_bed    //    file: /path/to/mappability_bed
+    ref_data_driver_gene_panel  //    file: /path/to/driver_gene_panel
+    ref_data_ensembl_data_dir   //    file: /path/to/ensembl_data_dir/
 
   main:
     // Channel for version.yml files
@@ -50,8 +50,8 @@ workflow PAVE {
     ch_versions = ch_versions.mix(PAVE_SOMATIC.out.versions)
 
   emit:
-    germline = PAVE_GERMLINE.out.vcf
-    somatic = PAVE_SOMATIC.out.vcf
+    germline = PAVE_GERMLINE.out.vcf // channel: [val(meta), pave_vcf]
+    somatic = PAVE_SOMATIC.out.vcf   // channel: [val(meta), pave_vcf]
 
-    versions = ch_versions // channel: [versions.yml]
+    versions = ch_versions           // channel: [versions.yml]
 }

@@ -209,29 +209,4 @@ class WorkflowHmftools {
     process.waitForProcessOutput(stdout, stderr)
     return [process.exitValue(), stdout, stderr]
   }
-
-  //public static get_gridss_reads_input(ch) {
-  //  return get_gridss_input(ch, 'bam').map { meta, sample_name, filepath ->
-  //    [meta, sample_name, filepath, filepath + '.bai']
-  //  }
-  //}
-
-  //public static get_gridss_svs_input(ch) {
-  //  return get_gridss_input(ch, 'sv')
-  //}
-
-  //public static get_gridss_input(ch, filetype) {
-  //  // Gets filepath if it exists otherwise Map.get returns null, and channel items with null
-  //  // filepaths are subsequently filtered.
-  //  def sample_types = ['tumor', 'normal']
-  //  return ch.flatMap { meta ->
-  //    sample_types.collect { sample_type ->
-  //      [
-  //        meta,
-  //        meta.get(['sample_name', sample_type]),
-  //        meta.get([sample_type, filetype]),
-  //      ]
-  //    }
-  //  }.filter { meta, sample_name, filepath -> filepath }
-  //}
 }

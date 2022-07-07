@@ -11,10 +11,10 @@ include { PREPROCESS        } from '../../modules/scwatts/nextflow_modules/grids
 workflow GRIDSS {
   take:
     ch_meta                   // channel: [val(meta)]
-    gridss_config
-    ref_data_genome_dir       // file: /path/to/genome/dir/
-    ref_data_genome_fn        // val: genome name
-    ref_data_gridss_blacklist // val: /path/to/gridss/blacklist.bed
+    gridss_config             //    file: /path/to/gridss_config (optional)
+    ref_data_genome_dir       //    file: /path/to/genome_dir/
+    ref_data_genome_fn        //     val: genome name
+    ref_data_gridss_blacklist //     val: /path/to/gridss_blacklist
 
   main:
     // Channel for version.yml files
@@ -25,14 +25,18 @@ workflow GRIDSS {
       // NOTE(SW): calling .branch within WorkflowGridss.get_inputs_from_meta triggers unavoidable
       // errors. Hence, the .branch is called at this scope.
       .branch {
+        // channel: [val(meta_gridss), bam, bai, vcf]
         extract_fragments: it[0]
           return it[1]
+        // channel: [val(meta_gridss), bam]
         preprocess: ! it[0]
           return it[1]
       }
     // In instances where the same input BAM is provided (e.g. multiple t/n pairs sharing the same normal), select
     // only one file to process
+    // channel: [val(meta_gridss), bam, bai, vcf]
     ch_extract_fragments_inputs = WorkflowGridss.get_unique_input_files(ch_inputs.extract_fragments)
+    // channel: [val(meta_gridss), bam]
     ch_preprocess_inputs_raw = WorkflowGridss.get_unique_input_files(ch_inputs.preprocess)
 
     // Read selection using prior SV calls
@@ -42,6 +46,7 @@ workflow GRIDSS {
     ch_versions = ch_versions.mix(EXTRACT_FRAGMENTS.out.versions)
 
     // Preprocess reads
+    // channel: [val(meta_gridss), bam]
     ch_preprocess_inputs = Channel
       .empty()
       .concat(
@@ -58,12 +63,14 @@ workflow GRIDSS {
 
     // Joint assembly
     // NOTE(SW): performed here to avoid WorkflowHmftools import in WorkflowGridss
+    // channel: [subject_name, [val(meta_gridss), bam, preprocess_dir]]
     ch_bams_and_preprocess = WorkflowHmftools.group_by_meta(
       ch_preprocess_inputs,
       PREPROCESS.out.preprocess_dir,
     )
       .map { [it[0].subject_name, it] }
       .groupTuple()
+    // channel: [val(meta_gridss), [bams], [preprocess_dirs], [labels]]
     ch_assemble_inputs = WorkflowGridss.get_assemble_inputs(ch_bams_and_preprocess)
     ASSEMBLE(
       ch_assemble_inputs,
@@ -75,6 +82,7 @@ workflow GRIDSS {
     ch_versions = ch_versions.mix(ASSEMBLE.out.versions)
 
     // Joint calling
+    // channel: [val(meta_gridss), [bams], assemble_dir, [labels]]
     ch_call_inputs = WorkflowHmftools.group_by_meta(
       ch_assemble_inputs,
       ASSEMBLE.out.assemble_dir,
@@ -95,6 +103,7 @@ workflow GRIDSS {
     ch_versions = ch_versions.mix(CALL.out.versions)
 
     // Annotate with RepeatMasker, required for LINX
+    // channel: [val(meta_gridss), vcf]
     ch_annotate_inputs = CALL.out.vcf.filter { meta, vcf ->
         return WorkflowHmftools.has_records_vcf(vcf)
       }
@@ -102,6 +111,7 @@ workflow GRIDSS {
     ch_versions = ch_versions.mix(ANNOTATE.out.versions)
 
     // Pair annotated output with input meta
+    // channel: [val(meta), vcf]
     ch_out = Channel.empty()
       .concat(
         ch_meta.map { meta -> [meta.id, meta] },

@@ -51,6 +51,18 @@ FILETYPES_EXPECTED = {
             (SampleType.NORMAL, FileType.SV_VCF),
         ],
     },
+    'gridss-purple-linx': {
+        'required': [
+            (SampleType.TUMOR, FileType.BAM),
+            (SampleType.NORMAL, FileType.BAM),
+        ],
+        'optional': [
+            (SampleType.TUMOR, FileType.SV_VCF),
+            (SampleType.NORMAL, FileType.SV_VCF),
+            (SampleType.TUMOR, FileType.SMLV_VCF),
+            (SampleType.NORMAL, FileType.SMLV_VCF)
+        ],
+    },
     'gridss': {
         'required': [
             (SampleType.TUMOR, FileType.BAM),
@@ -80,18 +92,6 @@ FILETYPES_EXPECTED = {
         ],
         'optional': [
             (SampleType.NORMAL, FileType.GRIPSS_HARD_SV_VCF),
-        ],
-    },
-    'gridss-purple-linx': {
-        'required': [
-            (SampleType.TUMOR, FileType.BAM),
-            (SampleType.NORMAL, FileType.BAM),
-        ],
-        'optional': [
-            (SampleType.TUMOR, FileType.SV_VCF),
-            (SampleType.NORMAL, FileType.SV_VCF),
-            (SampleType.TUMOR, FileType.SMLV_VCF),
-            (SampleType.NORMAL, FileType.SMLV_VCF)
         ],
     },
     'lilac': {

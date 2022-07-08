@@ -5,127 +5,86 @@
 🚧🚨 <em>Under development</em> 🚨🚧
 </p>
 
-# HMFtools
+# HMF tools
 
-> TDB
+A comprehensive WGS analysis pipeline from the Hartwig Medical Foundation.
 
 ## Table of contents
 
-* [Installation](#installation)
-* [Usage](#usage)
-* [Outputs](#outputs)
-* [Run tests](#run-tests)
-* [Requirements](#requirements)
-* [Reference data](#reference-data)
+* [Quick start](#quick-start)
+* [Pipeline modes](#pipeline-modes)
+* [Pipeline tests](#pipeline-tests)
 * [License](#license)
 
-## Overview
+## Quick start
 
-> TDB
-
-## Installation
-
+1. Install dependencies.
+> Assumes `Conda` is installed.
 ```bash
-git clone https://github.com/scwatts/nextflow_pipelines && cd ./nextflow_pipelines/hmftools/
+conda create -y \
+  -n hmftools \
+  -c bioconda \
+  -c conda-forge \
+  -c defaults \
+  'bcftools >=1.15' \
+  'dvc >=2.12.0' \
+  'git >=2.37.0' \
+  'nextflow >=22.04.0'
+conda activate hmftools
 ```
 
-## Usage
+2. Install [`Docker`](https://docs.docker.com/engine/installation/).
 
-Configure inputs and pipeline (see [`nextflow.config`](nextflow.config) for example) then execute:
-
+3. Download the pipeline and reference data.
 ```bash
-# Pull in reference data
+# Download pipeline and install modules
+git clone https://github.com/umccr/nextflow_pipelines && cd ./nextflow_pipelines/hmftools/
+nf-core modules list local
+
+# Reference data
 git clone https://github.com/umccr/reference_data -b dev reference_data_gitrepo/ && cd reference_data_gitrepo/
 dvc pull reference_data/{genomes,hmftools}/ -r storage-s3 && cd ../
 ln -s reference_data_gitrepo/reference_data/ reference_data
+```
 
-# Install modules
-mkdir -p ./modules/
-nf-core modules install
-nf-core modules -g scwatts/nextflow_modules -b main install
-
-# Launch pipeline
-nextflow run ./main.nf -profile docker --input /path/to/samplesheet.tsv --outdir ./output/
+4. Run the pipeline with your data.
+```bash
+nextflow run ./main.nf -profile docker --input <SAMPLESHEET_FP> --outdir <OUTPUT_DIRECTORY>
 ```
 
 ## Pipeline modes
 
-> TBD
-
 Several modes of execution are offered and can be accessed using the `--mode` argument.
 
-| Name                  | Description                           |
-| ---                   | ---                                   |
-| `full`                |                                       |
-| `gridss`              |                                       |
-| `purple`              |                                       |
-| `linx`                |                                       |
-| `gridss-purple-linx`  |                                       |
-| `lilac`               |                                       |
-| `teal`                |                                       |
+| Name                  | Description                                   |
+| ---                   | ---                                           |
+| `full`                | Run all processes in the pipeline             |
+| `gridss-purple-linx`  | Run AMBER, COBALT, GRIDSS, GRIPSS, and PURPLE |
+| `gridss`              | Run only GRIDSS and GRIPSS                    |
+| `purple`              | Run only PURPLE                               |
+| `linx`                | Run only LINX                                 |
+| `lilac`               | Run only LILAC                                |
+| `teal`                | Run only TEAL                                 |
 
-> Currently only T/N inputs are offered
+See [examples/README.md](examples/README.md) for example samplesheet required for each mode.
 
+## Pipeline tests
 
-## Outputs
-
-### Directories
-
-> TBD
-
-### Useful files
-
-> TDB
-
-## Run tests
 The internal pipeline logic can be tested using a stub run. No actual outputs are generated in a stub run and
-only the `stub` section of a process is executed. Hence, it completes in a short amount of time but does not test
-validity of actual processes beyond declared inputs and outputs.
+only the `stub` definition block of a process is executed. Hence, it completes in a short amount of time but does not
+test validity of actual processes beyond declared inputs and outputs.
 
 ```bash
-nextflow run main.nf --input ./assets/samplesheet.tsv --outdir output/ --max_memory '1.GB' -stub
+nextflow run main.nf --input ./assets/samplesheet.tsv --outdir output_stub/ --max_memory '1.GB' -stub
 ```
 
-A more comprehensive test that involves both the process `script` section and internal pipeline logic can be run with
-the supplied downsampled test dataset. This of course takes longer (on the order of minutes) but replicates a full run
-and generates 'real' process outputs.
+A more comprehensive test that involves both the process `script` definition block and internal pipeline logic can be
+run with the supplied downsampled test dataset. This of course takes longer (on the order of minutes) but replicates a
+full run and generates 'real' process outputs.
 
 ```bash
-# Pull in reference data
-git clone https://github.com/umccr/reference_data -b dev reference_data_gitrepo/ && cd reference_data_gitrepo/
-dvc pull reference_data/{genomes,hmftools}/ -r storage-s3 && cd ../
-ln -s reference_data_gitrepo/reference_data/ reference_data
-
-# Install modules
-mkdir -p ./modules/
-nf-core modules install
-nf-core modules -g scwatts/nextflow_modules -b main install
-
-# Run test
-nextflow run ./main.nf -profile docker,test --outdir output/ --max_memory '6.GB'
+nextflow run ./main.nf -profile docker,test --outdir output_test/ --max_memory '6.GB'
 ```
-
-## Requirements
-
-> TDB
-
-> Software versions only indicate what is currently in use rather than strict requirements
-
-### Pipeline
-
-* [Nextflow](https://www.nextflow.io/) (v22.04.3)
-* [nf-core](https://nf-co.re) (v2.4.1)
-* [Docker](https://www.docker.com/get-started) (v20.10.11)
-* [BCFtools](https://www.htslib.org/) (v1.15.1)
-
-### GPL toolkit
-
-* [AMBER](https://github.com/hartwigmedical/hmftools/blob/master/amber/) (v3.9)
-* [COBALT](https://github.com/hartwigmedical/hmftools/blob/master/cobalt/) (v1.13)
-* [GRIDSS](https://github.com/PapenfussLab/gridss) (v2.13.2)
-* [GRIPSS](https://github.com/hartwigmedical/hmftools/blob/master/gripss/) (v2.1)
-* [PURPLE](https://github.com/hartwigmedical/hmftools/blob/master/purple/) (v3.4)
-* [LINX](https://github.com/hartwigmedical/hmftools/blob/master/linx/) (v1.19)
 
 ## License
 

@@ -106,6 +106,7 @@ def get_absolute_path(path) {
   return path ? new File(path).absolutePath : []
 }
 
+samplesheet                           = get_absolute_path(params.input)
 // Reference genome
 ref_data_genome                       = get_absolute_path(params.ref_data_genome)
 ref_data_genome_dir                   = file(ref_data_genome).parent
@@ -150,7 +151,7 @@ workflow HMFTOOLS {
 
   // Check samplesheet and prepare input channel
   CHECK_SAMPLESHEET(
-    params.input,
+    samplesheet,
     params.mode,
   )
   // channel: [val(meta)]

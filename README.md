@@ -13,6 +13,6 @@ UMCCR Nextflow infrastructure is organised across several locations:
 
 ## Available pipelines
 
-| Name                      | Description              |
-| --                        | --                       |
-| [HMFtools](./hmftools/)   | Pipeline to run HMFtools |
+| Name                      | Description            |
+| --                        | --                     |
+| [HMFtools](./hmftools/)   | HMF tools and pipeline |

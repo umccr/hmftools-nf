@@ -11,9 +11,16 @@ class WorkflowHmftools {
   //
   // Check and validate parameters
   //
-  public static void initialise(params, log) {
+  public static void initialise(params, workflow, log) {
+    // Download region file for collectwgsmetrics if in test mode
+    if (workflow.profile.contains('test')) {
+        def work_dir = new File(workflow.workDir.toString())
+        def interval_file = File.createTempFile('collectwgsmetrics.interval_list', null, work_dir)
+        interval_file.deleteOnExit()
+        interval_file << new URL (params.ref_data_wgsmetrics_intervals_url).getText()
+        params.ref_data_wgsmetrics_intervals_local = interval_file
+    }
   }
-
 
   public static List set_stages(mode, log) {
     def stages = []

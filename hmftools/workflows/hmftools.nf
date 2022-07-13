@@ -363,27 +363,23 @@ workflow HMFTOOLS {
   //
   if (WorkflowHmftools.Stage.TEAL in stages) {
 
-    ch_teal_inputs_base = ch_inputs
+    ch_teal_inputs_bams = ch_inputs
       .map { meta ->
         [meta, meta.get(['bam', 'tumor']), meta.get(['bam', 'normal'])]
       }
 
     // Mode: full
     if (run_cobalt && WorkflowHmftools.Stage.PURPLE in stages) {
-      ch_teal_inputs = WorkflowHmftools.group_by_meta(
-        ch_teal_inputs_base,
+      ch_teal_inputs_other = WorkflowHmftools.group_by_meta(
         ch_cobalt_out,
         ch_purple_out,
       )
     // Mode: teal
     } else {
-      ch_teal_inputs = ch_teal_inputs_base
-        .map { data ->
-          def meta = data[0]
-          def fps = data[1..-1]
+      ch_teal_inputs_other = ch_inputs
+        .map { meta ->
           return [
             meta,
-            *fps,
             meta.get(['cobalt_dir', 'tumor']),
             meta.get(['purple_dir', 'tumor']),
           ]
@@ -391,7 +387,8 @@ workflow HMFTOOLS {
     }
 
     TEAL(
-      ch_teal_inputs,
+      ch_teal_inputs_bams,
+      ch_teal_inputs_other,
       ref_data_genome_dir,
       ref_data_genome_fn,
     )
@@ -404,26 +401,18 @@ workflow HMFTOOLS {
 
     // Mode: full
     if (WorkflowHmftools.Stage.PURPLE in stages) {
-      ch_lilac_inputs = WorkflowHmftools.group_by_meta(
-        ch_bams_and_indices,
-        ch_purple_out,
-      )
+      ch_lilac_inputs_purple_dir = ch_purple_out
     // Mode: lilac
     } else {
-      ch_lilac_inputs = ch_bams_and_indices
-        .map { data ->
-          def meta = data[0]
-          def fps = data[1..-1]
-          return [
-            meta,
-            *fps,
-            meta.get(['purple_dir', 'tumor']),
-          ]
+      ch_lilac_inputs_purple_dir = ch_inputs
+        .map { meta ->
+          return [meta, meta.get(['purple_dir', 'tumor'])]
         }
     }
 
     LILAC(
-      ch_lilac_inputs,
+      ch_bams_and_indices,
+      ch_lilac_inputs_purple_dir,
       ref_data_genome_dir,
       ref_data_genome_fn,
       ref_data_lilac_resource_dir,

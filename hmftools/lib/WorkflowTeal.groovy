@@ -7,7 +7,7 @@ class WorkflowTeal {
   public static get_metrics_inputs(ch) {
     // channel: [val(meta_teal), bam]
     def d = ch
-      .flatMap { meta, tbam, nbam, cobalt_dir, purple_dir ->
+      .flatMap { meta, tbam, nbam ->
         def sample_types = ['tumor': tbam, 'normal': nbam]
         sample_types
           .keySet()
@@ -60,7 +60,7 @@ class WorkflowTeal {
         def files = data[1..-1]
         meta_teal.metas_full.collect { meta -> [meta.id, meta, [meta_teal.sample_type, *files]] }
       }
-      .groupTuple()
+      .groupTuple(size: 2)
       .map { id, meta, other ->
         def data = [:]
         other.each { sample_type, bam, metrics ->

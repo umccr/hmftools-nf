@@ -7,7 +7,7 @@ class WorkflowLilac {
   public static get_slice_inputs(ch, hla_bed) {
     // channel: [val(meta_lilac), bam, bai, bed, regions_list]
     def d = ch
-      .flatMap { meta, tbam, nbam, tbai, nbai, purple_dir ->
+      .flatMap { meta, tbam, nbam, tbai, nbai ->
         def sample_types = ['tumor': [tbam, tbai], 'normal': [nbam, nbai]]
         sample_types
           .keySet()
@@ -60,7 +60,7 @@ class WorkflowLilac {
         def fps = data[1..-1]
         meta_lilac.metas_full.collect { meta -> [meta.id, meta, [meta_lilac.sample_type, *fps]] }
       }
-      .groupTuple()
+      .groupTuple(size: 2)
       .map { id, meta, other ->
         def data = [:]
         other.each { sample_type, bam, bai ->

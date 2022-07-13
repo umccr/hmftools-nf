@@ -179,19 +179,34 @@ class WorkflowHmftools {
 
   public static group_by_meta(Map named_args, ... channels) {
     def r = channels
-    if (! named_args.get('interleave', false)) {
-      r = r.collect { ch -> ch.map { [it[0], it[1..-1]] }}
-    }
-    r = Channel.empty()
-      .concat(
-        *r,
-      )
-    def tuple_size = named_args.get('tuple_size')
-    if (tuple_size) {
-      r = r.groupTuple(size: tuple_size)
-    } else {
-      r = r.groupTuple()
-    }
+    // Set position; required to use non-blocking .mix operator
+    // NOTE(SW): operating on native list object containing channels
+    def i = 0
+    r = r
+      .collect { ch ->
+        def ii = i
+        def d = ch.map { data ->
+          def meta = data[0]
+          def values = data[1..-1]
+          return [meta, [position: ii, values: values]]
+        }
+        i++
+        return d
+      }
+
+    r = Channel.empty().mix(*r)
+    r = r
+      .groupTuple(size: channels.size())
+      .map { data ->
+        def meta = data[0]
+        def values_map = data[1]
+
+        def values_list = values_map
+          .sort { it.position }
+          .collect { it.values }
+        return [meta, *values_list]
+      }
+
     if (named_args.get('flatten', true)) {
       r = r.map { it.flatten() }
     }

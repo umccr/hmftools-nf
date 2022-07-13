@@ -62,14 +62,49 @@ workflow GRIDSS {
     ch_versions = ch_versions.mix(PREPROCESS.out.versions)
 
     // Joint assembly
+    // The data flow in this following section is complex. For joint assembly, we must collect
+    // all subject BAMs and preprocess output directories but to do this in a non-blocking way,
+    // the number expected files/entries for each subject must be provided.
+
+    // First, we obtain the number of entries of each subject directly from the input meta. This
+    // evaluates immediately.
+    // channel: [subject_name, count]
+    ch_subject_files_expected = Channel.empty()
+      .mix(
+        ch_extract_fragments_inputs.map { it[0].subject_name },
+        ch_preprocess_inputs_raw.map { it[0].subject_name },
+      )
+      .collect()
+      .flatMap { names ->
+        names
+          .countBy { it }
+          .collect { k, v -> [k, v] }
+      }
+
+    // Next, we prepare a channel containing the required files to join with the above counts.
     // NOTE(SW): performed here to avoid WorkflowHmftools import in WorkflowGridss
-    // channel: [subject_name, [val(meta_gridss), bam, preprocess_dir]]
-    ch_bams_and_preprocess = WorkflowHmftools.group_by_meta(
+    // channel: [subject_name, [[val(meta_gridss), bam, preprocess_dir]]
+    ch_assembly_inputs_base = WorkflowHmftools.group_by_meta(
       ch_preprocess_inputs,
       PREPROCESS.out.preprocess_dir,
     )
       .map { [it[0].subject_name, it] }
+
+    // Finally, we create the basis for the assembly input channel. Each element in ch_subject_files_expected
+    // is associated with the corresponding element in ch_subject_files_expected using the cross
+    // operator, creating a channel with the format
+    //   [[subject_name, count], [subject_name, [val(meta_gridss), bam, preprocess_dir]]]
+    // From this data, a groupKey with the expected size emit groupTuple size is created.
+    // channel: [subject_name, [[val(meta_gridss), bam, preprocess_dir], ...]]
+    ch_bams_and_preprocess = ch_subject_files_expected
+      .cross(ch_assembly_inputs_base)
+      .map { bams_expected, data ->
+        def (subject_name, count) = bams_expected
+        def values = data[1]
+        return [groupKey(subject_name, count), values]
+      }
       .groupTuple()
+
     // channel: [val(meta_gridss), [bams], [preprocess_dirs], [labels]]
     ch_assemble_inputs = WorkflowGridss.get_assemble_inputs(ch_bams_and_preprocess)
     ASSEMBLE(
@@ -86,11 +121,12 @@ workflow GRIDSS {
     ch_call_inputs = WorkflowHmftools.group_by_meta(
       ch_assemble_inputs,
       ASSEMBLE.out.assemble_dir,
-      flatten: false
+      flatten: false,
     )
-      .map { meta, other ->
-        def (bams, preprocess_dirs, labels) = other[0]
-        def (assemble_dir) = other[1]
+      .map { data ->
+        def meta = data[0]
+        def (bams, preprocess_dirs, labels) = data[1]
+        def (assemble_dir) = data[2]
         return [meta, bams, assemble_dir, labels]
       }
     CALL(
@@ -119,7 +155,7 @@ workflow GRIDSS {
           meta_gridss.id_list.collect { id -> [id, sv] }
         }
       )
-      .groupTuple()
+      .groupTuple(size: 2)
       .map { id, other -> other.flatten() }
 
   emit:

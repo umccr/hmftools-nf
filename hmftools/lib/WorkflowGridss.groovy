@@ -40,6 +40,8 @@ class WorkflowGridss {
     // channel (b): [val(meta_gridss), bam]
     def d = ch
       .map { [it[1..-1], it[0]] }
+      // NOTE(SW): number of grouped elements is unknown here but does not block since all inputs
+      // are derived directly from the samplesheet
       .groupTuple()
       .map { filepaths, meta_gridsss ->
         def (sample_names, ids, sample_types, subject_names) = meta_gridsss

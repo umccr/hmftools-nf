@@ -8,7 +8,8 @@ include { LILAC as LILAC_PROCESS } from '../../modules/scwatts/nextflow_modules/
 
 workflow LILAC {
   take:
-    ch_inputs                   // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai, purple_dir]
+    ch_inputs_bams              // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
+    ch_inputs_purple_dir        // channel: [val(meta), purple_dir]
     ref_data_genome_dir         //    file: /path/to/genome_dir/
     ref_data_genome_fn          //     val: genome name
     ref_data_lilac_resource_dir //    file: /path/to/lilac_resource_dir/
@@ -20,7 +21,7 @@ workflow LILAC {
     // Slice HLA region
     // NOTE(SW): here I remove duplicate files so that we only process each input once
     // channel: [val(meta_lilac), bam, bai, bed, regions_list]
-    ch_slice_inputs = WorkflowLilac.get_slice_inputs(ch_inputs, "${ref_data_lilac_resource_dir}/hla.38.bed")
+    ch_slice_inputs = WorkflowLilac.get_slice_inputs(ch_inputs_bams, "${ref_data_lilac_resource_dir}/hla.38.bed")
     // channel: [val(meta_lilac), bam, bai, bed, regions_list]
     ch_slice_inputs = WorkflowLilac.get_unique_input_files(ch_slice_inputs)
     SAMBAMBA_SLICE(
@@ -32,7 +33,7 @@ workflow LILAC {
     // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai, purple_dir]
     ch_lilac_inputs = WorkflowHmftools.group_by_meta(
       WorkflowLilac.sort_slices(SAMBAMBA_SLICE.out.bam),
-      ch_inputs.map { meta, tbam, nbam, tbai, nbai, purple_dir -> [meta, purple_dir] }
+      ch_inputs_purple_dir,
     )
     LILAC_PROCESS(
       ch_lilac_inputs,

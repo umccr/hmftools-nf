@@ -5,6 +5,7 @@
 import static groovy.io.FileType.FILES
 
 import nextflow.Channel
+import nextflow.Nextflow
 
 class WorkflowHmftools {
 
@@ -125,7 +126,8 @@ class WorkflowHmftools {
           if (! stub_run) {
             // For BAM file inputs, require co-located index
             if (it.filepath.endsWith('.bam')) {
-              def bam_index_fp = new File("${it.filepath}.bai")
+              def bam_index_fp_str = "${it.filepath}.bai".toString()
+              def bam_index_fp = Nextflow.file(bam_index_fp_str)
               if (! bam_index_fp.exists()) {
                 log.error "\nERROR: No index found for ${it.filepath}"
                 System.exit(1)
@@ -134,7 +136,7 @@ class WorkflowHmftools {
 
             // For GRIPSS SV VCFs, require co-located index
             if (it.filetype.startsWith('gripss')) {
-              def vcf_index_fp = new File("${it.filepath}.tbi")
+              def vcf_index_fp = Nextflow.file("${it.filepath}.tbi".toString())
               if (! vcf_index_fp.exists()) {
                 log.error "\nERROR: No index found for ${it.filepath}"
                 System.exit(1)

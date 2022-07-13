@@ -102,44 +102,44 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/
 */
 
 // Get absolute file paths
-def get_absolute_path(path) {
-  return path ? new File(path).absolutePath : []
+def get_file_object(path) {
+  return path ? file(path) : []
 }
 
-samplesheet                           = get_absolute_path(params.input)
+samplesheet                           = get_file_object(params.input)
 // Reference genome
-ref_data_genome                       = get_absolute_path(params.ref_data_genome)
+ref_data_genome                       = get_file_object(params.ref_data_genome)
 ref_data_genome_dir                   = file(ref_data_genome).parent
 ref_data_genome_fn                    = file(ref_data_genome).name
 // AMBER and COBALT
-ref_data_amber_loci                   = get_absolute_path(params.ref_data_amber_loci)
-ref_data_cobalt_gc_profile            = get_absolute_path(params.ref_data_cobalt_gc_profile)
+ref_data_amber_loci                   = get_file_object(params.ref_data_amber_loci)
+ref_data_cobalt_gc_profile            = get_file_object(params.ref_data_cobalt_gc_profile)
 // GRIDSS
-gridss_config                         = get_absolute_path(params.gridss_config)
-ref_data_gridss_blacklist             = get_absolute_path(params.ref_data_gridss_blacklist)
-ref_data_gridss_breakend_pon          = get_absolute_path(params.ref_data_gridss_breakend_pon)
-ref_data_gridss_breakpoint_pon        = get_absolute_path(params.ref_data_gridss_breakpoint_pon)
+gridss_config                         = get_file_object(params.gridss_config)
+ref_data_gridss_blacklist             = get_file_object(params.ref_data_gridss_blacklist)
+ref_data_gridss_breakend_pon          = get_file_object(params.ref_data_gridss_breakend_pon)
+ref_data_gridss_breakpoint_pon        = get_file_object(params.ref_data_gridss_breakpoint_pon)
 // LINX
-ref_data_linx_fragile_sites           = get_absolute_path(params.ref_data_linx_fragile_sites)
-ref_data_linx_lines                   = get_absolute_path(params.ref_data_linx_lines)
+ref_data_linx_fragile_sites           = get_file_object(params.ref_data_linx_fragile_sites)
+ref_data_linx_lines                   = get_file_object(params.ref_data_linx_lines)
 // SAGE, PAVE
-ref_data_sage_blacklist_bed           = get_absolute_path(params.ref_data_sage_blacklist_bed)
-ref_data_sage_blacklist_vcf           = get_absolute_path(params.ref_data_sage_blacklist_vcf)
-ref_data_sage_coding_panel_germline   = get_absolute_path(params.ref_data_sage_coding_panel_germline)
-ref_data_sage_coding_panel_somatic    = get_absolute_path(params.ref_data_sage_coding_panel_somatic)
-ref_data_sage_high_confidence         = get_absolute_path(params.ref_data_sage_high_confidence)
-ref_data_sage_known_hotspots_germline = get_absolute_path(params.ref_data_sage_known_hotspots_germline)
-ref_data_sage_known_hotspots_somatic  = get_absolute_path(params.ref_data_sage_known_hotspots_somatic)
-ref_data_sage_pon_file                = get_absolute_path(params.ref_data_sage_pon_file)
+ref_data_sage_blacklist_bed           = get_file_object(params.ref_data_sage_blacklist_bed)
+ref_data_sage_blacklist_vcf           = get_file_object(params.ref_data_sage_blacklist_vcf)
+ref_data_sage_coding_panel_germline   = get_file_object(params.ref_data_sage_coding_panel_germline)
+ref_data_sage_coding_panel_somatic    = get_file_object(params.ref_data_sage_coding_panel_somatic)
+ref_data_sage_high_confidence         = get_file_object(params.ref_data_sage_high_confidence)
+ref_data_sage_known_hotspots_germline = get_file_object(params.ref_data_sage_known_hotspots_germline)
+ref_data_sage_known_hotspots_somatic  = get_file_object(params.ref_data_sage_known_hotspots_somatic)
+ref_data_sage_pon_file                = get_file_object(params.ref_data_sage_pon_file)
 // LILAC
-ref_data_lilac_resource_dir           = get_absolute_path(params.ref_data_lilac_resource_dir)
+ref_data_lilac_resource_dir           = get_file_object(params.ref_data_lilac_resource_dir)
 // Other
-ref_data_clinvar_vcf                  = get_absolute_path(params.ref_data_clinvar_vcf)
-ref_data_driver_gene_panel            = get_absolute_path(params.ref_data_driver_gene_panel)
-ref_data_ensembl_data_dir             = get_absolute_path(params.ref_data_ensembl_data_dir)
-ref_data_known_fusion_data            = get_absolute_path(params.ref_data_known_fusion_data)
-ref_data_known_fusions                = get_absolute_path(params.ref_data_known_fusions)
-ref_data_mappability_bed              = get_absolute_path(params.ref_data_mappability_bed)
+ref_data_clinvar_vcf                  = get_file_object(params.ref_data_clinvar_vcf)
+ref_data_driver_gene_panel            = get_file_object(params.ref_data_driver_gene_panel)
+ref_data_ensembl_data_dir             = get_file_object(params.ref_data_ensembl_data_dir)
+ref_data_known_fusion_data            = get_file_object(params.ref_data_known_fusion_data)
+ref_data_known_fusions                = get_file_object(params.ref_data_known_fusions)
+ref_data_mappability_bed              = get_file_object(params.ref_data_mappability_bed)
 
 // Set stages to run
 stages = WorkflowHmftools.set_stages(params.mode, log)

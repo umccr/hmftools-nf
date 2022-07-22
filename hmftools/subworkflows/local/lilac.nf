@@ -2,9 +2,10 @@
 // LILAC is a WGS tool for HLA typing and somatic CNV and SNV calling
 //
 
-include { SAMBAMBA_SLICE } from '../../modules/scwatts/nextflow_modules/sambamba/slice/main'
-
+include { EXTRACT_AND_INDEX_CONTIG              } from '../../modules/scwatts/nextflow_modules/custom/extract_and_index_contig/main'
 include { LILAC as LILAC_PROCESS } from '../../modules/scwatts/nextflow_modules/lilac/main'
+include { REALIGN_READS_LILAC as REALIGN_READS  } from '../../modules/scwatts/nextflow_modules/custom/realign_reads_lilac/main'
+include { SAMBAMBA_SLICE                        } from '../../modules/scwatts/nextflow_modules/sambamba/slice/main'
 
 workflow LILAC {
   take:
@@ -20,6 +21,8 @@ workflow LILAC {
 
     // Slice HLA region
     // NOTE(SW): here I remove duplicate files so that we only process each input once
+    // NOTE(SW): orphaned reads are sometimes obtained, this is the slicing procedure used
+    // in Pipeline5, see LilacBamSlicer.java#L115
     // channel: [val(meta_lilac), bam, bai, bed, regions_list]
     ch_slice_inputs = WorkflowLilac.get_slice_inputs(ch_inputs_bams, "${ref_data_lilac_resource_dir}/hla.38.bed")
     // channel: [val(meta_lilac), bam, bai, bed, regions_list]
@@ -29,10 +32,25 @@ workflow LILAC {
     )
     ch_versions = ch_versions.mix(SAMBAMBA_SLICE.out.versions)
 
+    // Align reads with chr6
+    // NOTE(SW): the aim of this process is to take reads mapping to ALT contigs and align them
+    // to the three relevant HLA genes on chr6. All reads including those previously mapped to chr6
+    // are realigned for consistency.
+    EXTRACT_AND_INDEX_CONTIG(
+      'chr6',
+      ref_data_genome_dir,
+      ref_data_genome_fn,
+    )
+    REALIGN_READS(
+      SAMBAMBA_SLICE.out.bam,
+      EXTRACT_AND_INDEX_CONTIG.out.contig,
+      EXTRACT_AND_INDEX_CONTIG.out.bwa_indices,
+    )
+
     // Run LILAC
     // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai, purple_dir]
     ch_lilac_inputs = WorkflowHmftools.group_by_meta(
-      WorkflowLilac.sort_slices(SAMBAMBA_SLICE.out.bam),
+      WorkflowLilac.sort_slices(REALIGN_READS.out.bam),
       ch_inputs_purple_dir,
     )
     LILAC_PROCESS(

@@ -17,6 +17,12 @@
             "cobalt": {
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
+            "custom/extract_and_index_contig": {
+                "git_sha": "4d3788c5901f119b808deda12045a8a108c4e8ab"
+            },
+            "custom/realign_reads_lilac": {
+                "git_sha": "857fd1eb4637578e1b13ec5aee635b36b3caa2e9"
+            },
             "gpgr/linx_report": {
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },

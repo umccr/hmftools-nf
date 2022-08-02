@@ -10,6 +10,7 @@ workflow SAGE {
     ch_inputs                             // channel: [meta, tumor_bam, normal_bam, tumor_bai, normal_bai]
     ref_data_genome_dir                   //    file: /path/to/genome_dir/
     ref_data_genome_fn                    //     val: genome name
+    ref_data_genome_version               //     val: genome version
     ref_data_sage_known_hotspots_germline //    file: /path/to/sage_known_hotspots_germline
     ref_data_sage_known_hotspots_somatic  //    file: /path/to/sage_known_hotspots_somatic
     ref_data_sage_coding_panel_germline   //    file: /path/to/sage_coding_panel_germline
@@ -29,6 +30,7 @@ workflow SAGE {
       ch_inputs,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_sage_known_hotspots_germline,
       ref_data_sage_coding_panel_germline,
       ref_data_sage_high_confidence,
@@ -41,6 +43,7 @@ workflow SAGE {
       ch_inputs,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_sage_known_hotspots_somatic,
       ref_data_sage_coding_panel_somatic,
       ref_data_sage_high_confidence,

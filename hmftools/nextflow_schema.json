@@ -69,6 +69,11 @@
           "description": "Path to FASTA genome file.",
           "fa_icon": "far fa-file-code"
         },
+        "ref_data_genome_version": {
+          "type": "string",
+          "description": "FASTA genome version (37 or 38).",
+          "fa_icon": "far fa-file-code"
+        },
         "ref_data_amber_loci": {
           "type": "string",
           "format": "file-path",

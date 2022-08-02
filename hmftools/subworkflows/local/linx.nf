@@ -10,6 +10,7 @@ workflow LINX {
   take:
     ch_linx_germline_inputs     // channel: [val(meta), purple]
     ch_linx_somatic_inputs      // channel: [val(meta), gripss_hard_vcf]
+    ref_data_genome_version     //     val: genome version
     ref_data_linx_fragile_sites //    file: /path/to/linx_fragile_sites
     ref_data_linx_lines         //    file: /path/to/linx_lines
     ref_data_ensembl_data_dir   //    file: /path/to/ensembl_data_dir/
@@ -23,6 +24,7 @@ workflow LINX {
     // Germline
     LINX_GERMLINE(
       ch_linx_germline_inputs,
+      ref_data_genome_version,
       ref_data_linx_fragile_sites,
       ref_data_linx_lines,
       ref_data_ensembl_data_dir,
@@ -33,6 +35,7 @@ workflow LINX {
     // Somatic
     LINX_SOMATIC(
       ch_linx_somatic_inputs,
+      ref_data_genome_version,
       ref_data_linx_fragile_sites,
       ref_data_linx_lines,
       ref_data_ensembl_data_dir,
@@ -43,6 +46,7 @@ workflow LINX {
 
     VISUALISER(
       LINX_SOMATIC.out.annotation_dir,
+      ref_data_genome_version,
       ref_data_ensembl_data_dir,
     )
     ch_versions = ch_versions.mix(VISUALISER.out.versions)

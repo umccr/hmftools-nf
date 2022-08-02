@@ -7,12 +7,13 @@ include { GRIPSS_SOMATIC  } from '../../modules/scwatts/nextflow_modules/gripss/
 
 workflow GRIPSS {
   take:
-    ch_inputs           // channel: [val(meta), gridss_vcf]
-    ref_data_genome_dir //    file: /path/to/genome_dir/
-    ref_data_genome_fn  //     val: genome name
-    breakend_pon        //    file: /path/to/breakend_pon
-    breakpoint_pon      //    file: /path/to/breakpoint_pon
-    known_fusions       //    file: /path/to/known_fusions
+    ch_inputs               // channel: [val(meta), gridss_vcf]
+    ref_data_genome_dir     //    file: /path/to/genome_dir/
+    ref_data_genome_fn      //     val: genome name
+    ref_data_genome_version //     val: genome version
+    breakend_pon            //    file: /path/to/breakend_pon
+    breakpoint_pon          //    file: /path/to/breakpoint_pon
+    known_fusions           //    file: /path/to/known_fusions
 
   main:
     // Channel for version.yml files
@@ -23,6 +24,7 @@ workflow GRIPSS {
       ch_inputs,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       breakend_pon,
       breakpoint_pon,
       known_fusions,
@@ -34,6 +36,7 @@ workflow GRIPSS {
       ch_inputs,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       breakend_pon,
       breakpoint_pon,
       known_fusions,

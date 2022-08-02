@@ -8,10 +8,10 @@ include { TEAL as TEAL_PROCESS } from '../../modules/scwatts/nextflow_modules/te
 
 workflow TEAL {
   take:
-    ch_inputs_bams      // channel: [val(meta), tumor_bam, normal_bam]
-    ch_inputs_other     // channel: [val(meta), cobalt_dir, purple_dir]
-    ref_data_genome_dir //    file: /path/to/genome_dir/
-    ref_data_genome_fn  //     val: genome name
+    ch_inputs_bams          // channel: [val(meta), tumor_bam, normal_bam]
+    ch_inputs_other         // channel: [val(meta), cobalt_dir, purple_dir]
+    ref_data_genome_dir     //    file: /path/to/genome_dir/
+    ref_data_genome_fn      //     val: genome name
 
   main:
     // Channel for version.yml files

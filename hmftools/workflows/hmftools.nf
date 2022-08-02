@@ -111,6 +111,7 @@ samplesheet                           = get_file_object(params.input)
 ref_data_genome                       = get_file_object(params.ref_data_genome)
 ref_data_genome_dir                   = file(ref_data_genome).parent
 ref_data_genome_fn                    = file(ref_data_genome).name
+ref_data_genome_version               = params.ref_data_genome_version
 // AMBER and COBALT
 ref_data_amber_loci                   = get_file_object(params.ref_data_amber_loci)
 ref_data_cobalt_gc_profile            = get_file_object(params.ref_data_cobalt_gc_profile)
@@ -229,6 +230,7 @@ workflow HMFTOOLS {
       ch_gridss_out,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_gridss_breakend_pon,
       ref_data_gridss_breakpoint_pon,
       ref_data_known_fusions,
@@ -250,6 +252,7 @@ workflow HMFTOOLS {
       ch_bams_and_indices,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_sage_known_hotspots_germline,
       ref_data_sage_known_hotspots_somatic,
       ref_data_sage_coding_panel_germline,
@@ -278,6 +281,7 @@ workflow HMFTOOLS {
       ch_sage_somatic_out,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_sage_pon_file,
       ref_data_sage_blacklist_bed,
       ref_data_sage_blacklist_vcf,
@@ -348,6 +352,7 @@ workflow HMFTOOLS {
       ch_purple_inputs,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_cobalt_gc_profile,
       ref_data_sage_known_hotspots_somatic,
       ref_data_sage_known_hotspots_germline,
@@ -415,6 +420,7 @@ workflow HMFTOOLS {
       ch_lilac_inputs_purple_dir,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_lilac_resource_dir,
     )
     ch_versions = ch_versions.mix(LILAC.out.versions)
@@ -445,6 +451,7 @@ workflow HMFTOOLS {
     LINX(
       ch_linx_germline_inputs,
       ch_linx_somatic_inputs,
+      ref_data_genome_version,
       ref_data_linx_fragile_sites,
       ref_data_linx_lines,
       ref_data_ensembl_data_dir,

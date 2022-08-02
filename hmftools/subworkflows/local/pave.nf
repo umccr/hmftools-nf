@@ -11,6 +11,7 @@ workflow PAVE {
     ch_inputs_somatic           // channel: [val(meta), sage_somatic_vcf]
     ref_data_genome_dir         //    file: /path/to/genome_dir/
     ref_data_genome_fn          //     val: genome name
+    ref_data_genome_version     //     val: genome version
     ref_data_sage_pon_file      //    file: /path/to/sage_pon_file
     ref_data_sage_blacklist_bed //    file: /path/to/sage_blacklist_bed
     ref_data_sage_blacklist_vcf //    file: /path/to/sage_black_list_vcf
@@ -28,6 +29,7 @@ workflow PAVE {
       ch_inputs_germline,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_sage_blacklist_bed,
       ref_data_sage_blacklist_vcf,
       ref_data_clinvar_vcf,
@@ -42,6 +44,7 @@ workflow PAVE {
       ch_inputs_somatic,
       ref_data_genome_dir,
       ref_data_genome_fn,
+      ref_data_genome_version,
       ref_data_sage_pon_file,
       ref_data_mappability_bed,
       ref_data_driver_gene_panel,

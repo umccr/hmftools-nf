@@ -43,6 +43,7 @@ class WorkflowTeal {
         def id = meta_fulls.collect { it.id }.join('__')
         def meta_teal_new = [
           id: "${id}_${sample_type[0]}",
+          id_simple: id,
           metas_full: meta_fulls,
           sample_type: sample_type[0],
         ]

@@ -87,7 +87,7 @@ class WorkflowGridss {
             ids += meta_gridss.id_list
           }
         def meta_gridss_new = [
-          id: subject_name,
+          id: ids.join('__'),
           id_list: ids,
         ]
 

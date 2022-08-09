@@ -373,7 +373,9 @@ workflow HMFTOOLS {
 
     ch_teal_inputs_bams = ch_inputs
       .map { meta ->
-        [meta, meta.get(['bam', 'tumor']), meta.get(['bam', 'normal'])]
+        def tumor_bam = meta.get(['bam', 'tumor'])
+        def normal_bam = meta.get(['bam', 'normal'])
+        [meta, tumor_bam, normal_bam, "${tumor_bam}.bai", "${normal_bam}.bai"]
       }
 
     // Mode: full

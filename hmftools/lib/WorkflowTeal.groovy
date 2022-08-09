@@ -4,29 +4,29 @@
 
 class WorkflowTeal {
 
-  public static get_metrics_inputs(ch) {
+  public static split_input_bams(ch) {
     // channel: [val(meta_teal), bam]
     def d = ch
-      .flatMap { meta, tbam, nbam ->
-        def sample_types = ['tumor': tbam, 'normal': nbam]
+      .flatMap { meta, tbam, nbam, tbai, nbai ->
+        def sample_types = ['tumor': [tbam, tbai], 'normal': [nbam, nbai]]
         sample_types
           .keySet()
           .collect { sample_type ->
-            def fp = sample_types[sample_type]
+            def fps = sample_types[sample_type]
             def sample_name = meta.get(['sample_name', sample_type])
             def meta_teal = [
               id: sample_name,
               sample_type: sample_type,
               meta_full: meta,
             ]
-            return [meta_teal, fp]
+            return [meta_teal, *fps]
           }
       }
     return d
   }
 
   public static get_unique_input_files(ch) {
-    // channel: [val(meta_teal), bam]
+    // channel: [val(meta_teal), bam, bai]
     def d = ch
       .map { [it[1..-1], it[0]] }
       .groupTuple()
@@ -54,7 +54,7 @@ class WorkflowTeal {
 
   public static sort_bams_and_metrics(ch) {
     // Collect T/N pairs into single channel element
-    // channel: [val(meta), tumor_bam, normal_bam, tumor_wgs_metrics, normal_wgs_metrics]
+    // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai, tumor_wgs_metrics, normal_wgs_metrics]
     def d = ch
       .flatMap{ data ->
         def meta_teal = data[0]
@@ -64,14 +64,17 @@ class WorkflowTeal {
       .groupTuple(size: 2)
       .map { id, meta, other ->
         def data = [:]
-        other.each { sample_type, bam, metrics ->
+        other.each { sample_type, bam, bai, metrics ->
           data[[sample_type, 'bam']] = bam
+          data[[sample_type, 'bai']] = bai
           data[[sample_type, 'metrics']] = metrics
         }
         [
           meta[0],
           data.get(['tumor', 'bam']),
           data.get(['normal', 'bam']),
+          data.get(['tumor', 'bai']),
+          data.get(['normal', 'bai']),
           data.get(['tumor', 'metrics']),
           data.get(['normal', 'metrics']),
         ]

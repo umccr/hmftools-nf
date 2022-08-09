@@ -2,7 +2,6 @@
 // GRIDSS is a software suite containing tools useful for the detection of genomic rearrangements.
 //
 
-include { ANNOTATE          } from '../../modules/scwatts/nextflow_modules/gridss/annotate/main'
 include { ASSEMBLE          } from '../../modules/scwatts/nextflow_modules/gridss/assemble/main'
 include { CALL              } from '../../modules/scwatts/nextflow_modules/gridss/call/main'
 include { EXTRACT_FRAGMENTS } from '../../modules/scwatts/nextflow_modules/gridss/extract_fragments/main'
@@ -138,20 +137,12 @@ workflow GRIDSS {
     )
     ch_versions = ch_versions.mix(CALL.out.versions)
 
-    // Annotate with RepeatMasker, required for LINX
-    // channel: [val(meta_gridss), vcf]
-    ch_annotate_inputs = CALL.out.vcf.filter { meta, vcf ->
-        return WorkflowHmftools.has_records_vcf(vcf)
-      }
-    ANNOTATE(ch_annotate_inputs)
-    ch_versions = ch_versions.mix(ANNOTATE.out.versions)
-
-    // Pair annotated output with input meta
+    // Pair output VCF with input meta
     // channel: [val(meta), vcf]
     ch_out = Channel.empty()
       .concat(
         ch_meta.map { meta -> [meta.id, meta] },
-        ANNOTATE.out.vcf.flatMap { meta_gridss, sv ->
+        CALL.out.vcf.flatMap { meta_gridss, sv ->
           meta_gridss.id_list.collect { id -> [id, sv] }
         }
       )

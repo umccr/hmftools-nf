@@ -17,11 +17,12 @@ def checkPathParamList = [
   // AMBER and COBALT
   params.ref_data_amber_loci,
   params.ref_data_cobalt_gc_profile,
-  // GRIDSS
+  // GRIDSS, GRIPSS
   params.gridss_config,
   params.ref_data_gridss_blacklist,
   params.ref_data_gridss_breakend_pon,
   params.ref_data_gridss_breakpoint_pon,
+  params.ref_data_repeat_masker_file,
   // LINX
   params.ref_data_linx_fragile_sites,
   params.ref_data_linx_lines,
@@ -115,11 +116,12 @@ ref_data_genome_version               = params.ref_data_genome_version
 // AMBER and COBALT
 ref_data_amber_loci                   = get_file_object(params.ref_data_amber_loci)
 ref_data_cobalt_gc_profile            = get_file_object(params.ref_data_cobalt_gc_profile)
-// GRIDSS
+// GRIDSS, GRIPSS
 gridss_config                         = get_file_object(params.gridss_config)
 ref_data_gridss_blacklist             = get_file_object(params.ref_data_gridss_blacklist)
 ref_data_gridss_breakend_pon          = get_file_object(params.ref_data_gridss_breakend_pon)
 ref_data_gridss_breakpoint_pon        = get_file_object(params.ref_data_gridss_breakpoint_pon)
+ref_data_repeat_masker_file           = get_file_object(params.ref_data_repeat_masker_file)
 // LINX
 ref_data_linx_fragile_sites           = get_file_object(params.ref_data_linx_fragile_sites)
 ref_data_linx_lines                   = get_file_object(params.ref_data_linx_lines)
@@ -234,6 +236,7 @@ workflow HMFTOOLS {
       ref_data_gridss_breakend_pon,
       ref_data_gridss_breakpoint_pon,
       ref_data_known_fusions,
+      ref_data_repeat_masker_file,
     )
     ch_versions = ch_versions.mix(GRIPSS.out.versions)
     ch_gripss_germline_out = ch_gripss_germline_out.mix(GRIPSS.out.germline)

@@ -14,6 +14,7 @@ workflow GRIPSS {
     breakend_pon            //    file: /path/to/breakend_pon
     breakpoint_pon          //    file: /path/to/breakpoint_pon
     known_fusions           //    file: /path/to/known_fusions
+    repeat_masker_file      //    file: /path/to/repeat_masker_file
 
   main:
     // Channel for version.yml files
@@ -28,6 +29,7 @@ workflow GRIPSS {
       breakend_pon,
       breakpoint_pon,
       known_fusions,
+      repeat_masker_file,
     )
     ch_versions = ch_versions.mix(GRIPSS_GERMLINE.out.versions)
 
@@ -40,6 +42,7 @@ workflow GRIPSS {
       breakend_pon,
       breakpoint_pon,
       known_fusions,
+      repeat_masker_file,
     )
     ch_versions = ch_versions.mix(GRIPSS_SOMATIC.out.versions)
 

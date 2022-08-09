@@ -109,6 +109,13 @@
           "description": "Path to GRIDSS breakpoint PON file.",
           "fa_icon": "far fa-file-code"
         },
+        "ref_data_repeat_masker_file": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.fa\\.out\\.gz$",
+          "description": "Path to RepeatMasker file.",
+          "fa_icon": "far fa-file-code"
+        },
         "ref_data_linx_fragile_sites": {
           "type": "string",
           "format": "file-path",

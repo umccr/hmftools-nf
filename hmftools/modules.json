@@ -27,10 +27,10 @@
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gridss/assemble": {
-                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "gridss/call": {
-                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "gridss/extract_fragments": {
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
@@ -39,10 +39,10 @@
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gripss/germline": {
-                "git_sha": "5d71c84f4b906dd7bb525f597a2349b504c62cf2"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "gripss/somatic": {
-                "git_sha": "5d71c84f4b906dd7bb525f597a2349b504c62cf2"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "lilac": {
                 "git_sha": "8cd3ca7635266b955be9867d014d0b23dd1230c0"
@@ -57,19 +57,19 @@
                 "git_sha": "f3ed7a57abcc0d3d48059783c3c734d92272c140"
             },
             "pave/germline": {
-                "git_sha": "8ac02d296d54455541b3a674cbe40dcbcf913985"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "pave/somatic": {
-                "git_sha": "8ac02d296d54455541b3a674cbe40dcbcf913985"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "purple": {
-                "git_sha": "2270e2aa838c957b124d0d4987a6f2279a489283"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "sage/germline": {
-                "git_sha": "c8e08e3e9443094145834f4fc0bcbd5402ab5273"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "sage/somatic": {
-                "git_sha": "c8e08e3e9443094145834f4fc0bcbd5402ab5273"
+                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
             },
             "sambamba/slice": {
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"

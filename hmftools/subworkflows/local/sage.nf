@@ -13,8 +13,7 @@ workflow SAGE {
     ref_data_genome_version               //     val: genome version
     ref_data_sage_known_hotspots_germline //    file: /path/to/sage_known_hotspots_germline
     ref_data_sage_known_hotspots_somatic  //    file: /path/to/sage_known_hotspots_somatic
-    ref_data_sage_coding_panel_germline   //    file: /path/to/sage_coding_panel_germline
-    ref_data_sage_coding_panel_somatic    //    file: /path/to/sage_coding_panel_somatic
+    ref_data_sage_coding_panel            //    file: /path/to/sage_coding_panel
     ref_data_sage_high_confidence         //    file: /path/to/sage_high_confidence
     ref_data_sage_pon_file                //    file: /path/to/sage_pon
     ref_data_mappability_bed              //    file: /path/to/mappability_bed
@@ -32,7 +31,7 @@ workflow SAGE {
       ref_data_genome_fn,
       ref_data_genome_version,
       ref_data_sage_known_hotspots_germline,
-      ref_data_sage_coding_panel_germline,
+      ref_data_sage_coding_panel,
       ref_data_sage_high_confidence,
       ref_data_ensembl_data_dir,
     )
@@ -45,7 +44,7 @@ workflow SAGE {
       ref_data_genome_fn,
       ref_data_genome_version,
       ref_data_sage_known_hotspots_somatic,
-      ref_data_sage_coding_panel_somatic,
+      ref_data_sage_coding_panel,
       ref_data_sage_high_confidence,
       ref_data_ensembl_data_dir,
     )

@@ -91,21 +91,21 @@
         "ref_data_gridss_blacklist": {
           "type": "string",
           "format": "file-path",
-          "pattern": "^\\S+\\.bed$",
+          "pattern": "^\\S+\\.bed.gz$",
           "description": "Path to GRIDSS blacklist file.",
           "fa_icon": "far fa-file-code"
         },
         "ref_data_gridss_breakend_pon": {
           "type": "string",
           "format": "file-path",
-          "pattern": "^\\S+\\.bed",
+          "pattern": "^\\S+\\.bed\\.gz",
           "description": "Path to GRIDSS breakend PON file.",
           "fa_icon": "far fa-file-code"
         },
         "ref_data_gridss_breakpoint_pon": {
           "type": "string",
           "format": "file-path",
-          "pattern": "^\\S+\\.bedpe$",
+          "pattern": "^\\S+\\.bedpe\\.gz$",
           "description": "Path to GRIDSS breakpoint PON file.",
           "fa_icon": "far fa-file-code"
         },
@@ -173,7 +173,7 @@
         "ref_data_sage_pon_file": {
           "type": "string",
           "format": "file-path",
-          "pattern": "^\\S+\\.vcf\\.gz$",
+          "pattern": "^\\S+\\.tsv\\.gz$",
           "description": "Path to HMF SAGE Panel of Normals file.",
           "fa_icon": "far fa-file-code"
         },
@@ -184,14 +184,7 @@
           "description": "Path to HMF distributed High Confidence regions file.",
           "fa_icon": "far fa-file-code"
         },
-        "ref_data_sage_coding_panel_germline": {
-          "type": "string",
-          "format": "file-path",
-          "pattern": "^\\S+\\.bed\\.gz$",
-          "description": "Path to germline SAGE Coding Panel file.",
-          "fa_icon": "far fa-file-code"
-        },
-        "ref_data_sage_coding_panel_somatic": {
+        "ref_data_sage_coding_panel": {
           "type": "string",
           "format": "file-path",
           "pattern": "^\\S+\\.bed\\.gz$",
@@ -224,6 +217,13 @@
           "format": "file-path",
           "pattern": "^\\S+\\.csv$",
           "description": "Path to HMF Known Fusions Data file.",
+          "fa_icon": "far fa-file-code"
+        },
+        "ref_data_purple_germline_del": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.csv$",
+          "description": "Path to HMF PURPLE Germline Cohort Deletion Frequency file.",
           "fa_icon": "far fa-file-code"
         },
         "ref_data_driver_gene_panel": {

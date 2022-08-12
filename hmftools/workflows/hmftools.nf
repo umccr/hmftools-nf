@@ -29,8 +29,7 @@ def checkPathParamList = [
   // SAGE, PAVE
   params.ref_data_sage_blacklist_bed,
   params.ref_data_sage_blacklist_vcf,
-  params.ref_data_sage_coding_panel_germline,
-  params.ref_data_sage_coding_panel_somatic,
+  params.ref_data_sage_coding_panel,
   params.ref_data_sage_high_confidence,
   params.ref_data_sage_known_hotspots_germline,
   params.ref_data_sage_known_hotspots_somatic,
@@ -38,6 +37,7 @@ def checkPathParamList = [
   // LILAC
   params.ref_data_lilac_resource_dir,
   // Other
+  params.ref_data_purple_germline_del,
   params.ref_data_clinvar_vcf,
   params.ref_data_driver_gene_panel,
   params.ref_data_ensembl_data_dir,
@@ -128,8 +128,7 @@ ref_data_linx_lines                   = get_file_object(params.ref_data_linx_lin
 // SAGE, PAVE
 ref_data_sage_blacklist_bed           = get_file_object(params.ref_data_sage_blacklist_bed)
 ref_data_sage_blacklist_vcf           = get_file_object(params.ref_data_sage_blacklist_vcf)
-ref_data_sage_coding_panel_germline   = get_file_object(params.ref_data_sage_coding_panel_germline)
-ref_data_sage_coding_panel_somatic    = get_file_object(params.ref_data_sage_coding_panel_somatic)
+ref_data_sage_coding_panel            = get_file_object(params.ref_data_sage_coding_panel)
 ref_data_sage_high_confidence         = get_file_object(params.ref_data_sage_high_confidence)
 ref_data_sage_known_hotspots_germline = get_file_object(params.ref_data_sage_known_hotspots_germline)
 ref_data_sage_known_hotspots_somatic  = get_file_object(params.ref_data_sage_known_hotspots_somatic)
@@ -137,6 +136,7 @@ ref_data_sage_pon_file                = get_file_object(params.ref_data_sage_pon
 // LILAC
 ref_data_lilac_resource_dir           = get_file_object(params.ref_data_lilac_resource_dir)
 // Other
+ref_data_purple_germline_del          = get_file_object(params.ref_data_purple_germline_del)
 ref_data_clinvar_vcf                  = get_file_object(params.ref_data_clinvar_vcf)
 ref_data_driver_gene_panel            = get_file_object(params.ref_data_driver_gene_panel)
 ref_data_ensembl_data_dir             = get_file_object(params.ref_data_ensembl_data_dir)
@@ -258,8 +258,7 @@ workflow HMFTOOLS {
       ref_data_genome_version,
       ref_data_sage_known_hotspots_germline,
       ref_data_sage_known_hotspots_somatic,
-      ref_data_sage_coding_panel_germline,
-      ref_data_sage_coding_panel_somatic,
+      ref_data_sage_coding_panel,
       ref_data_sage_high_confidence,
       ref_data_sage_pon_file,
       ref_data_mappability_bed,
@@ -361,6 +360,7 @@ workflow HMFTOOLS {
       ref_data_sage_known_hotspots_germline,
       ref_data_driver_gene_panel,
       ref_data_ensembl_data_dir,
+      ref_data_purple_germline_del,
     )
     ch_versions = ch_versions.mix(PURPLE.out.versions)
     ch_purple_out = ch_purple_out.mix(PURPLE.out.purple_dir)

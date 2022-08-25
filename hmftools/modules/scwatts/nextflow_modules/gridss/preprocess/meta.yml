@@ -1,0 +1,47 @@
+name: "PREPROCESS"
+description: Preprocess reads for GRIDSS
+keywords:
+  - gridss
+  - read processing
+  - sv
+tools:
+  - "gridss":
+      description: "GRIDSS is a module software suite containing tools useful for the detection of genomic rearrangements."
+      homepage: "https://github.com/PapenfussLab/gridss"
+      documentation: "https://github.com/PapenfussLab/gridss"
+      tool_dev_url: "https://github.com/PapenfussLab/gridss"
+      doi: ""
+      licence: "['GPL >=3']"
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - bam:
+      type: file
+      description: BAM file
+      pattern: "*.{bam}"
+  - gridss_config:
+      type: file
+      description: Optional GRIDSS configuration file
+  - ref_data_genome_dir:
+      type: directory
+      description: Directory containing reference genome
+  - ref_data_genome_fn:
+      type: string
+      description: Reference genome filename
+
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - preprocess_dir:
+      type: directory
+      description: GRIDSS preprocess output directory
+
+authors:
+  - "@scwatts"

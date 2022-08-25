@@ -1,0 +1,53 @@
+name: "sambamba_slice"
+description: Tools for working with SAM/BAM data
+keywords:
+  - sambamba
+  - slice
+tools:
+  - "sambamba":
+      description: "Tools for working with SAM/BAM data."
+      homepage: "https://lomereiter.github.io/sambamba/"
+      documentation: "https://lomereiter.github.io/sambamba/"
+      tool_dev_url: "https://lomereiter.github.io/sambamba/"
+      doi: ""
+      licence: "['GPL v2']"
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - bam:
+      type: file
+      description: BAM file
+      pattern: "*.{bam}"
+  - bai:
+      type: file
+      description: BAI file
+      pattern: "*.{bai}"
+  - bed:
+      type: file
+      description: Optional slice regions BED file
+      pattern: "*.{bed}"
+  - regions:
+      type: list
+      description: Optional list of regions strings to slice
+
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [id: 'sample_id']
+  - bam:
+      type: file
+      description: Sliced BAM file
+      pattern: "*.{bam}"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@scwatts"

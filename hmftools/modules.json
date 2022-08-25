@@ -39,10 +39,10 @@
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gripss/germline": {
-                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
+                "git_sha": "261bf3f3f8344d06cefb26d44060660b5dff5a58"
             },
             "gripss/somatic": {
-                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
+                "git_sha": "261bf3f3f8344d06cefb26d44060660b5dff5a58"
             },
             "lilac": {
                 "git_sha": "8cd3ca7635266b955be9867d014d0b23dd1230c0"

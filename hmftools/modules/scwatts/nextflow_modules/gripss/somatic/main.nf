@@ -31,7 +31,7 @@ process GRIPSS_SOMATIC {
       ${args} \
       -sample "${meta.get(['sample_name', 'tumor'])}" \
       -reference "${meta.get(['sample_name', 'normal'])}" \
-      -ref_genome_version "V${ref_data_genome_ver}" \
+      -ref_genome_version "${ref_data_genome_ver}" \
       -ref_genome "${ref_data_genome_dir}/${ref_data_genome_fn}" \
       -pon_sgl_file "${breakend_pon}" \
       -pon_sv_file "${breakpoint_pon}" \

@@ -7,7 +7,7 @@
                 "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d"
             },
             "picard/collectwgsmetrics": {
-                "git_sha": "63db63757cab03cfa7a02c0d0f134b66fbfadea6"
+                "git_sha": "ac1c6ad7104c7863842a322a8cf74f4fee1d20b4"
             }
         },
         "scwatts/nextflow_modules": {

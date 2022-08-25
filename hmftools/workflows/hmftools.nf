@@ -69,10 +69,10 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 //
 include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet'
 
-include { AMBER       } from '../modules/scwatts/nextflow_modules/amber/main'
-include { COBALT      } from '../modules/scwatts/nextflow_modules/cobalt/main'
-include { LINX_REPORT } from '../modules/scwatts/nextflow_modules/gpgr/linx_report/main'
-include { PURPLE      } from '../modules/scwatts/nextflow_modules/purple/main'
+include { AMBER       } from '../modules/umccr/nextflow_modules/amber/main'
+include { COBALT      } from '../modules/umccr/nextflow_modules/cobalt/main'
+include { LINX_REPORT } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
+include { PURPLE      } from '../modules/umccr/nextflow_modules/purple/main'
 
 //
 // SUBWORKFLOWS

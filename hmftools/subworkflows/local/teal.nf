@@ -4,7 +4,7 @@
 
 include { PICARD_COLLECTWGSMETRICS as COLLECTWGSMETRICS } from '../../modules/nf-core/modules/picard/collectwgsmetrics/main'
 
-include { TEAL as TEAL_PROCESS } from '../../modules/scwatts/nextflow_modules/teal/main'
+include { TEAL as TEAL_PROCESS } from '../../modules/umccr/nextflow_modules/teal/main'
 
 workflow TEAL {
   take:

@@ -45,7 +45,7 @@ workflow NFCORE_HMFTOOLS {
 // See: https://github.com/nf-core/rnaseq/issues/619
 //
 workflow {
-  NFCORE_HMFTOOLS ()
+  NFCORE_HMFTOOLS()
 }
 
 /*

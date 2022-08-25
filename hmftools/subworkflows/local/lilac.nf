@@ -3,7 +3,7 @@
 //
 
 include { EXTRACT_AND_INDEX_CONTIG              } from '../../modules/umccr/nextflow_modules/custom/extract_and_index_contig/main'
-include { LILAC as LILAC_PROCESS } from '../../modules/umccr/nextflow_modules/lilac/main'
+include { LILAC as LILAC_PROCESS                } from '../../modules/umccr/nextflow_modules/lilac/main'
 include { REALIGN_READS_LILAC as REALIGN_READS  } from '../../modules/umccr/nextflow_modules/custom/realign_reads_lilac/main'
 include { SAMBAMBA_SLICE                        } from '../../modules/umccr/nextflow_modules/sambamba/slice/main'
 

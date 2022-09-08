@@ -402,6 +402,7 @@ workflow HMFTOOLS {
       ref_data_genome_dir,
       ref_data_genome_fn,
     )
+    ch_versions = ch_versions.mix(TEAL.out.versions)
   }
 
   //

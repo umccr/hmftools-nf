@@ -2,9 +2,9 @@
 // LILAC is a WGS tool for HLA typing and somatic CNV and SNV calling
 //
 
+include { EXTRACT_AND_INDEX_CONTIG              } from '../../modules/local/lilac_extract_and_index_contig/main'
 include { SLICE                                 } from '../../modules/local/lilac_slice/main'
 
-include { EXTRACT_AND_INDEX_CONTIG              } from '../../modules/umccr/nextflow_modules/custom/extract_and_index_contig/main'
 include { LILAC as LILAC_PROCESS                } from '../../modules/umccr/nextflow_modules/lilac/main'
 include { REALIGN_READS_LILAC as REALIGN_READS  } from '../../modules/umccr/nextflow_modules/custom/realign_reads_lilac/main'
 

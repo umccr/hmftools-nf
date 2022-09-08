@@ -17,9 +17,6 @@
             "cobalt": {
                 "git_sha": "67b925c54c0834f7616c74d57622f879ce472914"
             },
-            "custom/extract_and_index_contig": {
-                "git_sha": "858830677433c594fe1002f31ccc7826ce212018"
-            },
             "custom/realign_reads_lilac": {
                 "git_sha": "40d4fbfdd125e024d68f10a6b50851f51ff085ac"
             },

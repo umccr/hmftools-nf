@@ -1,6 +1,6 @@
 process LILAC {
   //conda (params.enable_conda ? "bioconda::hmftools-lilac=1.2" : null)
-  container 'docker.io/scwatts/lilac:1.2'
+  container 'docker.io/scwatts/lilac:1.2--1'
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumour_bai), path(normal_bai), path(purple_dir)
@@ -20,7 +20,6 @@ process LILAC {
   def args = task.ext.args ?: ''
   def sample_name = get_sample_name(meta, tumor_bam, normal_bam)
   def tumor_bam_arg = tumor_bam ? "-tumor_bam ${tumor_bam}" : ''
-  def reference_bam_arg = normal_bam ? "-reference_bam ${normal_bam}" : ''
   def purple_args = purple_dir ? """
     -gene_copy_number ${purple_dir}/${sample_name}.purple.cnv.gene.tsv \
     -somatic_vcf ${purple_dir}/${sample_name}.purple.sv.vcf.gz \
@@ -31,9 +30,9 @@ process LILAC {
     -Xmx${task.memory.giga}g \
     -jar "${task.ext.jarPath}" \
       ${args} \
-      -sample "${sample_name}" \
+      -sample "${meta.subject_name}" \
       ${tumor_bam_arg} \
-      ${reference_bam_arg} \
+      -reference_bam ${normal_bam} \
       -ref_genome_version "${ref_data_genome_ver}" \
       -ref_genome "${ref_data_genome_dir}/${ref_data_genome_fn}" \
       -resource_dir "${lilac_resource_dir}" \

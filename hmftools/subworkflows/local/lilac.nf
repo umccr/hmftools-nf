@@ -20,12 +20,18 @@ workflow LILAC {
     // Channel for version.yml files
     ch_versions = Channel.empty()
 
-    // Slice HLA region
+
+    // Slice HLA regions
+    if (ref_data_genome_version == '38') {
+      slice_bed = "${ref_data_lilac_resource_dir}/hla.38.alt.umccr.bed"
+    } else {
+      slice_bed = "${ref_data_lilac_resource_dir}/hla.${ref_data_genome_version}.bed"
+    }
     // NOTE(SW): here I remove duplicate files so that we only process each input once
     // NOTE(SW): orphaned reads are sometimes obtained, this is the slicing procedure used
     // in Pipeline5, see LilacBamSlicer.java#L115
     // channel: [val(meta_lilac), bam, bai, bed, regions_list]
-    ch_slice_inputs = WorkflowLilac.get_slice_inputs(ch_inputs_bams, "${ref_data_lilac_resource_dir}/hla.${ref_data_genome_version}.bed")
+    ch_slice_inputs = WorkflowLilac.get_slice_inputs(ch_inputs_bams, slice_bed)
     // channel: [val(meta_lilac), bam, bai, bed, regions_list]
     ch_slice_inputs = WorkflowLilac.get_unique_input_files(ch_slice_inputs)
     SAMBAMBA_SLICE(
@@ -33,6 +39,7 @@ workflow LILAC {
     )
     ch_versions = ch_versions.mix(SAMBAMBA_SLICE.out.versions)
 
+    // Realign contigs if using hg38 (use of ALT contigs implied)
     if (ref_data_genome_version == '38') {
       // Align reads with chr6
       // NOTE(SW): the aim of this process is to take reads mapping to ALT contigs and align them

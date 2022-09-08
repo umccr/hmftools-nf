@@ -2,6 +2,11 @@ process VISUALISER {
   //conda (params.enable_conda ? "bioconda::hmftools-linx=1.21" : null)
   container 'quay.io/biocontainers/hmftools-linx:1.21--hdfd78af_0'
 
+  // Lenient caching is required here as the hash of the LINX_SOMATIC
+  // 'annotation_dir' output changes between runs even when the LINX_SOMATIC
+  // process itself is cached.
+  cache = 'lenient'
+
   input:
   tuple val(meta), path(linx)
   val ref_data_genome_ver

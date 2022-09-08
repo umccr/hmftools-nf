@@ -12,31 +12,31 @@
         },
         "umccr/nextflow_modules": {
             "amber": {
-                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+                "git_sha": "fcfd2dc3c77881b2c3db46a1b88f3adaa165cfc8"
             },
             "cobalt": {
-                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+                "git_sha": "098cff7942fb3b959b7c1fb56edd31d681ac2cff"
             },
             "custom/extract_and_index_contig": {
-                "git_sha": "55381f38c12b6596b43a00f45889b2161549fe01"
+                "git_sha": "ac9668603090eb2b6c054abb080aec3b1d293266"
             },
             "custom/realign_reads_lilac": {
-                "git_sha": "857fd1eb4637578e1b13ec5aee635b36b3caa2e9"
+                "git_sha": "34c74cddc2be70979a7909e083a19fc59692ae55"
             },
             "gpgr/linx_report": {
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "gridss/assemble": {
-                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
+                "git_sha": "3e0470ff2313d3533be86f91a71fd57f8ee71582"
             },
             "gridss/call": {
-                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
+                "git_sha": "3e0470ff2313d3533be86f91a71fd57f8ee71582"
             },
             "gridss/extract_fragments": {
-                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+                "git_sha": "3e0470ff2313d3533be86f91a71fd57f8ee71582"
             },
             "gridss/preprocess": {
-                "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
+                "git_sha": "3e0470ff2313d3533be86f91a71fd57f8ee71582"
             },
             "gripss/germline": {
                 "git_sha": "261bf3f3f8344d06cefb26d44060660b5dff5a58"
@@ -45,7 +45,7 @@
                 "git_sha": "261bf3f3f8344d06cefb26d44060660b5dff5a58"
             },
             "lilac": {
-                "git_sha": "8cd3ca7635266b955be9867d014d0b23dd1230c0"
+                "git_sha": "cf4224919ee8a08553340e11ff2d4bf29df952ec"
             },
             "linx/germline": {
                 "git_sha": "f3ed7a57abcc0d3d48059783c3c734d92272c140"
@@ -54,16 +54,16 @@
                 "git_sha": "f3ed7a57abcc0d3d48059783c3c734d92272c140"
             },
             "linx/visualiser": {
-                "git_sha": "f3ed7a57abcc0d3d48059783c3c734d92272c140"
+                "git_sha": "bcb149a7d54db511242822a8021a3a632265a12f"
             },
             "pave/germline": {
-                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
+                "git_sha": "9b3b857c3c75c67eeee625aea43b624c07225ea3"
             },
             "pave/somatic": {
-                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
+                "git_sha": "9b3b857c3c75c67eeee625aea43b624c07225ea3"
             },
             "purple": {
-                "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
+                "git_sha": "e2e2193e206a403bf33a0e50f78ee35154c2aa44"
             },
             "sage/germline": {
                 "git_sha": "b20bdcc031ef16353fe85567addecbe754103508"
@@ -75,7 +75,7 @@
                 "git_sha": "8c8a5c645b6033f631eb532b83abf81243d6e23d"
             },
             "teal": {
-                "git_sha": "640d0851c11fbb14ee6b9eb2e8b30674d95971f7"
+                "git_sha": "ab3b3126f8114290ce65011f8074f6d63aba130e"
             }
         }
     }

@@ -72,7 +72,8 @@
         "ref_data_genome_version": {
           "type": "string",
           "description": "FASTA genome version (37 or 38).",
-          "fa_icon": "far fa-file-code"
+          "fa_icon": "far fa-file-code",
+          "enum": ["37", "38", "38_noalt"]
         },
         "ref_data_amber_loci": {
           "type": "string",

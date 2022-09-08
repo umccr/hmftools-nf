@@ -67,7 +67,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 //
 // MODULES
 //
-include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet'
+include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet/main'
 
 include { AMBER       } from '../modules/umccr/nextflow_modules/amber/main'
 include { COBALT      } from '../modules/umccr/nextflow_modules/cobalt/main'

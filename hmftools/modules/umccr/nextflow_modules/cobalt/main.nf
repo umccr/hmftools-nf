@@ -1,6 +1,6 @@
 process COBALT {
   //conda (params.enable_conda ? "bioconda::hmftools-cobalt=1.13" : null)
-  container 'docker.io/scwatts/cobalt:1.13'
+  container 'docker.io/scwatts/cobalt:1.13--1'
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumor_bai), path(normal_bai)
@@ -31,7 +31,7 @@ process COBALT {
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       cobalt: 1.13
   END_VERSIONS
   """

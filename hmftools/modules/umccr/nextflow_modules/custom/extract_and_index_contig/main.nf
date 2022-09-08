@@ -1,6 +1,6 @@
 process EXTRACT_AND_INDEX_CONTIG {
   //conda (params.enable_conda ? "bioconda::null" : null)
-  container 'docker.io/scwatts/extract_and_index_contig:0.0.1'
+  container 'docker.io/scwatts/custom-extract_and_index_contig:0.0.1--3'
 
   input:
   val contig_name
@@ -26,7 +26,7 @@ process EXTRACT_AND_INDEX_CONTIG {
   bwa index ${contig_name}_extracted.fa
 
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
       samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
   END_VERSIONS

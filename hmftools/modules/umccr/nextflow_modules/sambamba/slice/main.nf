@@ -27,7 +27,7 @@ process SAMBAMBA_SLICE {
   sambamba index "${bam.simpleName}.sliced.bam"
 
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       sambamba: \$(sambamba --version 2>&1 | sed -n '/sambamba/ s/^sambamba \\(.\\+\\)/\\1/p' | head -n1)
   END_VERSIONS
   """

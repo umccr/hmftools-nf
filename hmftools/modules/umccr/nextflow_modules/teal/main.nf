@@ -1,6 +1,6 @@
 process TEAL {
   //conda (params.enable_conda ? "bioconda::hmftools-teal=1.0.1" : null)
-  container 'docker.io/scwatts/teal:1.0.1'
+  container 'docker.io/scwatts/teal:1.0.1--2'
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumor_bai), path(normal_bai), path(tumor_wgs_metrics), path(normal_wgs_metrics), path(cobalt_dir), path(purple_dir)
@@ -39,7 +39,7 @@ process TEAL {
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       teal: 1.0.1
   END_VERSIONS
   """

@@ -1,6 +1,6 @@
 process REALIGN_READS_LILAC {
   //conda (params.enable_conda ? "bioconda::hmftools-lilac=1.2" : null)
-  container 'docker.io/scwatts/realign_reads_lilac:0.0.1'
+  container 'docker.io/scwatts/custom-realign_reads_lilac:0.0.1--3'
 
   input:
   tuple val(meta), path(bam), path(bai)
@@ -35,7 +35,7 @@ process REALIGN_READS_LILAC {
   samtools index ${meta.id}_realigned.bam
 
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')
       samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
       sambamba: \$(sambamba --version 2>&1 | sed -n '/sambamba/ s/^sambamba \\(.\\+\\)/\\1/p' | head -n1)

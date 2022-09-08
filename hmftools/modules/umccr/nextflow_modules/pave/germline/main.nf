@@ -2,7 +2,7 @@
 
 process PAVE_GERMLINE {
   //conda (params.enable_conda ? "bioconda::hmftools-pave=1.3" : null)
-  container 'docker.io/scwatts/pave:1.3'
+  container 'docker.io/scwatts/pave:1.3--3'
 
   input:
   tuple val(meta), path(sage_vcf)
@@ -47,7 +47,7 @@ process PAVE_GERMLINE {
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       pave: 1.2
   END_VERSIONS
   """

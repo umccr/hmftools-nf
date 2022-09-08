@@ -39,7 +39,7 @@ process VISUALISER {
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       linx: 1.19
   END_VERSIONS
   """

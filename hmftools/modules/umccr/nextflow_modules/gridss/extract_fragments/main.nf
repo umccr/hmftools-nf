@@ -1,6 +1,6 @@
 process EXTRACT_FRAGMENTS {
   //conda (params.enable_conda ? "bioconda::gridss=2.13.2" : null)
-  container 'docker.io/scwatts/gridss:2.13.2'
+  container 'docker.io/scwatts/gridss:2.13.2--2'
 
   input:
   tuple val(meta), path(bam), path(bai), path(sv_vcf)
@@ -35,7 +35,7 @@ process EXTRACT_FRAGMENTS {
   # NOTE(SW): hard coded since there is no reliable way to obtain version information, see GH issue
   # https://github.com/PapenfussLab/gridss/issues/586
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       gridss: 2.13.2
   END_VERSIONS
   """

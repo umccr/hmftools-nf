@@ -1,6 +1,6 @@
 process LILAC {
   //conda (params.enable_conda ? "bioconda::hmftools-lilac=1.2" : null)
-  container 'docker.io/scwatts/lilac:1.2--1'
+  container 'docker.io/scwatts/lilac:1.2--3'
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumour_bai), path(normal_bai), path(purple_dir)
@@ -42,7 +42,7 @@ process LILAC {
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       lilac: 1.2
   END_VERSIONS
   """

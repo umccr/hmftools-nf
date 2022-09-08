@@ -41,7 +41,7 @@ process GRIPSS_GERMLINE {
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       gripss: 2.1
   END_VERSIONS
   """

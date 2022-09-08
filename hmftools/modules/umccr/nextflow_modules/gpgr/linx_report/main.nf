@@ -24,7 +24,7 @@ process LINX_REPORT {
     --out ${meta.get(['sample_name', 'tumor'])}_linx.html;
 
   cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
+  "${task.process}":
       R: \$(R --version | head -n1 | sed 's/^R version \\([0-9.]\\+\\).\\+/\\1/')
       gpgr: \$(gpgr.R --version | cut -f2 -d' ')
   END_VERSIONS

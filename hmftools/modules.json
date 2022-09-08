@@ -71,9 +71,6 @@
             "sage/somatic": {
                 "git_sha": "33cefbbb037566368bdeb9772f8822f711420f0b"
             },
-            "sambamba/slice": {
-                "git_sha": "b93fbfa60074de4e65bf4bf67f3a415bcaed9fe1"
-            },
             "teal": {
                 "git_sha": "235abd3bb0410cd1f8289f15d9890820595ac25d"
             }

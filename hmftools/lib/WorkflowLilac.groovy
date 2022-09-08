@@ -5,7 +5,7 @@
 class WorkflowLilac {
 
   public static get_slice_inputs(ch, hla_bed) {
-    // channel: [val(meta_lilac), bam, bai, bed, regions_list]
+    // channel: [val(meta_lilac), bam, bai, bed]
     def d = ch
       .flatMap { meta, tbam, nbam, tbai, nbai ->
         def sample_types = ['tumor': [tbam, tbai], 'normal': [nbam, nbai]]
@@ -19,14 +19,14 @@ class WorkflowLilac {
               sample_type: sample_type,
               meta_full: meta,
             ]
-            return [meta_lilac, *fps, hla_bed, '']
+            return [meta_lilac, *fps, hla_bed]
           }
       }
     return d
   }
 
   public static get_unique_input_files(ch) {
-    // channel: [val(meta_lilac), bam, bai, bed, regions_list]
+    // channel: [val(meta_lilac), bam, bai, bed]
     def d = ch
       .map { [it[1..-1], it[0]] }
       .groupTuple()

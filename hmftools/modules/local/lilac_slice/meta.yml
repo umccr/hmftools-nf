@@ -1,16 +1,15 @@
-name: "sambamba_slice"
-description: Tools for working with SAM/BAM data
+name: "lilac_slice"
+description: Slice BAM for LILAC
 keywords:
-  - sambamba
+  - samtools
   - slice
 tools:
-  - "sambamba":
-      description: "Tools for working with SAM/BAM data."
-      homepage: "https://lomereiter.github.io/sambamba/"
-      documentation: "https://lomereiter.github.io/sambamba/"
-      tool_dev_url: "https://lomereiter.github.io/sambamba/"
+  - custom:
+      description: "Slice BAM for LILAC"
+      homepage: "https://github.com/umccr/nextflow_pipelines"
+      documentation: "https://github.com/umccr/nextflow_pipelines"
       doi: ""
-      licence: "['GPL v2']"
+      licence: "['GPL v3']"
 
 input:
   - meta:
@@ -30,9 +29,6 @@ input:
       type: file
       description: Optional slice regions BED file
       pattern: "*.{bed}"
-  - regions:
-      type: list
-      description: Optional list of regions strings to slice
 
 output:
   - meta:

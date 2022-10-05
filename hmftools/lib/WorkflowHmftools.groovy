@@ -220,20 +220,4 @@ class WorkflowHmftools {
   public static group_by_meta(... channels) {
     return group_by_meta([:], *channels)
   }
-
-  public static Boolean has_records_vcf(filepath) {
-    def command = "bcftools view -H ${filepath} | head | wc -l"
-    def results = execute_command(command)
-    def stdout = results[1]
-    return stdout.toInteger() > 0
-  }
-
-  public static <T> List<T> execute_command(command) {
-    def command_fq = ['/bin/bash', '-c', command]
-    def stdout = new StringBuilder()
-    def stderr = new StringBuilder()
-    def process = command_fq.execute()
-    process.waitForProcessOutput(stdout, stderr)
-    return [process.exitValue(), stdout, stderr]
-  }
 }

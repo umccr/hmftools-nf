@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the main.nf workflow in the nf-core/hmftools pipeline
+// This file holds several functions specific to the main.nf workflow in the umccr/hmftools pipeline
 //
 
 class WorkflowMain {

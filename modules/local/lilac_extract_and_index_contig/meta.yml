@@ -7,8 +7,8 @@ keywords:
 tools:
   - custom:
       description: "Extract and index contig"
-      homepage: "https://github.com/umccr/nextflow_pipelines"
-      documentation: "https://github.com/umccr/nextflow_pipelines"
+      homepage: "https://github.com/umccr/hmftools"
+      documentation: "https://github.com/umccr/hmftools"
       doi: ""
       licence: "['GPL v3']"
 

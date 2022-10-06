@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://raw.githubusercontent.com/nf-core/hmftools/master/nextflow_schema.json",
-  "title": "nf-core/hmftools pipeline parameters",
-  "description": "Collection of pipelines for HMFtools",
+  "$id": "https://raw.githubusercontent.com/umccr/hmftools/master/nextflow_schema.json",
+  "title": "umccr/hmftools pipeline parameters",
+  "description": "Comprehensive genomic oncogenic analysis pipeline",
   "type": "object",
   "definitions": {
     "input_output_options": {

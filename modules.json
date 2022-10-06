@@ -1,6 +1,6 @@
 {
-    "name": "nf-core/hmftools",
-    "homePage": "https://github.com/nf-core/hmftools",
+    "name": "umccr/hmftools",
+    "homePage": "https://github.com/umccr/hmftools",
     "repos": {
         "nf-core/modules": {
             "custom/dumpsoftwareversions": {

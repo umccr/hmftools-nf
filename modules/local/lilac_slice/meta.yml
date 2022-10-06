@@ -6,8 +6,8 @@ keywords:
 tools:
   - custom:
       description: "Slice BAM for LILAC"
-      homepage: "https://github.com/umccr/nextflow_pipelines"
-      documentation: "https://github.com/umccr/nextflow_pipelines"
+      homepage: "https://github.com/umccr/hmftools"
+      documentation: "https://github.com/umccr/hmftools"
       doi: ""
       licence: "['GPL v3']"
 

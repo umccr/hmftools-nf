@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the subworkflows/lilac.nf in the nf-core/hmftools pipeline
+// This file holds several functions specific to the subworkflows/lilac.nf in the umccr/hmftools pipeline
 //
 
 class WorkflowLilac {

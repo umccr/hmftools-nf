@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the workflows/hmftools.nf in the nf-core/hmftools pipeline
+// This file holds several functions specific to the workflows/hmftools.nf in the umccr/hmftools pipeline
 //
 
 import static groovy.io.FileType.FILES

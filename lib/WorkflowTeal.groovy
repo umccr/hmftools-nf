@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the subworkflows/teal.nf in the nf-core/hmftools pipeline
+// This file holds several functions specific to the subworkflows/teal.nf in the umccr/hmftools pipeline
 //
 
 class WorkflowTeal {

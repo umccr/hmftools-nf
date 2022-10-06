@@ -9,12 +9,12 @@ Content-Type: text/html; charset=utf-8
 $email_html
 
 --nfcoremimeboundary
-Content-Type: image/png;name="nf-core-hmftools_logo.png"
+Content-Type: image/png;name="umccr-hmftools_logo.png"
 Content-Transfer-Encoding: base64
 Content-ID: <nfcorepipelinelogo>
-Content-Disposition: inline; filename="nf-core-hmftools_logo_light.png"
+Content-Disposition: inline; filename="umccr-hmftools_logo_light.png"
 
-<% out << new File("$projectDir/assets/nf-core-hmftools_logo_light.png").
+<% out << new File("$projectDir/assets/umccr-hmftools_logo_light.png").
     bytes.
     encodeBase64().
     toString().

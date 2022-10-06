@@ -38,7 +38,7 @@ conda activate hmftools
 3. Download the pipeline and reference data.
 ```bash
 # Download pipeline and reference data
-git clone https://github.com/umccr/nextflow_pipelines && cd ./nextflow_pipelines/hmftools/
+git clone https://github.com/umccr/hmftools && cd ./hmftools/hmftools/
 
 git clone https://github.com/umccr/reference_data -b dev reference_data_gitrepo/ && cd reference_data_gitrepo/
 dvc pull reference_data/{genomes,hmftools}/ -r storage-s3 && cd ../

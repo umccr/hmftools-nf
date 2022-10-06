@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  nf-core/hmftools
+  umccr/hmftools
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Github : https://github.com/nf-core/hmftools
+  Github : https://github.com/umccr/hmftools
   Website: https://nf-co.re/hmftools
   Slack  : https://nfcore.slack.com/channels/hmftools
 ----------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ WorkflowMain.initialise(workflow, params, log)
 include { HMFTOOLS } from './workflows/hmftools'
 
 //
-// WORKFLOW: Run main nf-core/hmftools analysis pipeline
+// WORKFLOW: Run main umccr/hmftools analysis pipeline
 //
 workflow NFCORE_HMFTOOLS {
   HMFTOOLS()

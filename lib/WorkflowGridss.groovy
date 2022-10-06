@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the subworkflows/gridss.nf in the nf-core/hmftools pipeline
+// This file holds several functions specific to the subworkflows/gridss.nf in the umccr/hmftools pipeline
 //
 
 class WorkflowGridss {

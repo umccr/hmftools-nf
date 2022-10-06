@@ -4,8 +4,8 @@ process EXTRACT_AND_INDEX_CONTIG {
 
   input:
   val contig_name
-  path ref_data_genome_dir
-  val ref_data_genome_fn
+  path genome_fa
+  path genome_fai
 
   output:
   path "*extracted.fa"  , emit: contig
@@ -21,7 +21,7 @@ process EXTRACT_AND_INDEX_CONTIG {
   """
   samtools faidx \
     -o ${contig_name}_extracted.fa \
-    ${ref_data_genome_dir}/${ref_data_genome_fn} \
+    ${genome_fa} \
     ${contig_name}
   bwa index ${contig_name}_extracted.fa
 

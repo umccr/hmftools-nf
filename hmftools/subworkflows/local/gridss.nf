@@ -9,11 +9,15 @@ include { PREPROCESS        } from '../../modules/umccr/nextflow_modules/gridss/
 
 workflow GRIDSS {
   take:
-    ch_meta                   // channel: [val(meta)]
-    gridss_config             //    file: /path/to/gridss_config (optional)
-    ref_data_genome_dir       //    file: /path/to/genome_dir/
-    ref_data_genome_fn        //     val: genome name
-    ref_data_gridss_blacklist //     val: /path/to/gridss_blacklist
+    ch_meta                         // channel: [val(meta)]
+    gridss_config                   //    file: /path/to/gridss_config (optional)
+    ref_data_genome_fa              //    file: /path/to/genome_fa
+    ref_data_genome_fai             //    file: /path/to/genome_fai
+    ref_data_genome_dict            //    file: /path/to/genome_dict
+    ref_data_genome_bwa_index       //    file: /path/to/genome_bwa_index_dir/
+    ref_data_genome_bwa_index_image //    file: /path/to/genome_bwa_index_image
+    ref_data_genome_gridss_index    //    file: /path/to/genome_gridss_index
+    ref_data_gridss_blacklist       //     val: /path/to/gridss_blacklist
 
   main:
     // Channel for version.yml files
@@ -55,8 +59,12 @@ workflow GRIDSS {
     PREPROCESS(
       ch_preprocess_inputs,
       gridss_config,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
+      ref_data_genome_bwa_index,
+      ref_data_genome_bwa_index_image,
+      ref_data_genome_gridss_index,
     )
     ch_versions = ch_versions.mix(PREPROCESS.out.versions)
 
@@ -109,8 +117,12 @@ workflow GRIDSS {
     ASSEMBLE(
       ch_assemble_inputs,
       gridss_config,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
+      ref_data_genome_bwa_index,
+      ref_data_genome_bwa_index_image,
+      ref_data_genome_gridss_index,
       ref_data_gridss_blacklist,
     )
     ch_versions = ch_versions.mix(ASSEMBLE.out.versions)
@@ -131,8 +143,12 @@ workflow GRIDSS {
     CALL(
       ch_call_inputs,
       gridss_config,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
+      ref_data_genome_bwa_index,
+      ref_data_genome_bwa_index_image,
+      ref_data_genome_gridss_index,
       ref_data_gridss_blacklist,
     )
     ch_versions = ch_versions.mix(CALL.out.versions)

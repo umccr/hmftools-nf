@@ -8,8 +8,9 @@ include { SAGE_SOMATIC  } from '../../modules/umccr/nextflow_modules/sage/somati
 workflow SAGE {
   take:
     ch_inputs                             // channel: [meta, tumor_bam, normal_bam, tumor_bai, normal_bai]
-    ref_data_genome_dir                   //    file: /path/to/genome_dir/
-    ref_data_genome_fn                    //     val: genome name
+    ref_data_genome_fa                    //    file: /path/to/genome_fa
+    ref_data_genome_fai                   //    file: /path/to/genome_fai
+    ref_data_genome_dict                  //    file: /path/to/genome_dict
     ref_data_genome_version               //     val: genome version
     ref_data_sage_known_hotspots_germline //    file: /path/to/sage_known_hotspots_germline
     ref_data_sage_known_hotspots_somatic  //    file: /path/to/sage_known_hotspots_somatic
@@ -27,8 +28,9 @@ workflow SAGE {
     // Germline
     SAGE_GERMLINE(
       ch_inputs,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
       ref_data_genome_version,
       ref_data_sage_known_hotspots_germline,
       ref_data_sage_coding_panel,
@@ -40,8 +42,9 @@ workflow SAGE {
     // Somatic
     SAGE_SOMATIC(
       ch_inputs,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
       ref_data_genome_version,
       ref_data_sage_known_hotspots_somatic,
       ref_data_sage_coding_panel,

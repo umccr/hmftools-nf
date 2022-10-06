@@ -12,8 +12,8 @@ workflow LILAC {
   take:
     ch_inputs_bams              // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
     ch_inputs_purple_dir        // channel: [val(meta), purple_dir]
-    ref_data_genome_dir         //    file: /path/to/genome_dir/
-    ref_data_genome_fn          //     val: genome name
+    ref_data_genome_fa          //    file: /path/to/genome_fa
+    ref_data_genome_fai         //    file: /path/to/genome_fai
     ref_data_genome_version     //     val: genome version
     ref_data_lilac_resource_dir //    file: /path/to/lilac_resource_dir/
 
@@ -23,9 +23,9 @@ workflow LILAC {
 
     // Slice HLA regions
     if (ref_data_genome_version == '38') {
-      slice_bed = "${ref_data_lilac_resource_dir}/hla.38.alt.umccr.bed"
+      slice_bed = file("${params.ref_data_lilac_resource_dir}/hla.38.alt.umccr.bed", checkIfExists: true)
     } else {
-      slice_bed = "${ref_data_lilac_resource_dir}/hla.${ref_data_genome_version}.bed"
+      slice_bed = file("${params.ref_data_lilac_resource_dir}/hla.${ref_data_genome_version}.bed", checkIfExists: true)
     }
     // NOTE(SW): here I remove duplicate files so that we only process each input once
     // NOTE(SW): orphaned reads are sometimes obtained, this is the slicing procedure used
@@ -47,8 +47,8 @@ workflow LILAC {
       // are realigned for consistency.
       EXTRACT_AND_INDEX_CONTIG(
         'chr6',
-        ref_data_genome_dir,
-        ref_data_genome_fn,
+        ref_data_genome_fa,
+        ref_data_genome_fai,
       )
       REALIGN_READS(
         SLICE.out.bam,
@@ -74,8 +74,7 @@ workflow LILAC {
     // Run LILAC
     LILAC_PROCESS(
       ch_lilac_inputs,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
       ref_data_genome_version,
       ref_data_lilac_resource_dir,
     )

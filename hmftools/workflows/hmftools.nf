@@ -13,7 +13,12 @@ WorkflowHmftools.initialise(params, workflow, log)
 def checkPathParamList = [
   params.input,
   // Reference genome
-  params.ref_data_genome,
+  params.ref_data_genome_fa,
+  params.ref_data_genome_fai,
+  params.ref_data_genome_dict,
+  params.ref_data_genome_bwa_index,
+  params.ref_data_genome_bwa_index_image,
+  params.ref_data_genome_gridss_index,
   // AMBER and COBALT
   params.ref_data_amber_loci,
   params.ref_data_cobalt_gc_profile,
@@ -109,10 +114,13 @@ def get_file_object(path) {
 
 samplesheet                           = get_file_object(params.input)
 // Reference genome
-ref_data_genome                       = get_file_object(params.ref_data_genome)
-ref_data_genome_dir                   = file(ref_data_genome).parent
-ref_data_genome_fn                    = file(ref_data_genome).name
+ref_data_genome_fa                    = get_file_object(params.ref_data_genome_fa)
 ref_data_genome_version               = params.ref_data_genome_version
+ref_data_genome_fai                   = get_file_object(params.ref_data_genome_fai)
+ref_data_genome_dict                  = get_file_object(params.ref_data_genome_dict)
+ref_data_genome_bwa_index             = get_file_object(params.ref_data_genome_bwa_index)
+ref_data_genome_bwa_index_image       = get_file_object(params.ref_data_genome_bwa_index_image)
+ref_data_genome_gridss_index          = get_file_object(params.ref_data_genome_gridss_index)
 // AMBER and COBALT
 ref_data_amber_loci                   = get_file_object(params.ref_data_amber_loci)
 ref_data_cobalt_gc_profile            = get_file_object(params.ref_data_cobalt_gc_profile)
@@ -212,8 +220,12 @@ workflow HMFTOOLS {
     GRIDSS(
       ch_inputs,
       gridss_config,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
+      ref_data_genome_bwa_index,
+      ref_data_genome_bwa_index_image,
+      ref_data_genome_gridss_index,
       ref_data_gridss_blacklist,
     )
     ch_versions = ch_versions.mix(GRIDSS.out.versions)
@@ -230,8 +242,8 @@ workflow HMFTOOLS {
   if (WorkflowHmftools.Stage.GRIPSS in stages) {
     GRIPSS(
       ch_gridss_out,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
       ref_data_genome_version,
       ref_data_gridss_breakend_pon,
       ref_data_gridss_breakpoint_pon,
@@ -253,8 +265,9 @@ workflow HMFTOOLS {
   if (WorkflowHmftools.Stage.SAGE in stages) {
     SAGE(
       ch_bams_and_indices,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
       ref_data_genome_version,
       ref_data_sage_known_hotspots_germline,
       ref_data_sage_known_hotspots_somatic,
@@ -281,8 +294,8 @@ workflow HMFTOOLS {
     PAVE(
       ch_sage_germline_out,
       ch_sage_somatic_out,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
       ref_data_genome_version,
       ref_data_sage_pon_file,
       ref_data_sage_blacklist_bed,
@@ -352,8 +365,9 @@ workflow HMFTOOLS {
 
     PURPLE(
       ch_purple_inputs,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
       ref_data_genome_version,
       ref_data_cobalt_gc_profile,
       ref_data_sage_known_hotspots_somatic,
@@ -399,8 +413,7 @@ workflow HMFTOOLS {
     TEAL(
       ch_teal_inputs_bams,
       ch_teal_inputs_other,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
     )
     ch_versions = ch_versions.mix(TEAL.out.versions)
   }
@@ -424,8 +437,8 @@ workflow HMFTOOLS {
     LILAC(
       ch_bams_and_indices,
       ch_lilac_inputs_purple_dir,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
       ref_data_genome_version,
       ref_data_lilac_resource_dir,
     )

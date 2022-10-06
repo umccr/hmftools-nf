@@ -10,8 +10,7 @@ workflow TEAL {
   take:
     ch_inputs_bams          // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
     ch_inputs_other         // channel: [val(meta), cobalt_dir, purple_dir]
-    ref_data_genome_dir     //    file: /path/to/genome_dir/
-    ref_data_genome_fn      //     val: genome name
+    ref_data_genome_fa      //    file: /path/to/genome_fa
 
   main:
     // Channel for version.yml files
@@ -27,7 +26,7 @@ workflow TEAL {
     ch_metrics_inputs = ch_input_bams_split_unique.map { meta_teal, bam, bai -> [meta_teal, bam] }
     COLLECTWGSMETRICS(
       ch_metrics_inputs,
-      "${ref_data_genome_dir}/${ref_data_genome_fn}",
+      ref_data_genome_fa,
     )
     ch_versions = ch_versions.mix(COLLECTWGSMETRICS.out.versions)
     // Run TEAL

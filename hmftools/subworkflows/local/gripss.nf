@@ -8,8 +8,8 @@ include { GRIPSS_SOMATIC  } from '../../modules/umccr/nextflow_modules/gripss/so
 workflow GRIPSS {
   take:
     ch_inputs               // channel: [val(meta), gridss_vcf]
-    ref_data_genome_dir     //    file: /path/to/genome_dir/
-    ref_data_genome_fn      //     val: genome name
+    ref_data_genome_fa      //    file: /path/to/genome_fa
+    ref_data_genome_fai     //    file: /path/to/genome_fai
     ref_data_genome_version //     val: genome version
     breakend_pon            //    file: /path/to/breakend_pon
     breakpoint_pon          //    file: /path/to/breakpoint_pon
@@ -23,8 +23,8 @@ workflow GRIPSS {
     // Germline
     GRIPSS_GERMLINE(
       ch_inputs,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
       ref_data_genome_version,
       breakend_pon,
       breakpoint_pon,
@@ -36,8 +36,8 @@ workflow GRIPSS {
     // Somatic
     GRIPSS_SOMATIC(
       ch_inputs,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
       ref_data_genome_version,
       breakend_pon,
       breakpoint_pon,

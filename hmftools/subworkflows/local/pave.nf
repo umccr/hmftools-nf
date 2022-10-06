@@ -9,8 +9,8 @@ workflow PAVE {
   take:
     ch_inputs_germline          // channel: [val(meta), sage_germline_vcf]
     ch_inputs_somatic           // channel: [val(meta), sage_somatic_vcf]
-    ref_data_genome_dir         //    file: /path/to/genome_dir/
-    ref_data_genome_fn          //     val: genome name
+    ref_data_genome_fa          //    file: /path/to/genome_fa
+    ref_data_genome_fai         //    file: /path/to/genome_fai
     ref_data_genome_version     //     val: genome version
     ref_data_sage_pon_file      //    file: /path/to/sage_pon_file
     ref_data_sage_blacklist_bed //    file: /path/to/sage_blacklist_bed
@@ -27,8 +27,8 @@ workflow PAVE {
     // Germline
     PAVE_GERMLINE(
       ch_inputs_germline,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
       ref_data_genome_version,
       ref_data_sage_blacklist_bed,
       ref_data_sage_blacklist_vcf,
@@ -42,8 +42,8 @@ workflow PAVE {
     // Somatic
     PAVE_SOMATIC(
       ch_inputs_somatic,
-      ref_data_genome_dir,
-      ref_data_genome_fn,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
       ref_data_genome_version,
       ref_data_sage_pon_file,
       ref_data_mappability_bed,

@@ -1,12 +1,13 @@
 process PURPLE {
   //conda (params.enable_conda ? "bioconda::hmftools-purple=3.6" : null)
-  container 'docker.io/scwatts/purple:3.6--3'
+  container 'docker.io/scwatts/purple:3.6--4'
 
   input:
   tuple val(meta), path(amber), path(cobalt), path(sv_hard_vcf), path(sv_hard_vcf_index), path(sv_soft_vcf), path(sv_soft_vcf_index), path(smlv_tumor_vcf), path(smlv_normal_vcf)
-  path ref_data_genome_dir
-  val ref_data_genome_fn
-  val ref_data_genome_ver
+  path genome_fa
+  path genome_fai
+  path genome_dict
+  val genome_ver
   path gc_profile
   path sage_known_hotspots_somatic
   path sage_known_hotspots_germline
@@ -63,8 +64,8 @@ process PURPLE {
       -somatic_hotspots "${sage_known_hotspots_somatic}" \
       -germline_hotspots "${sage_known_hotspots_germline}" \
       ${germline_del_freq_arg} \
-      -ref_genome "${ref_data_genome_dir}/${ref_data_genome_fn}" \
-      -ref_genome_version "${ref_data_genome_ver}" \
+      -ref_genome "${genome_fa}" \
+      -ref_genome_version "${genome_ver}" \
       -threads "${task.cpus}" \
       -circos "${task.ext.circosPath}"
 
@@ -73,10 +74,9 @@ process PURPLE {
     exit 1;
   fi
 
-  # NOTE(SW): hard coded since there is no reliable way to obtain version information
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      purple: 3.4
+      purple: \$(java -jar "${task.ext.jarPath}" -version | sed 's/.*Purple version: //')
   END_VERSIONS
   """
 

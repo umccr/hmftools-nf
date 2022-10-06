@@ -36,13 +36,11 @@ input:
   - purple_dir:
       type: directory
       description: Optional PURPLE output directory
-  - ref_data_genome_dir:
-      type: directory
-      description: Directory containing reference genome
-  - ref_data_genome_fn:
-      type: string
-      description: Reference genome filename
-  - ref_data_genome_ver:
+  - genome_fa:
+      type: file
+      description: Reference genome assembly fa file
+      pattern: "*.{fa,fasta}"
+  - genome_ver:
       type: string
       description: Reference genome version
   - lilac_resource_dir:

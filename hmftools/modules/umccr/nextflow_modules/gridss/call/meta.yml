@@ -32,12 +32,29 @@ input:
   - gridss_config:
       type: file
       description: Optional GRIDSS configuration file
-  - ref_data_genome_dir:
+  - genome_fa:
+      type: file
+      description: Reference genome assembly fa file
+      pattern: "*.{fa,fasta}"
+  - genome_fai:
+      type: file
+      description: Reference genome assembly fai file
+      pattern: "*.{fai}"
+  - genome_dict:
+      type: file
+      description: Reference genome assembly dict file
+      pattern: "*.{dict}"
+  - genome_bwa_index_dir:
       type: directory
-      description: Directory containing reference genome
-  - ref_data_genome_fn:
-      type: string
-      description: Reference genome filename
+      description: Directory containing reference genome assembly BWA index
+  - genome_bwa_index_image:
+      type: file
+      description: Reference genome assembly BWA index img file
+      pattern: "*.{img}"
+  - genome_gridss_index:
+      type: file
+      description: Reference genome assembly GRIDSS index file
+      pattern: "*.{gridsscache}"
   - blacklist:
       type: file
       description: GRIDSS blacklist file

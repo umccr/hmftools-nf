@@ -1,6 +1,6 @@
 process AMBER {
   //conda (params.enable_conda ? "bioconda::hmftools-amber=3.9" : null)
-  container 'docker.io/scwatts/amber:3.9--2'
+  container 'docker.io/scwatts/amber:3.9--3'
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumor_bai), path(normal_bai)
@@ -33,7 +33,7 @@ process AMBER {
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      amber: 3.9.0
+      amber: 3.9
   END_VERSIONS
   """
 

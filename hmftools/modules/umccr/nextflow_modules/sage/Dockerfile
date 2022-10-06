@@ -9,14 +9,23 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 RUN \
-  mkdir -p /opt/lilac/ && \
-  wget -O /opt/lilac/lilac.jar 'https://github.com/hartwigmedical/hmftools/releases/download/lilac-v1.4/lilac_v1.4.1.jar'
+  mkdir -p /opt/sage/ && \
+  wget -O /opt/sage/sage.jar 'https://github.com/hartwigmedical/hmftools/releases/download/sage-v3.2/sage_v3.2.jar'
 
 USER mambauser
 
 RUN \
   micromamba install -y -n base -c bioconda -c conda-forge \
-    'openjdk >=8' && \
+    bioconductor-genomicranges \
+    bioconductor-variantannotation \
+    font-ttf-dejavu \
+    'openjdk >=8' \
+    r-dplyr \
+    r-ggplot2 \
+    r-tidyr \
+    xorg-libxt \
+    zlib && \
   micromamba clean --all --yes
 
 ENV PATH="/opt/conda/bin:/opt/conda/condabin:${PATH}"
+

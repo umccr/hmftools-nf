@@ -1,12 +1,11 @@
 process LILAC {
   //conda (params.enable_conda ? "bioconda::hmftools-lilac=1.2" : null)
-  container 'docker.io/scwatts/lilac:1.2--4'
+  container 'docker.io/scwatts/lilac:1.4.1--0'
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumour_bai), path(normal_bai), path(purple_dir)
-  path ref_data_genome_dir
-  val ref_data_genome_fn
-  val ref_data_genome_ver
+  path genome_fa
+  val genome_ver
   path lilac_resource_dir, stageAs: 'lilac_resource_dir'
 
   output:
@@ -33,8 +32,8 @@ process LILAC {
       -sample "${sample_name}" \
       ${tumor_bam_arg} \
       -reference_bam ${normal_bam} \
-      -ref_genome_version "${ref_data_genome_ver}" \
-      -ref_genome "${ref_data_genome_dir}/${ref_data_genome_fn}" \
+      -ref_genome_version "${genome_ver}" \
+      -ref_genome "${genome_fa}" \
       -resource_dir "${lilac_resource_dir}" \
       ${purple_args.replaceAll('\\n', '')} \
       -threads "${task.cpus}" \
@@ -43,7 +42,7 @@ process LILAC {
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      lilac: 1.2
+      lilac: 1.4.1
   END_VERSIONS
   """
 

@@ -9,14 +9,22 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 RUN \
-  mkdir -p /opt/lilac/ && \
-  wget -O /opt/lilac/lilac.jar 'https://github.com/hartwigmedical/hmftools/releases/download/lilac-v1.4/lilac_v1.4.1.jar'
+  mkdir -p /opt/linx/ && \
+  wget -O /opt/linx/linx.jar 'https://github.com/hartwigmedical/hmftools/releases/download/linx-v1.22/linx_v1.22.jar'
 
 USER mambauser
 
 RUN \
   micromamba install -y -n base -c bioconda -c conda-forge \
-    'openjdk >=8' && \
+    bioconductor-gviz \
+    'circos >=0.69.6' \
+    'openjdk >=8' \
+    r-cowplot \
+    r-dplyr \
+    r-ggplot2 \
+    r-magick \
+    r-tidyr \
+    xorg-libxtst && \
   micromamba clean --all --yes
 
 ENV PATH="/opt/conda/bin:/opt/conda/condabin:${PATH}"

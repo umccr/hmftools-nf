@@ -2,13 +2,13 @@
 
 process PAVE_GERMLINE {
   //conda (params.enable_conda ? "bioconda::hmftools-pave=1.3" : null)
-  container 'docker.io/scwatts/pave:1.3--3'
+  container 'docker.io/scwatts/pave:1.4--0'
 
   input:
   tuple val(meta), path(sage_vcf)
-  path ref_data_genome_dir
-  val ref_data_genome_fn
-  val ref_data_genome_ver
+  path genome_fa
+  path genome_fai
+  val genome_ver
   path sage_blacklist_bed
   path sage_blacklist_vcf
   path clinvar_vcf
@@ -33,8 +33,8 @@ process PAVE_GERMLINE {
     -jar "${task.ext.jarPath}" \
       ${args} \
       -sample "${meta.get(['sample_name', 'tumor'])}" \
-      -ref_genome_version "${ref_data_genome_ver}" \
-      -ref_genome "${ref_data_genome_dir}/${ref_data_genome_fn}" \
+      -ref_genome_version "${genome_ver}" \
+      -ref_genome "${genome_fa}" \
       -ensembl_data_dir "${ensembl_data_dir}" \
       -driver_gene_panel "${driver_gene_panel}" \
       -clinvar_vcf "${clinvar_vcf}" \
@@ -48,7 +48,7 @@ process PAVE_GERMLINE {
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      pave: 1.2
+      pave: 1.4
   END_VERSIONS
   """
 

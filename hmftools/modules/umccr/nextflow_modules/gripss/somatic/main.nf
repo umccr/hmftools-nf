@@ -1,12 +1,12 @@
 process GRIPSS_SOMATIC {
   //conda (params.enable_conda ? "bioconda::hmftools-gripss=2.2" : null)
-  container 'quay.io/biocontainers/hmftools-gripss:2.2--hdfd78af_0 '
+  container 'docker.io/scwatts/gripss:2.3--0'
 
   input:
   tuple val(meta), path(gridss_vcf)
-  path ref_data_genome_dir
-  val ref_data_genome_fn
-  val ref_data_genome_ver
+  path genome_fa
+  path genome_fai
+  val genome_ver
   path breakend_pon
   path breakpoint_pon
   path known_fusions
@@ -31,8 +31,8 @@ process GRIPSS_SOMATIC {
       ${args} \
       -sample "${meta.get(['sample_name', 'tumor'])}" \
       -reference "${meta.get(['sample_name', 'normal'])}" \
-      -ref_genome_version "${ref_data_genome_ver}" \
-      -ref_genome "${ref_data_genome_dir}/${ref_data_genome_fn}" \
+      -ref_genome_version "${genome_ver}" \
+      -ref_genome "${genome_fa}" \
       -pon_sgl_file "${breakend_pon}" \
       -pon_sv_file "${breakpoint_pon}" \
       -known_hotspot_file "${known_fusions}" \
@@ -43,7 +43,7 @@ process GRIPSS_SOMATIC {
   # NOTE(SW): hard coded since there is no reliable way to obtain version information
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      gripss: 2.1
+      gripss: 2.3
   END_VERSIONS
   """
 

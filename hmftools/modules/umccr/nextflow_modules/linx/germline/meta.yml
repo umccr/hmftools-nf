@@ -24,7 +24,7 @@ input:
       type: file
       description: GRIPSS hard filtered VCF
       pattern: "*.{vcf.gz}"
-  - ref_data_genome_ver:
+  - genome_ver:
       type: string
       description: Reference genome version
   - fragile_sites:

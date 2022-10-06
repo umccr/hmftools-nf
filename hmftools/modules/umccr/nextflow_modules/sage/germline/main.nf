@@ -1,12 +1,13 @@
 process SAGE_GERMLINE {
   //conda (params.enable_conda ? "bioconda::hmftools-sage=3.1" : null)
-  container 'quay.io/biocontainers/hmftools-sage:3.1--hdfd78af_0 '
+  container 'docker.io/scwatts/sage:3.2--0'
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumor_bai), path(normal_bai)
-  path ref_data_genome_dir
-  val ref_data_genome_fn
-  val ref_data_genome_ver
+  path genome_fa
+  path genome_fai
+  path genome_dict
+  val genome_ver
   path sage_known_hotspots_germline
   path sage_coding_panel
   path sage_high_confidence
@@ -31,8 +32,8 @@ process SAGE_GERMLINE {
       -reference_bam "${tumor_bam}" \
       -tumor "${meta.get(['sample_name', 'normal'])}" \
       -tumor_bam "${normal_bam}" \
-      -ref_genome_version "${ref_data_genome_ver}" \
-      -ref_genome "${ref_data_genome_dir}/${ref_data_genome_fn}" \
+      -ref_genome_version "${genome_ver}" \
+      -ref_genome "${genome_fa}" \
       -hotspots "${sage_known_hotspots_germline}" \
       -panel_bed "${sage_coding_panel}" \
       -high_confidence_bed "${sage_high_confidence}" \
@@ -48,10 +49,9 @@ process SAGE_GERMLINE {
       -threads "${task.cpus}" \
       -out "${meta.subject_name}.sage_germline.vcf.gz"
 
-  # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      sage: 3.0.3
+      sage: \$(java -jar "${task.ext.jarPath}" | head -n1 | sed 's/.*Sage version: //')
   END_VERSIONS
   """
 

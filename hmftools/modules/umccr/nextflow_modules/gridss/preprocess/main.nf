@@ -1,12 +1,16 @@
 process PREPROCESS {
   //conda (params.enable_conda ? "bioconda::gridss=2.13.2" : null)
-  container 'docker.io/scwatts/gridss:2.13.2--2'
+  container 'docker.io/scwatts/gridss:2.13.2--3'
 
   input:
   tuple val(meta), path(bam)
   path gridss_config
-  path ref_data_genome_dir
-  val ref_data_genome_fn
+  path genome_fa
+  path genome_fai
+  path genome_dict
+  path genome_bwa_index_dir, stageAs: 'bwa_index'
+  path genome_bwa_index_image
+  path genome_gridss_index
 
   output:
   tuple val(meta), path("gridss_preprocess/${bam.name}.gridss.working/"), emit: preprocess_dir
@@ -20,22 +24,23 @@ process PREPROCESS {
   def config_arg = gridss_config ? "--configuration ${gridss_config}" : ''
 
   """
+  # Symlink BWA indices next to assembly FASTA
+  ln -s \$(find -L ${genome_bwa_index_dir} -type f) ./
+
   gridss \
     ${args} \
     --jvmheap "${task.memory.giga}g" \
     --jar "${task.ext.jarPath}" \
     --steps preprocess \
-    --reference "${ref_data_genome_dir}/${ref_data_genome_fn}" \
+    --reference "${genome_fa}" \
     --workingdir gridss_preprocess/ \
     --threads "${task.cpus}" \
     ${config_arg} \
     ${bam}
 
-  # NOTE(SW): hard coded since there is no reliable way to obtain version information, see GH issue
-  # https://github.com/PapenfussLab/gridss/issues/586
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      gridss: 2.13.2
+      gridss: \$(java -cp "${task.ext.jarPath}" gridss.CallVariants --version 2>&1 | sed 's/-gridss//')
   END_VERSIONS
   """
 

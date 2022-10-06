@@ -9,8 +9,8 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 RUN \
-  mkdir -p /opt/lilac/ && \
-  wget -O /opt/lilac/lilac.jar 'https://github.com/hartwigmedical/hmftools/releases/download/lilac-v1.4/lilac_v1.4.1.jar'
+  mkdir -p /opt/gripss/ && \
+  wget -O /opt/gripss/gripss.jar 'https://github.com/hartwigmedical/hmftools/releases/download/gripss-v2.3/gripss_v2.3.jar'
 
 USER mambauser
 

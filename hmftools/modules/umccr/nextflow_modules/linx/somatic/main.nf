@@ -1,10 +1,10 @@
 process LINX_SOMATIC {
   //conda (params.enable_conda ? "bioconda::hmftools-linx=1.21" : null)
-  container 'quay.io/biocontainers/hmftools-linx:1.21--hdfd78af_0'
+  container 'docker.io/scwatts/linx:1.22--0'
 
   input:
   tuple val(meta), path(purple_dir)
-  val ref_data_genome_ver
+  val genome_ver
   path fragile_sites
   path lines
   path ensembl_data_dir
@@ -27,7 +27,7 @@ process LINX_SOMATIC {
     -jar "${task.ext.jarPath}" \
       ${args} \
       -sample "${meta.get(['sample_name', 'tumor'])}" \
-      -ref_genome_version "${ref_data_genome_ver}" \
+      -ref_genome_version "${genome_ver}" \
       -sv_vcf "${purple_dir}/${meta.get(['sample_name', 'tumor'])}.purple.sv.vcf.gz" \
       -purple_dir "${purple_dir}" \
       -fragile_site_file "${fragile_sites}" \
@@ -39,10 +39,9 @@ process LINX_SOMATIC {
       -driver_gene_panel "${driver_gene_panel}" \
       -output_dir linx_somatic/
 
-  # NOTE(SW): hard coded since there is no reliable way to obtain version information
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      linx: 1.19
+      linx: \$(java -jar "${task.ext.jarPath}" | sed 's/^.*LINX version: //')
   END_VERSIONS
   """
 

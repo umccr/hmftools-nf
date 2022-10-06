@@ -1,12 +1,16 @@
 process CALL {
   //conda (params.enable_conda ? "bioconda::gridss=2.13.2" : null)
-  container 'docker.io/scwatts/gridss:2.13.2--2'
+  container 'docker.io/scwatts/gridss:2.13.2--3'
 
   input:
   tuple val(meta), path(bams), path(assemble_dir), val(labels)
   path gridss_config
-  path ref_data_genome_dir
-  val ref_data_genome_fn
+  path genome_fa
+  path genome_fai
+  path genome_dict
+  path genome_bwa_index_dir, stageAs: 'bwa_index'
+  path genome_bwa_index_image
+  path genome_gridss_index
   path blacklist
 
   output:
@@ -49,6 +53,9 @@ process CALL {
   }
   shadow_input_directory ${assemble_dir}
 
+  # Symlink BWA indices next to assembly FASTA
+  ln -s \$(find -L ${genome_bwa_index_dir} -type f) ./
+
   # Run
   gridss \
     ${args} \
@@ -56,7 +63,7 @@ process CALL {
     --jar "${task.ext.jarPath}" \
     --steps call \
     --labels "${labels_arg}" \
-    --reference "${ref_data_genome_dir}/${ref_data_genome_fn}" \
+    --reference "${genome_fa}" \
     --blacklist "${blacklist}" \
     --workingdir "${output_dirname}/work/" \
     --assembly "${output_dirname}/sv_assemblies.bam" \
@@ -65,11 +72,9 @@ process CALL {
     ${config_arg} \
     ${bams_arg}
 
-  # NOTE(SW): hard coded since there is no reliable way to obtain version information, see GH issue
-  # https://github.com/PapenfussLab/gridss/issues/586
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      gridss: 2.13.2
+      gridss: \$(java -cp "${task.ext.jarPath}" gridss.CallVariants --version 2>&1 | sed 's/-gridss//')
   END_VERSIONS
   """
 

@@ -4,12 +4,11 @@
 
 include { ASSEMBLE          } from '../../modules/umccr/nextflow_modules/gridss/assemble/main'
 include { CALL              } from '../../modules/umccr/nextflow_modules/gridss/call/main'
-include { EXTRACT_FRAGMENTS } from '../../modules/umccr/nextflow_modules/gridss/extract_fragments/main'
 include { PREPROCESS        } from '../../modules/umccr/nextflow_modules/gridss/preprocess/main'
 
 workflow GRIDSS {
   take:
-    ch_meta                         // channel: [val(meta)]
+    ch_inputs                       // channel: [val(meta), bam_tumor, bam_normal]
     gridss_config                   //    file: /path/to/gridss_config (optional)
     ref_data_genome_fa              //    file: /path/to/genome_fa
     ref_data_genome_fai             //    file: /path/to/genome_fai
@@ -23,39 +22,24 @@ workflow GRIDSS {
     // Channel for version.yml files
     ch_versions = Channel.empty()
 
-    // Prepare inputs
-    ch_inputs = WorkflowGridss.get_inputs(ch_meta)
-      // NOTE(SW): calling .branch within WorkflowGridss.get_inputs_from_meta triggers unavoidable
-      // errors. Hence, the .branch is called at this scope.
-      .branch {
-        // channel: [val(meta_gridss), bam, bai, vcf]
-        extract_fragments: it[0]
-          return it[1]
-        // channel: [val(meta_gridss), bam]
-        preprocess: ! it[0]
-          return it[1]
-      }
-    // In instances where the same input BAM is provided (e.g. multiple t/n pairs sharing the same normal), select
-    // only one file to process
-    // channel: [val(meta_gridss), bam, bai, vcf]
-    ch_extract_fragments_inputs = WorkflowGridss.get_unique_input_files(ch_inputs.extract_fragments)
+    // Build a channel of individual BAMs for preprocessing
     // channel: [val(meta_gridss), bam]
-    ch_preprocess_inputs_raw = WorkflowGridss.get_unique_input_files(ch_inputs.preprocess)
-
-    // Read selection using prior SV calls
-    EXTRACT_FRAGMENTS(
-      ch_extract_fragments_inputs,
-    )
-    ch_versions = ch_versions.mix(EXTRACT_FRAGMENTS.out.versions)
+    ch_preprocess_inputs = ch_inputs
+      .flatMap { meta, tbam, nbam ->
+        def bam_map = ['tumor': tbam, 'normal': nbam]
+        bam_map
+          .keySet()
+          .collect { sample_type ->
+            def meta_gridss = [
+              id: meta.get(['sample_name', sample_type]),
+              sample_type: sample_type,
+              subject_id: meta.id,
+            ]
+            return [meta_gridss, bam_map[sample_type]]
+          }
+      }
 
     // Preprocess reads
-    // channel: [val(meta_gridss), bam]
-    ch_preprocess_inputs = Channel
-      .empty()
-      .concat(
-        EXTRACT_FRAGMENTS.out.bam,
-        ch_preprocess_inputs_raw,
-      )
     PREPROCESS(
       ch_preprocess_inputs,
       gridss_config,
@@ -68,52 +52,26 @@ workflow GRIDSS {
     )
     ch_versions = ch_versions.mix(PREPROCESS.out.versions)
 
-    // Joint assembly
-    // The data flow in this following section is complex. For joint assembly, we must collect
-    // all subject BAMs and preprocess output directories but to do this in a non-blocking way,
-    // the number expected files/entries for each subject must be provided.
-
-    // First, we obtain the number of entries of each subject directly from the input meta. This
-    // evaluates immediately.
-    // channel: [subject_name, count]
-    ch_subject_files_expected = Channel.empty()
-      .mix(
-        ch_extract_fragments_inputs.map { it[0].subject_name },
-        ch_preprocess_inputs_raw.map { it[0].subject_name },
-      )
-      .collect()
-      .flatMap { names ->
-        names
-          .countBy { it }
-          .collect { k, v -> [k, v] }
-      }
-
-    // Next, we prepare a channel containing the required files to join with the above counts.
-    // NOTE(SW): performed here to avoid WorkflowHmftools import in WorkflowGridss
-    // channel: [subject_name, [[val(meta_gridss), bam, preprocess_dir]]
-    ch_assembly_inputs_base = WorkflowHmftools.group_by_meta(
+    // Gather BAMs and outputs from preprocessing for each tumor/normal set
+    // channel: [subject_id, [[val(meta_gridss), bam, preprocess_dir], ...]]
+    ch_bams_and_preprocess = WorkflowHmftools.group_by_meta(
       ch_preprocess_inputs,
       PREPROCESS.out.preprocess_dir,
     )
-      .map { [it[0].subject_name, it] }
+    .map { [it[0].subject_id, it] }
+    .groupTuple(size: 2)
 
-    // Finally, we create the basis for the assembly input channel. Each element in ch_subject_files_expected
-    // is associated with the corresponding element in ch_subject_files_expected using the cross
-    // operator, creating a channel with the format
-    //   [[subject_name, count], [subject_name, [val(meta_gridss), bam, preprocess_dir]]]
-    // From this data, a groupKey with the expected size emit groupTuple size is created.
-    // channel: [subject_name, [[val(meta_gridss), bam, preprocess_dir], ...]]
-    ch_bams_and_preprocess = ch_subject_files_expected
-      .cross(ch_assembly_inputs_base)
-      .map { bams_expected, data ->
-        def (subject_name, count) = bams_expected
-        def values = data[1]
-        return [groupKey(subject_name, count), values]
-      }
-      .groupTuple()
-
+    // Order and organise inputs for assembly
     // channel: [val(meta_gridss), [bams], [preprocess_dirs], [labels]]
-    ch_assemble_inputs = WorkflowGridss.get_assemble_inputs(ch_bams_and_preprocess)
+    ch_assemble_inputs = ch_bams_and_preprocess
+      .map { subject_id, entries ->
+        def (tmeta, tbam, tpreprocess) = entries.find { e -> e[0].sample_type == 'tumor' }
+        def (nmeta, nbam, npreprocess) = entries.find { e -> e[0].sample_type == 'normal' }
+        def meta_gridss = [id: tmeta.subject_id]
+        return [meta_gridss, [nbam, tbam], [npreprocess, tpreprocess], [nmeta.id, tmeta.id]]
+      }
+
+    // Assemble variants
     ASSEMBLE(
       ch_assemble_inputs,
       gridss_config,
@@ -127,7 +85,7 @@ workflow GRIDSS {
     )
     ch_versions = ch_versions.mix(ASSEMBLE.out.versions)
 
-    // Joint calling
+    // Prepare inputs for variant calling
     // channel: [val(meta_gridss), [bams], assemble_dir, [labels]]
     ch_call_inputs = WorkflowHmftools.group_by_meta(
       ch_assemble_inputs,
@@ -140,6 +98,8 @@ workflow GRIDSS {
         def (assemble_dir) = data[2]
         return [meta, bams, assemble_dir, labels]
       }
+
+    // Call variants
     CALL(
       ch_call_inputs,
       gridss_config,
@@ -153,14 +113,11 @@ workflow GRIDSS {
     )
     ch_versions = ch_versions.mix(CALL.out.versions)
 
-    // Pair output VCF with input meta
-    // channel: [val(meta), vcf]
+    // Reunite final VCF with the corresponding input meta object
     ch_out = Channel.empty()
       .concat(
-        ch_meta.map { meta -> [meta.id, meta] },
-        CALL.out.vcf.flatMap { meta_gridss, sv ->
-          meta_gridss.id_list.collect { id -> [id, sv] }
-        }
+        ch_inputs.map { meta, tbam, nbam -> [meta.id, meta] },
+        CALL.out.vcf.map { meta, vcf -> [meta.id, vcf] },
       )
       .groupTuple(size: 2)
       .map { id, other -> other.flatten() }

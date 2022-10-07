@@ -36,6 +36,7 @@ class WorkflowHmftools {
         stages = [
           Stage.AMBER,
           Stage.COBALT,
+          Stage.SVPREP,
           Stage.GRIDSS,
           Stage.GRIPSS,
           Stage.PURPLE,
@@ -44,6 +45,7 @@ class WorkflowHmftools {
         break
       case 'gridss':
         stages = [
+          Stage.SVPREP,
           Stage.GRIDSS,
           Stage.GRIPSS,
         ]
@@ -78,6 +80,7 @@ class WorkflowHmftools {
   enum Stage {
     AMBER,
     COBALT,
+    SVPREP,
     GRIDSS,
     GRIPSS,
     LILAC,

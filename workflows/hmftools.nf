@@ -22,7 +22,8 @@ def checkPathParamList = [
   // AMBER and COBALT
   params.ref_data_amber_loci,
   params.ref_data_cobalt_gc_profile,
-  // GRIDSS, GRIPSS
+  // SVPREP, GRIDSS, GRIPSS
+  params.ref_data_sv_prep_blacklist,
   params.gridss_config,
   params.ref_data_gridss_blacklist,
   params.ref_data_gridss_breakend_pon,
@@ -82,13 +83,14 @@ include { PURPLE      } from '../modules/umccr/nextflow_modules/purple/main'
 //
 // SUBWORKFLOWS
 //
-include { GRIDSS } from '../subworkflows/local/gridss'
-include { GRIPSS } from '../subworkflows/local/gripss'
-include { LILAC  } from '../subworkflows/local/lilac'
-include { LINX   } from '../subworkflows/local/linx'
-include { PAVE   } from '../subworkflows/local/pave'
-include { SAGE   } from '../subworkflows/local/sage'
-include { TEAL   } from '../subworkflows/local/teal'
+include { GRIDSS        } from '../subworkflows/local/gridss'
+include { GRIDSS_SVPREP } from '../subworkflows/local/gridss_svprep'
+include { GRIPSS        } from '../subworkflows/local/gripss'
+include { LILAC         } from '../subworkflows/local/lilac'
+include { LINX          } from '../subworkflows/local/linx'
+include { PAVE          } from '../subworkflows/local/pave'
+include { SAGE          } from '../subworkflows/local/sage'
+include { TEAL          } from '../subworkflows/local/teal'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,7 +126,8 @@ ref_data_genome_gridss_index          = get_file_object(params.ref_data_genome_g
 // AMBER and COBALT
 ref_data_amber_loci                   = get_file_object(params.ref_data_amber_loci)
 ref_data_cobalt_gc_profile            = get_file_object(params.ref_data_cobalt_gc_profile)
-// GRIDSS, GRIPSS
+// SVPREP, GRIDSS, GRIPSS
+ref_data_sv_prep_blacklist            = get_file_object(params.ref_data_sv_prep_blacklist)
 gridss_config                         = get_file_object(params.gridss_config)
 ref_data_gridss_blacklist             = get_file_object(params.ref_data_gridss_blacklist)
 ref_data_gridss_breakend_pon          = get_file_object(params.ref_data_gridss_breakend_pon)
@@ -217,19 +220,44 @@ workflow HMFTOOLS {
   // channel: [val(meta), gridss_vcf]
   ch_gridss_out = Channel.empty()
   if (WorkflowHmftools.Stage.GRIDSS in stages) {
-    GRIDSS(
-      ch_inputs,
-      gridss_config,
-      ref_data_genome_fa,
-      ref_data_genome_fai,
-      ref_data_genome_dict,
-      ref_data_genome_bwa_index,
-      ref_data_genome_bwa_index_image,
-      ref_data_genome_gridss_index,
-      ref_data_gridss_blacklist,
-    )
-    ch_versions = ch_versions.mix(GRIDSS.out.versions)
-    ch_gridss_out = ch_gridss_out.mix(GRIDSS.out.results)
+    if (params.no_svprep) {
+      gridss_inputs = ch_inputs
+        .map { meta ->
+          def tumor_bam = meta.get(['bam', 'tumor'])
+          def normal_bam = meta.get(['bam', 'normal'])
+          [meta, tumor_bam, normal_bam]
+        }
+      GRIDSS(
+        gridss_inputs,
+        gridss_config,
+        ref_data_genome_fa,
+        ref_data_genome_fai,
+        ref_data_genome_dict,
+        ref_data_genome_bwa_index,
+        ref_data_genome_bwa_index_image,
+        ref_data_genome_gridss_index,
+        ref_data_gridss_blacklist,
+      )
+      ch_versions = ch_versions.mix(GRIDSS.out.versions)
+      ch_gridss_out = ch_gridss_out.mix(GRIDSS.out.results)
+    } else {
+      GRIDSS_SVPREP(
+        ch_inputs,
+        gridss_config,
+        ref_data_genome_fa,
+        ref_data_genome_version,
+        ref_data_genome_fai,
+        ref_data_genome_dict,
+        ref_data_genome_bwa_index,
+        ref_data_genome_bwa_index_image,
+        ref_data_genome_gridss_index,
+        ref_data_gridss_blacklist,
+        ref_data_sv_prep_blacklist,
+        ref_data_known_fusions,
+      )
+      ch_versions = ch_versions.mix(GRIDSS_SVPREP.out.versions)
+      ch_gridss_out = ch_gridss_out.mix(GRIDSS_SVPREP.out.results)
+    }
   }
 
   //

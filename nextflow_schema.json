@@ -62,18 +62,52 @@
       "fa_icon": "fas fa-dna",
       "description": "Reference data files and options required for the workflow.",
       "properties": {
-        "ref_data_genome": {
+        "ref_data_genome_fa": {
           "type": "string",
           "format": "file-path",
           "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-          "description": "Path to FASTA genome file.",
+          "description": "Path to reference genome FASTA file.",
           "fa_icon": "far fa-file-code"
         },
         "ref_data_genome_version": {
           "type": "string",
-          "description": "FASTA genome version (37 or 38).",
+          "description": "Reference genome version (37 or 38).",
           "fa_icon": "far fa-file-code",
           "enum": ["37", "38", "38_noalt"]
+        },
+        "ref_data_genome_fai": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.fai$",
+          "description": "Path to reference genome FAI file.",
+          "fa_icon": "far fa-file-code"
+        },
+        "ref_data_genome_dict": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.dict$",
+          "description": "Path to reference genome sequence dictionary file.",
+          "fa_icon": "far fa-file-code"
+        },
+        "ref_data_genome_bwa_index": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "Path to directory containing reference genome BWA indices.",
+          "fa_icon": "far fa-file-code"
+        },
+        "ref_data_genome_bwa_index_image": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.img$",
+          "description": "Path to reference genome BWA indices image file.",
+          "fa_icon": "far fa-file-code"
+        },
+        "ref_data_genome_gridss_index": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.gridsscache$",
+          "description": "Path to reference genome GRIDSS index file.",
+          "fa_icon": "far fa-file-code"
         },
         "ref_data_amber_loci": {
           "type": "string",

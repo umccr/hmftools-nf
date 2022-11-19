@@ -44,29 +44,29 @@ process PURPLE {
   smlv_normal_vcf_arg=\$(get_smlv_arg "${smlv_normal_vcf_fp}" germline_vcf)
 
   # Run PURPLE
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -tumor "${meta.get(['sample_name', 'tumor'])}" \
-      -reference "${meta.get(['sample_name', 'normal'])}" \
-      -sv_recovery_vcf "${sv_soft_vcf}" \
-      -structural_vcf "${sv_hard_vcf}" \
-      \${smlv_tumor_vcf_arg} \
-      \${smlv_normal_vcf_arg} \
-      -amber "${amber}" \
-      -cobalt "${cobalt}" \
-      -output_dir purple/ \
-      -gc_profile "${gc_profile}" \
-      -run_drivers \
-      -driver_gene_panel "${driver_gene_panel}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -somatic_hotspots "${sage_known_hotspots_somatic}" \
-      -germline_hotspots "${sage_known_hotspots_germline}" \
-      ${germline_del_freq_arg} \
-      -ref_genome "${genome_fa}" \
-      -ref_genome_version "${genome_ver}" \
-      -threads "${task.cpus}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -tumor "${meta.get(['sample_name', 'tumor'])}" \\
+      -reference "${meta.get(['sample_name', 'normal'])}" \\
+      -sv_recovery_vcf "${sv_soft_vcf}" \\
+      -structural_vcf "${sv_hard_vcf}" \\
+      \${smlv_tumor_vcf_arg} \\
+      \${smlv_normal_vcf_arg} \\
+      -amber "${amber}" \\
+      -cobalt "${cobalt}" \\
+      -output_dir purple/ \\
+      -gc_profile "${gc_profile}" \\
+      -run_drivers \\
+      -driver_gene_panel "${driver_gene_panel}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -somatic_hotspots "${sage_known_hotspots_somatic}" \\
+      -germline_hotspots "${sage_known_hotspots_germline}" \\
+      ${germline_del_freq_arg} \\
+      -ref_genome "${genome_fa}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -threads "${task.cpus}" \\
       -circos "${task.ext.circosPath}"
 
   # PURPLE can fail silently, check that at least the PURPLE SV VCF is created

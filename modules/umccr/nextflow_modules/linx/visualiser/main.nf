@@ -23,18 +23,18 @@ process VISUALISER {
   def args = task.ext.args ?: ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -cp "${task.ext.jarPath}" \
-    com.hartwig.hmftools.linx.visualiser.SvVisualiser \
-      ${args} \
-      -sample "${meta.get(['sample_name', 'tumor'])}" \
-      -ref_genome_version "${genome_ver}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -plot_out linx_visualiser/plot \
-      -data_out linx_visualiser/data \
-      -vis_file_dir "${linx}" \
-      -circos "${task.ext.path_circos}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -cp "${task.ext.jarPath}" \\
+    com.hartwig.hmftools.linx.visualiser.SvVisualiser \\
+      ${args} \\
+      -sample "${meta.get(['sample_name', 'tumor'])}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -plot_out linx_visualiser/plot \\
+      -data_out linx_visualiser/data \\
+      -vis_file_dir "${linx}" \\
+      -circos "${task.ext.path_circos}" \\
       -threads "${task.cpus}"
 
   cat <<-END_VERSIONS > versions.yml

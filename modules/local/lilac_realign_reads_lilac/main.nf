@@ -19,18 +19,18 @@ process REALIGN_READS {
 
   """
   sambamba sort -n ${bam} -o ${meta.id}_sorted.bam
-  samtools fastq -@${task.threads} ${meta.id}_sorted.bam \
-      -1 ${meta.id}_R1.fastq.gz \
-      -2 ${meta.id}_R2.fastq.gz \
-      -0 ${meta.id}_other.fastq.gz \
+  samtools fastq -@${task.threads} ${meta.id}_sorted.bam \\
+      -1 ${meta.id}_R1.fastq.gz \\
+      -2 ${meta.id}_R2.fastq.gz \\
+      -0 ${meta.id}_other.fastq.gz \\
       -s ${meta.id}_singleton.fastq.gz;
 
-  bwa mem \
-    -t${task.cpus} \
-    -Y \
-    ${reference} \
-    ${meta.id}_R1.fastq.gz \
-    ${meta.id}_R2.fastq.gz | \
+  bwa mem \\
+    -t${task.cpus} \\
+    -Y \\
+    ${reference} \\
+    ${meta.id}_R1.fastq.gz \\
+    ${meta.id}_R2.fastq.gz | \\
     samtools sort -T tmp -o ${meta.id}_realigned.bam
   samtools index ${meta.id}_realigned.bam
 

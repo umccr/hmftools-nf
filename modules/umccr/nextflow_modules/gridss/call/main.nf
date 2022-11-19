@@ -57,19 +57,20 @@ process CALL {
   ln -s \$(find -L ${genome_bwa_index_dir} -type f) ./
 
   # Run
-  gridss \
-    ${args} \
-    --jvmheap "${task.memory.giga}g" \
-    --jar "${task.ext.jarPath}" \
-    --steps call \
-    --labels "${labels_arg}" \
-    --reference "${genome_fa}" \
-    --blacklist "${blacklist}" \
-    --workingdir "${output_dirname}/work/" \
-    --assembly "${output_dirname}/sv_assemblies.bam" \
-    --output "${output_dirname}/sv_vcf.vcf.gz" \
-    --threads "${task.cpus}" \
-    ${config_arg} \
+  gridss \\
+    ${args} \\
+    --jvmheap ${task.memory.giga - task.ext.otherJvmHeap.giga}g \\
+    --otherjvmheap ${task.ext.otherJvmHeap.giga}g \\
+    --jar "${task.ext.jarPath}" \\
+    --steps call \\
+    --labels "${labels_arg}" \\
+    --reference "${genome_fa}" \\
+    --blacklist "${blacklist}" \\
+    --workingdir "${output_dirname}/work/" \\
+    --assembly "${output_dirname}/sv_assemblies.bam" \\
+    --output "${output_dirname}/sv_vcf.vcf.gz" \\
+    --threads "${task.cpus}" \\
+    ${config_arg} \\
     ${bams_arg}
 
   cat <<-END_VERSIONS > versions.yml

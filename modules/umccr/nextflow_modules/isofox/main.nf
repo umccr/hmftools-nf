@@ -29,7 +29,7 @@ process ISOFOX {
   java \\
     -Xmx${task.memory.giga}g \\
     -jar ${task.ext.jarPath} \\
-      ${args} \
+      ${args} \\
       -sample ${meta.get(['sample_name', 'tumor'])} \\
       -bam_file ${bam} \\
       -ref_genome ${genome_fa} \\

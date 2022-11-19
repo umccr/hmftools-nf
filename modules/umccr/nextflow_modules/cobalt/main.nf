@@ -17,16 +17,16 @@ process COBALT {
   def args = task.ext.args ?: ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -tumor "${meta.get(['sample_name', 'tumor'])}" \
-      -tumor_bam "${tumor_bam}" \
-      -reference "${meta.get(['sample_name', 'normal'])}" \
-      -reference_bam "${normal_bam}" \
-      -output_dir cobalt/ \
-      -threads "${task.cpus}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -tumor "${meta.get(['sample_name', 'tumor'])}" \\
+      -tumor_bam "${tumor_bam}" \\
+      -reference "${meta.get(['sample_name', 'normal'])}" \\
+      -reference_bam "${normal_bam}" \\
+      -output_dir cobalt/ \\
+      -threads "${task.cpus}" \\
       -gc_profile "${gc_profile}"
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.

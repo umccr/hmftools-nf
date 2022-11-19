@@ -16,12 +16,12 @@ process SLICE {
   def args = task.ext.args ?: ''
 
   """
-  samtools view \
-    ${args} \
-    -L "${bed}" \
-    -@${task.cpus} \
-    -Obam \
-    ${bam} | \
+  samtools view \\
+    ${args} \\
+    -L "${bed}" \\
+    -@${task.cpus} \\
+    -Obam \\
+    ${bam} | \\
     samtools sort -T tmp -o "${bam.simpleName}.sliced.bam"
 
   samtools index "${bam.simpleName}.sliced.bam"

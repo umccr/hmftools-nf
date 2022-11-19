@@ -27,19 +27,19 @@ process PAVE_SOMATIC {
   def pon_filters = "HOTSPOT:5:5;PANEL:2:5;UNKNOWN:2:0"
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      -sample "${meta.get(['sample_name', 'tumor'])}" \
-      -ref_genome_version "${genome_ver}" \
-      -ref_genome "${genome_fa}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -driver_gene_panel "${driver_gene_panel}" \
-      -pon_file "${sage_pon_file}" \
-      -pon_filters "${pon_filters}" \
-      -mappability_bed "${mappability_bed}" \
-      -vcf_file "${sage_vcf}" \
-      -read_pass_only \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      -sample "${meta.get(['sample_name', 'tumor'])}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -ref_genome "${genome_fa}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -driver_gene_panel "${driver_gene_panel}" \\
+      -pon_file "${sage_pon_file}" \\
+      -pon_filters "${pon_filters}" \\
+      -mappability_bed "${mappability_bed}" \\
+      -vcf_file "${sage_vcf}" \\
+      -read_pass_only \\
       -output_dir ./
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.

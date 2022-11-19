@@ -19,9 +19,9 @@ process EXTRACT_AND_INDEX_CONTIG {
   def args = task.ext.args ?: ''
 
   """
-  samtools faidx \
-    -o ${contig_name}_extracted.fa \
-    ${genome_fa} \
+  samtools faidx \\
+    -o ${contig_name}_extracted.fa \\
+    ${genome_fa} \\
     ${contig_name}
   bwa index ${contig_name}_extracted.fa
 

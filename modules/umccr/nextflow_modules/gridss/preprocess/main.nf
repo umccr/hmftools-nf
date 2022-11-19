@@ -27,15 +27,15 @@ process PREPROCESS {
   # Symlink BWA indices next to assembly FASTA
   ln -s \$(find -L ${genome_bwa_index_dir} -type f) ./
 
-  gridss \
-    ${args} \
-    --jvmheap "${task.memory.giga}g" \
-    --jar "${task.ext.jarPath}" \
-    --steps preprocess \
-    --reference "${genome_fa}" \
-    --workingdir gridss_preprocess/ \
-    --threads "${task.cpus}" \
-    ${config_arg} \
+  gridss \\
+    ${args} \\
+    --jvmheap "${task.memory.giga}g" \\
+    --jar "${task.ext.jarPath}" \\
+    --steps preprocess \\
+    --reference "${genome_fa}" \\
+    --workingdir gridss_preprocess/ \\
+    --threads "${task.cpus}" \\
+    ${config_arg} \\
     ${bam}
 
   cat <<-END_VERSIONS > versions.yml

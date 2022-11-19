@@ -21,19 +21,19 @@ process LINX_GERMLINE {
   def args = task.ext.args ?: ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -sample "${meta.get(['sample_name', 'normal'])}" \
-      -germline \
-      -ref_genome_version "${genome_ver}" \
-      -sv_vcf "${gripss_sv}" \
-      -fragile_site_file "${fragile_sites}" \
-      -line_element_file "${lines}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -check_drivers \
-      -driver_gene_panel "${driver_gene_panel}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -sample "${meta.get(['sample_name', 'normal'])}" \\
+      -germline \\
+      -ref_genome_version "${genome_ver}" \\
+      -sv_vcf "${gripss_sv}" \\
+      -fragile_site_file "${fragile_sites}" \\
+      -line_element_file "${lines}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -check_drivers \\
+      -driver_gene_panel "${driver_gene_panel}" \\
       -output_dir linx_germline/
 
   cat <<-END_VERSIONS > versions.yml

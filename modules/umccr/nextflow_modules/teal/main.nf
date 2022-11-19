@@ -26,15 +26,15 @@ process TEAL {
   """ : ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      ${tumor_args.replaceAll('\n', '')} \
-      ${reference_args.replaceAll('\n', '')} \
-      -cobalt "${cobalt_dir}" \
-      -purple "${purple_dir}" \
-      -threads "${task.cpus}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      ${tumor_args.replaceAll('\n', '')} \\
+      ${reference_args.replaceAll('\n', '')} \\
+      -cobalt "${cobalt_dir}" \\
+      -purple "${purple_dir}" \\
+      -threads "${task.cpus}" \\
       -output_dir teal/
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.

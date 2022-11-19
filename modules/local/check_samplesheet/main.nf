@@ -16,8 +16,8 @@ process CHECK_SAMPLESHEET {
   def args = task.ext.args ?: ''
 
   """
-  check_samplesheet.py \
-    --input_fp "${samplesheet}" \
+  check_samplesheet.py \\
+    --input_fp "${samplesheet}" \\
     --mode "${mode}"
 
   cat <<-END_VERSIONS > versions.yml

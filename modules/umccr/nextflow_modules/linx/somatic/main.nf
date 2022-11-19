@@ -22,21 +22,21 @@ process LINX_SOMATIC {
   def args = task.ext.args ?: ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -sample "${meta.get(['sample_name', 'tumor'])}" \
-      -ref_genome_version "${genome_ver}" \
-      -sv_vcf "${purple_dir}/${meta.get(['sample_name', 'tumor'])}.purple.sv.vcf.gz" \
-      -purple_dir "${purple_dir}" \
-      -fragile_site_file "${fragile_sites}" \
-      -line_element_file "${lines}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -check_fusions \
-      -known_fusion_file "${known_fusion_data}" \
-      -check_drivers \
-      -driver_gene_panel "${driver_gene_panel}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -sample "${meta.get(['sample_name', 'tumor'])}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -sv_vcf "${purple_dir}/${meta.get(['sample_name', 'tumor'])}.purple.sv.vcf.gz" \\
+      -purple_dir "${purple_dir}" \\
+      -fragile_site_file "${fragile_sites}" \\
+      -line_element_file "${lines}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -check_fusions \\
+      -known_fusion_file "${known_fusion_data}" \\
+      -check_drivers \\
+      -driver_gene_panel "${driver_gene_panel}" \\
       -output_dir linx_somatic/
 
   cat <<-END_VERSIONS > versions.yml

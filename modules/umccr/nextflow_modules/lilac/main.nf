@@ -20,23 +20,23 @@ process LILAC {
   def sample_name = get_sample_name(meta, tumor_bam, normal_bam)
   def tumor_bam_arg = tumor_bam ? "-tumor_bam ${tumor_bam}" : ''
   def purple_args = purple_dir ? """
-    -gene_copy_number ${purple_dir}/${sample_name}.purple.cnv.gene.tsv \
-    -somatic_vcf ${purple_dir}/${sample_name}.purple.sv.vcf.gz \
+    -gene_copy_number ${purple_dir}/${sample_name}.purple.cnv.gene.tsv \\
+    -somatic_vcf ${purple_dir}/${sample_name}.purple.sv.vcf.gz \\
   """ : ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -sample "${sample_name}" \
-      ${tumor_bam_arg} \
-      -reference_bam ${normal_bam} \
-      -ref_genome_version "${genome_ver}" \
-      -ref_genome "${genome_fa}" \
-      -resource_dir "${lilac_resource_dir}" \
-      ${purple_args.replaceAll('\\n', '')} \
-      -threads "${task.cpus}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -sample "${sample_name}" \\
+      ${tumor_bam_arg} \\
+      -reference_bam ${normal_bam} \\
+      -ref_genome_version "${genome_ver}" \\
+      -ref_genome "${genome_fa}" \\
+      -resource_dir "${lilac_resource_dir}" \\
+      ${purple_args.replaceAll('\\n', '')} \\
+      -threads "${task.cpus}" \\
       -output_dir lilac/
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.

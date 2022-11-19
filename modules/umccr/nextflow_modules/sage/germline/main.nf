@@ -24,29 +24,29 @@ process SAGE_GERMLINE {
   def args = task.ext.args ?: ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -reference "${meta.get(['sample_name', 'tumor'])}" \
-      -reference_bam "${tumor_bam}" \
-      -tumor "${meta.get(['sample_name', 'normal'])}" \
-      -tumor_bam "${normal_bam}" \
-      -ref_genome_version "${genome_ver}" \
-      -ref_genome "${genome_fa}" \
-      -hotspots "${sage_known_hotspots_germline}" \
-      -panel_bed "${sage_coding_panel}" \
-      -high_confidence_bed "${sage_high_confidence}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -hotspot_min_tumor_qual 50 \
-      -panel_min_tumor_qual 75 \
-      -hotspot_max_germline_vaf 100 \
-      -hotspot_max_germline_rel_raw_base_qual 100 \
-      -panel_max_germline_vaf 100 \
-      -panel_max_germline_rel_raw_base_qual 100 \
-      -mnv_filter_enabled false \
-      -panel_only \
-      -threads "${task.cpus}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -reference "${meta.get(['sample_name', 'tumor'])}" \\
+      -reference_bam "${tumor_bam}" \\
+      -tumor "${meta.get(['sample_name', 'normal'])}" \\
+      -tumor_bam "${normal_bam}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -ref_genome "${genome_fa}" \\
+      -hotspots "${sage_known_hotspots_germline}" \\
+      -panel_bed "${sage_coding_panel}" \\
+      -high_confidence_bed "${sage_high_confidence}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -hotspot_min_tumor_qual 50 \\
+      -panel_min_tumor_qual 75 \\
+      -hotspot_max_germline_vaf 100 \\
+      -hotspot_max_germline_rel_raw_base_qual 100 \\
+      -panel_max_germline_vaf 100 \\
+      -panel_max_germline_rel_raw_base_qual 100 \\
+      -mnv_filter_enabled false \\
+      -panel_only \\
+      -threads "${task.cpus}" \\
       -out "${meta.subject_name}.sage_germline.vcf.gz"
 
   cat <<-END_VERSIONS > versions.yml

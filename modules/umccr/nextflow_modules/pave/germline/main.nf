@@ -28,21 +28,21 @@ process PAVE_GERMLINE {
   def args = task.ext.args ?: ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -sample "${meta.get(['sample_name', 'tumor'])}" \
-      -ref_genome_version "${genome_ver}" \
-      -ref_genome "${genome_fa}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -driver_gene_panel "${driver_gene_panel}" \
-      -clinvar_vcf "${clinvar_vcf}" \
-      -blacklist_bed "${sage_blacklist_bed}" \
-      -blacklist_vcf "${sage_blacklist_vcf}" \
-      -mappability_bed "${mappability_bed}" \
-      -vcf_file "${sage_vcf}" \
-      -read_pass_only \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -sample "${meta.get(['sample_name', 'tumor'])}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -ref_genome "${genome_fa}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -driver_gene_panel "${driver_gene_panel}" \\
+      -clinvar_vcf "${clinvar_vcf}" \\
+      -blacklist_bed "${sage_blacklist_bed}" \\
+      -blacklist_vcf "${sage_blacklist_vcf}" \\
+      -mappability_bed "${mappability_bed}" \\
+      -vcf_file "${sage_vcf}" \\
+      -read_pass_only \\
       -output_dir ./
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.

@@ -24,21 +24,21 @@ process SAGE_SOMATIC {
   def args = task.ext.args ?: ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -reference "${meta.get(['sample_name', 'normal'])}" \
-      -reference_bam "${normal_bam}" \
-      -tumor "${meta.get(['sample_name', 'tumor'])}" \
-      -tumor_bam "${tumor_bam}" \
-      -ref_genome_version "${genome_ver}" \
-      -ref_genome "${genome_fa}" \
-      -hotspots "${sage_known_hotspots_somatic}" \
-      -panel_bed "${sage_coding_panel}" \
-      -high_confidence_bed "${sage_high_confidence}" \
-      -ensembl_data_dir "${ensembl_data_dir}" \
-      -threads "${task.cpus}" \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -reference "${meta.get(['sample_name', 'normal'])}" \\
+      -reference_bam "${normal_bam}" \\
+      -tumor "${meta.get(['sample_name', 'tumor'])}" \\
+      -tumor_bam "${tumor_bam}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -ref_genome "${genome_fa}" \\
+      -hotspots "${sage_known_hotspots_somatic}" \\
+      -panel_bed "${sage_coding_panel}" \\
+      -high_confidence_bed "${sage_high_confidence}" \\
+      -ensembl_data_dir "${ensembl_data_dir}" \\
+      -threads "${task.cpus}" \\
       -out "${meta.subject_name}.sage_somatic.vcf.gz"
 
   cat <<-END_VERSIONS > versions.yml

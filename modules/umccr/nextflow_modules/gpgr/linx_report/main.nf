@@ -1,6 +1,6 @@
 process LINX_REPORT {
-  //conda (params.enable_conda ? "umccr::r-gpgr==1.3.0" : null)
-  container 'ghcr.io/umccr/gpgr:1.3.0'
+  //conda (params.enable_conda ? "umccr::r-gpgr==1.4.1" : null)
+  container 'ghcr.io/umccr/gpgr:1.4.1'
 
   input:
   tuple val(meta), path(linx_annotation), path(linx_visualiser)
@@ -16,11 +16,11 @@ process LINX_REPORT {
   def args = task.ext.args ?: ''
 
   """
-  gpgr.R linx \
-    ${args} \
-    --sample ${meta.get(['sample_name', 'tumor'])} \
-    --plot ${linx_visualiser}/ \
-    --table ${linx_annotation}/ \
+  gpgr.R linx \\
+    ${args} \\
+    --sample ${meta.get(['sample_name', 'tumor'])} \\
+    --plot ${linx_visualiser}/ \\
+    --table ${linx_annotation}/ \\
     --out ${meta.get(['sample_name', 'tumor'])}_linx.html;
 
   cat <<-END_VERSIONS > versions.yml

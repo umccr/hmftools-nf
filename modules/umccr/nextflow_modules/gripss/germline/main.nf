@@ -25,18 +25,18 @@ process GRIPSS_GERMLINE {
   def repeat_mask_file_arg = repeat_mask_file ? "-repeat_mask_file ${repeat_mask_file}" : ''
 
   """
-  java \
-    -Xmx${task.memory.giga}g \
-    -jar "${task.ext.jarPath}" \
-      ${args} \
-      -sample "${meta.get(['sample_name', 'normal'])}" \
-      -ref_genome_version "${genome_ver}" \
-      -ref_genome "${genome_fa}" \
-      -pon_sgl_file "${breakend_pon}" \
-      -pon_sv_file "${breakpoint_pon}" \
-      -known_hotspot_file "${known_fusions}" \
-      -vcf "${gridss_vcf}" \
-      ${repeat_mask_file_arg} \
+  java \\
+    -Xmx${task.memory.giga}g \\
+    -jar "${task.ext.jarPath}" \\
+      ${args} \\
+      -sample "${meta.get(['sample_name', 'normal'])}" \\
+      -ref_genome_version "${genome_ver}" \\
+      -ref_genome "${genome_fa}" \\
+      -pon_sgl_file "${breakend_pon}" \\
+      -pon_sv_file "${breakpoint_pon}" \\
+      -known_hotspot_file "${known_fusions}" \\
+      -vcf "${gridss_vcf}" \\
+      ${repeat_mask_file_arg} \\
       -output_dir ./
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information

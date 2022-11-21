@@ -83,6 +83,9 @@ include { AMBER       } from '../modules/umccr/nextflow_modules/amber/main'
 include { COBALT      } from '../modules/umccr/nextflow_modules/cobalt/main'
 include { LINX_REPORT } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
 include { PURPLE      } from '../modules/umccr/nextflow_modules/purple/main'
+include { TEAL        } from '../modules/umccr/nextflow_modules/teal/main'
+
+include { PICARD_COLLECTWGSMETRICS as COLLECTWGSMETRICS } from '../modules/nf-core/modules/picard/collectwgsmetrics/main'
 
 //
 // SUBWORKFLOWS
@@ -187,6 +190,81 @@ workflow HMFTOOLS {
         def tumor_bam = meta.get(['bam', 'tumor'])
         def normal_bam = meta.get(['bam', 'normal'])
         [meta, tumor_bam, normal_bam, "${tumor_bam}.bai", "${normal_bam}.bai"]
+      }
+  }
+
+  //
+  // MODULE: Run COLLECTWGSMETRICS to generate stats required for downstream processes
+  //
+  run_teal = Constants.Stage.TEAL in stages
+  run_cuppa = Constants.Stage.TEAL in stages
+  if (run_cuppa || run_teal) {
+
+    // NOTE(SW): CUPPA only requires collectwgsmetrics for the tumor sample in
+    // the upstream process Virus Interpreter but TEAL currently requires
+    // collectwgsmetrics for both tumor and normal sample
+    // channel: [val(meta_cwm), bam]
+    ch_cwm_inputs_all = ch_inputs
+      .flatMap { meta ->
+        def sample_types = run_teal ? ['tumor', 'normal'] : ['tumor']
+        return sample_types
+          .collect { sample_type ->
+            def bam = meta.get(['bam', sample_type])
+            def sample_name = meta.get(['sample_name', sample_type])
+            def meta_cwm = [
+              id: sample_name,
+              sample_type: sample_type,
+              meta_full: meta,
+            ]
+            return [meta_cwm, bam]
+          }
+      }
+
+    // Gather duplicate files e.g. repeated normal BAMs for multiple tumor samples
+    // NOTE(SW): no effective blocking by .groupTuple() as we're not dependent
+    // on any process
+    // channel: [val(meta_cwm), bam]
+    ch_cwm_inputs = ch_cwm_inputs_all
+      .map { [it[1..-1], it[0]] }
+      .groupTuple()
+      .map { filepaths, meta_cwm ->
+        def (meta_fulls, sample_types) = meta_cwm
+          .collect {
+            [it.meta_full, it.sample_type]
+          }
+          .transpose()
+
+        def sample_type = sample_types.unique(false)
+        assert sample_type.size() == 1
+
+        def id = meta_fulls.collect { it.id }.join('__')
+        def meta_cwm_new = [
+          id: "${id}_${sample_type[0]}",
+          id_simple: id,
+          metas_full: meta_fulls,
+          sample_type: sample_type[0],
+        ]
+        return [meta_cwm_new, *filepaths]
+      }
+
+    COLLECTWGSMETRICS(
+      ch_cwm_inputs,
+      ref_data_genome_fa,
+    )
+    ch_versions = ch_versions.mix(COLLECTWGSMETRICS.out.versions)
+
+    // Replicate outputs to undo unique operation
+    // channel (tumor): [val(meta), metrics]
+    // channel (normal): [val(meta), metrics]
+    ch_cwm_output = COLLECTWGSMETRICS.out.metrics
+      .flatMap { meta_cwm, metrics ->
+        meta_cwm.metas_full.collect { meta -> [meta, meta_cwm.sample_type, metrics] }
+      }
+      .branch { meta, sample_type, metrics ->
+        tumor: sample_type == 'tumor'
+          return [meta, metrics]
+        normal: sample_type == 'normal'
+          return [meta, metrics]
       }
   }
 
@@ -413,10 +491,11 @@ workflow HMFTOOLS {
   }
 
   //
-  // SUBWORKFLOW: Characterise teleomeres with TEAL
+  // MODULE: Run TEAL to characterise teleomeres
   //
-  if (Constants.Stage.TEAL in stages) {
+  if (run_teal) {
 
+    // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
     ch_teal_inputs_bams = ch_inputs
       .map { meta ->
         def tumor_bam = meta.get(['bam', 'tumor'])
@@ -425,6 +504,7 @@ workflow HMFTOOLS {
       }
 
     // Mode: full
+    // channel: [val(meta), cobalt_dir, purple_dir]
     if (run_cobalt && Constants.Stage.PURPLE in stages) {
       ch_teal_inputs_other = WorkflowHmftools.group_by_meta(
         ch_cobalt_out,
@@ -442,10 +522,23 @@ workflow HMFTOOLS {
         }
     }
 
-    TEAL(
+    // channel: [val(meta), tumor_wgs_metrics, normal_wgs_metrics]
+    // NOTE(SW): assuming here that TEAL is being run in tumor/normal mode and
+    // so we expect a tumor metrics file and normal metrics file
+    ch_teal_inputs_metrics = WorkflowHmftools.group_by_meta(
+      ch_cwm_output.tumor,
+      ch_cwm_output.normal,
+    )
+
+    // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai, tumor_wgs_metrics, normal_wgs_metrics, cobalt_dir, purple_dir]
+    ch_teal_inputs = WorkflowHmftools.group_by_meta(
       ch_teal_inputs_bams,
+      ch_teal_inputs_metrics,
       ch_teal_inputs_other,
-      ref_data_genome_fa,
+    )
+
+    TEAL(
+      ch_teal_inputs,
     )
     ch_versions = ch_versions.mix(TEAL.out.versions)
   }

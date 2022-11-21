@@ -1,6 +1,6 @@
 process GRIPSS_SOMATIC {
   //conda (params.enable_conda ? "bioconda::hmftools-gripss=2.2" : null)
-  container 'docker.io/scwatts/gripss:2.3--0'
+  container 'docker.io/scwatts/gripss:2.3.1--0'
 
   input:
   tuple val(meta), path(gridss_vcf)
@@ -43,7 +43,7 @@ process GRIPSS_SOMATIC {
   # NOTE(SW): hard coded since there is no reliable way to obtain version information
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
-      gripss: 2.3
+      gripss: 2.3.1
   END_VERSIONS
   """
 

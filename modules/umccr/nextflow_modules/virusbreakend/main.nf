@@ -1,15 +1,3 @@
-# NOTE(SW): the default kraken2 database requires 60 GB to load into memory
-
-
-
-
-# NOTE(SW): RepeatMasker will probably need to be fixed in the Docker image,
-# see /Users/stephen/repos/hmftools_stack/assets/Dockerfile for solution
-
-
-
-
-
 process VIRUSBREAKEND {
   container 'docker.io/scwatts/gridss:2.13.2--3'
 
@@ -53,7 +41,7 @@ process VIRUSBREAKEND {
 
   stub:
   """
-  touch ${meta.id}.virusbreakend.vcf
+  touch ${meta.id}.virusbreakend.vcf ${meta.id}.summary.tsv
   echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
   """
 }

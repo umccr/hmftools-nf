@@ -123,6 +123,12 @@
           "description": "Path to COBALT GC profile file.",
           "fa_icon": "far fa-file-code"
         },
+        "ref_data_cuppa": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "Path to CUPPA reference file directory.",
+          "fa_icon": "far fa-file-code"
+        },
         "ref_data_gridss_blacklist": {
           "type": "string",
           "format": "file-path",
@@ -151,6 +157,20 @@
           "description": "Path to RepeatMasker file.",
           "fa_icon": "far fa-file-code"
         },
+        "ref_data_rna_exp_counts": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.csv$",
+          "description": "Path to Isofox expected read counts file.",
+          "fa_icon": "far fa-file-code"
+        },
+        "ref_data_rna_exp_gc_ratios": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.csv$",
+          "description": "Path to Isofox expected GC ratios file.",
+          "fa_icon": "far fa-file-code"
+        },
         "ref_data_linx_fragile_sites": {
           "type": "string",
           "format": "file-path",
@@ -176,6 +196,26 @@
           "format": "directory-path",
           "description": "Path to LILAC resource directory.",
           "fa_icon": "far fa-folder-open"
+        },
+        "ref_data_virusbreakenddb": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "Path to VIRUSBreakend database directory.",
+          "fa_icon": "far fa-folder-open"
+        },
+        "ref_data_virus_taxonomy": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.tsv$",
+          "description": "Path to Virus Interpreter taxonomy file.",
+          "fa_icon": "far fa-file-code"
+        },
+        "ref_data_virus_reporting": {
+          "type": "string",
+          "format": "file-path",
+          "pattern": "^\\S+\\.tsv$",
+          "description": "Path to Virus Interpreter reporting file.",
+          "fa_icon": "far fa-file-code"
         },
         "ref_data_mappability_bed": {
           "type": "string",

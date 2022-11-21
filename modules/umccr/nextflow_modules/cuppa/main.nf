@@ -19,7 +19,7 @@ process CUPPA {
   # Symlink input files into a single directory
   mkdir sample_data/
   input_dirs="${isofox_dir} ${purple_dir} ${linx_dir} ${virus_interpreter_dir}"
-  find ${input_dirs} -type f -exec ln -s ../{} sample_data/ \;
+  find ${input_dirs} -type f -exec ln -s ../{} sample_data/ \\;
 
   java \\
     -Xmx${task.memory.giga}g \\

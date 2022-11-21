@@ -1,4 +1,4 @@
-# NOTE(SW): care must be taken for using exp_counts; only supports read length of 151 bp
+// NOTE(SW): care must be taken for using exp_counts; only supports read length of 151 bp
 
 
 process ISOFOX {

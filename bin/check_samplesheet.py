@@ -18,11 +18,12 @@ HEADER_COLS = (
 
 class FileType(enum.Enum):
 
-    BAM = 'bam'
-    SV_VCF = 'sv'
-    SMLV_VCF = 'smlv'
-    GRIPSS_SOFT_SV_VCF = 'gripss_soft_sv'
-    GRIPSS_HARD_SV_VCF = 'gripss_hard_sv'
+    BAM_WGS = 'bam_wgs'
+    BAM_WTS = 'bam_wts'
+    VCF_SV = 'vcf_sv'
+    SMLV_VCF = 'vcf_smlv'
+    VCF_SV_GRIPSS_SOFT = 'vcf_sv_gripss_soft'
+    VCF_SV_GRIPSS_HARD = 'vcf_sv_gripss_hard'
     AMBER_DIR = 'amber_dir'
     COBALT_DIR = 'cobalt_dir'
     PURPLE_DIR = 'purple_dir'
@@ -43,42 +44,42 @@ class SampleType(enum.Enum):
 FILETYPES_EXPECTED = {
     'full': {
         'required': [
-            (SampleType.TUMOR, FileType.BAM),
-            (SampleType.NORMAL, FileType.BAM),
+            (SampleType.TUMOR, FileType.BAM_WGS),
+            (SampleType.NORMAL, FileType.BAM_WGS),
         ],
         'optional': [
-            (SampleType.TUMOR, FileType.SV_VCF),
-            (SampleType.NORMAL, FileType.SV_VCF),
+            (SampleType.TUMOR, FileType.VCF_SV),
+            (SampleType.NORMAL, FileType.VCF_SV),
         ],
     },
     'gridss_purple_linx': {
         'required': [
-            (SampleType.TUMOR, FileType.BAM),
-            (SampleType.NORMAL, FileType.BAM),
+            (SampleType.TUMOR, FileType.BAM_WGS),
+            (SampleType.NORMAL, FileType.BAM_WGS),
         ],
         'optional': [
-            (SampleType.TUMOR, FileType.SV_VCF),
-            (SampleType.NORMAL, FileType.SV_VCF),
+            (SampleType.TUMOR, FileType.VCF_SV),
+            (SampleType.NORMAL, FileType.VCF_SV),
             (SampleType.TUMOR, FileType.SMLV_VCF),
             (SampleType.NORMAL, FileType.SMLV_VCF)
         ],
     },
     'gridss': {
         'required': [
-            (SampleType.TUMOR, FileType.BAM),
-            (SampleType.NORMAL, FileType.BAM),
+            (SampleType.TUMOR, FileType.BAM_WGS),
+            (SampleType.NORMAL, FileType.BAM_WGS),
         ],
         'optional': [
-            (SampleType.TUMOR, FileType.SV_VCF),
-            (SampleType.NORMAL, FileType.SV_VCF),
+            (SampleType.TUMOR, FileType.VCF_SV),
+            (SampleType.NORMAL, FileType.VCF_SV),
         ],
     },
     'purple': {
         'required': [
             (SampleType.TUMOR, FileType.AMBER_DIR),
             (SampleType.TUMOR, FileType.COBALT_DIR),
-            (SampleType.TUMOR, FileType.GRIPSS_HARD_SV_VCF),
-            (SampleType.TUMOR, FileType.GRIPSS_SOFT_SV_VCF),
+            (SampleType.TUMOR, FileType.VCF_SV_GRIPSS_HARD),
+            (SampleType.TUMOR, FileType.VCF_SV_GRIPSS_SOFT),
         ],
         'optional': [
             (SampleType.TUMOR, FileType.SMLV_VCF),
@@ -91,21 +92,21 @@ FILETYPES_EXPECTED = {
             (SampleType.TUMOR, FileType.PURPLE_DIR),
         ],
         'optional': [
-            (SampleType.NORMAL, FileType.GRIPSS_HARD_SV_VCF),
+            (SampleType.NORMAL, FileType.VCF_SV_GRIPSS_HARD),
         ],
     },
     'lilac': {
         'required': [
-            (SampleType.TUMOR, FileType.BAM),
-            (SampleType.NORMAL, FileType.BAM),
+            (SampleType.TUMOR, FileType.BAM_WGS),
+            (SampleType.NORMAL, FileType.BAM_WGS),
             (SampleType.TUMOR, FileType.PURPLE_DIR),
         ],
         'optional': [],
     },
     'teal': {
         'required': [
-            (SampleType.TUMOR, FileType.BAM),
-            (SampleType.NORMAL, FileType.BAM),
+            (SampleType.TUMOR, FileType.BAM_WGS),
+            (SampleType.NORMAL, FileType.BAM_WGS),
             (SampleType.TUMOR, FileType.COBALT_DIR),
             (SampleType.TUMOR, FileType.PURPLE_DIR),
         ],
@@ -160,7 +161,8 @@ def main():
             FILETYPES_EXPECTED[args.mode]['optional'],
         )
         check_subject_names(rid, records)
-        check_bam_sample_names(records)
+        check_bam_sample_names(records, FileType.BAM_WGS)
+        check_bam_sample_names(records, FileType.BAM_WTS)
         check_sample_type_sample_names(rid, records)
 
 
@@ -182,11 +184,11 @@ def check_subject_names(rid, records):
         sys.exit(1)
 
 
-def check_bam_sample_names(records):
+def check_bam_sample_names(records, bam_filetype):
     record_tumor_bam = None
     record_normal_bam = None
     for record in records:
-        if record['filetype_enum'] != FileType.BAM:
+        if record['filetype_enum'] != bam_filetype:
             continue
         if record['sample_type_enum'] == SampleType.TUMOR:
             record_tumor_bam = record
@@ -198,7 +200,7 @@ def check_bam_sample_names(records):
 
     if record_tumor_bam['sample_name'] == record_normal_bam['sample_name']:
         sample_name = record_tumor_bam['sample_name']
-        print(f'Got identical same names for BAMs: {sample_name}', file=sys.stderr)
+        print(f'Got identical sample names for \'{repr(bam_filetype)}\' BAMs: {sample_name}', file=sys.stderr)
         sys.exit(1)
 
 

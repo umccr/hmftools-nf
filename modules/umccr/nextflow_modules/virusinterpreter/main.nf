@@ -1,9 +1,4 @@
-# TODO(SW): compute output sections (block and stub)
-
-# NOTE(SW): meta.id should be tumour id
-
-
-process VIRUSINTERPREPTER {
+process VIRUSINTERPRETER {
   container 'docker.io/scwatts/virus_interpreter:1.2--0'
 
   input:
@@ -12,8 +7,8 @@ process VIRUSINTERPREPTER {
   path virus_reporting
 
   output:
-  ####tuple val(meta), path("*.virusbreakend.vcf"), emit: vcf
-  path 'versions.yml'                         , emit: versions
+  tuple val(meta), path('virus_interpreter'), emit: virusinterpreter_dir
+  path 'versions.yml'                       , emit: versions
 
   when:
   task.ext.when == null || task.ext.when
@@ -25,14 +20,14 @@ process VIRUSINTERPREPTER {
   java \\
     -Xmx${task.memory.giga}g \\
     -jar ${task.ext.jarPath} \\
-      -sample_id ${meta.id} \\
+      -sample_id ${meta.get(['sample_name', 'tumor'])} \\
       -purple_purity_tsv ${purple_purity} \\
       -purple_qc_file ${purple_qc} \\
       -tumor_sample_wgs_metrics_file ${wgs_metrics} \\
       -virus_breakend_tsv ${virus_tsv} \\
       -taxonomy_db_tsv ${taxonomy} \\
       -virus_reporting_db_tsv ${virus_reporting} \\
-      -output_dir ./output/
+      -output_dir ./virusinterpreter/
 
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":
@@ -42,8 +37,7 @@ process VIRUSINTERPREPTER {
 
   stub:
   """
-  ####touch ${meta.id}.virusbreakend.vcf
+  mkdir virus_interpreter/
   echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
   """
 }
-

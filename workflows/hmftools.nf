@@ -26,13 +26,18 @@ def checkPathParamList = [
   // AMBER and COBALT
   params.ref_data_amber_loci,
   params.ref_data_cobalt_gc_profile,
+  // CUPPA
+  params.ref_data_cuppa,
   // SVPREP, GRIDSS, GRIPSS
-  params.ref_data_sv_prep_blacklist,
   params.gridss_config,
+  params.ref_data_sv_prep_blacklist,
   params.ref_data_gridss_blacklist,
   params.ref_data_gridss_breakend_pon,
   params.ref_data_gridss_breakpoint_pon,
   params.ref_data_repeat_masker_file,
+  // Isofox
+  params.ref_data_rna_exp_counts,
+  params.ref_data_rna_exp_gc_ratios,
   // LINX
   params.ref_data_linx_fragile_sites,
   params.ref_data_linx_lines,
@@ -46,6 +51,10 @@ def checkPathParamList = [
   params.ref_data_sage_pon_file,
   // LILAC
   params.ref_data_lilac_resource_dir,
+  // VIRUSBreakend, Virus Interpreter
+  params.ref_data_virusbreakenddb,
+  params.ref_data_virus_taxonomy,
+  params.ref_data_virus_reporting,
   // Other
   params.ref_data_purple_germline_del,
   params.ref_data_clinvar_vcf,
@@ -79,11 +88,15 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 //
 include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet/main'
 
-include { AMBER       } from '../modules/umccr/nextflow_modules/amber/main'
-include { COBALT      } from '../modules/umccr/nextflow_modules/cobalt/main'
-include { LINX_REPORT } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
-include { PURPLE      } from '../modules/umccr/nextflow_modules/purple/main'
-include { TEAL        } from '../modules/umccr/nextflow_modules/teal/main'
+include { AMBER            } from '../modules/umccr/nextflow_modules/amber/main'
+include { COBALT           } from '../modules/umccr/nextflow_modules/cobalt/main'
+include { CUPPA            } from '../modules/umccr/nextflow_modules/cuppa/main'
+include { ISOFOX           } from '../modules/umccr/nextflow_modules/isofox/main'
+include { LINX_REPORT      } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
+include { PURPLE           } from '../modules/umccr/nextflow_modules/purple/main'
+include { TEAL             } from '../modules/umccr/nextflow_modules/teal/main'
+include { VIRUSBREAKEND    } from '../modules/umccr/nextflow_modules/virusbreakend/main'
+include { VIRUSINTERPRETER } from '../modules/umccr/nextflow_modules/virusinterpreter/main'
 
 include { PICARD_COLLECTWGSMETRICS as COLLECTWGSMETRICS } from '../modules/nf-core/modules/picard/collectwgsmetrics/main'
 
@@ -133,13 +146,18 @@ ref_data_genome_gridss_index          = get_file_object(params.ref_data_genome_g
 // AMBER and COBALT
 ref_data_amber_loci                   = get_file_object(params.ref_data_amber_loci)
 ref_data_cobalt_gc_profile            = get_file_object(params.ref_data_cobalt_gc_profile)
+// CUPPA
+ref_data_cuppa                        = get_file_object(params.ref_data_cuppa)
 // SVPREP, GRIDSS, GRIPSS
-ref_data_sv_prep_blacklist            = get_file_object(params.ref_data_sv_prep_blacklist)
 gridss_config                         = get_file_object(params.gridss_config)
+ref_data_sv_prep_blacklist            = get_file_object(params.ref_data_sv_prep_blacklist)
 ref_data_gridss_blacklist             = get_file_object(params.ref_data_gridss_blacklist)
 ref_data_gridss_breakend_pon          = get_file_object(params.ref_data_gridss_breakend_pon)
 ref_data_gridss_breakpoint_pon        = get_file_object(params.ref_data_gridss_breakpoint_pon)
 ref_data_repeat_masker_file           = get_file_object(params.ref_data_repeat_masker_file)
+// Isofox
+ref_data_rna_exp_counts               = get_file_object(params.ref_data_rna_exp_counts)
+ref_data_rna_exp_gc_ratios            = get_file_object(params.ref_data_rna_exp_gc_ratios)
 // LINX
 ref_data_linx_fragile_sites           = get_file_object(params.ref_data_linx_fragile_sites)
 ref_data_linx_lines                   = get_file_object(params.ref_data_linx_lines)
@@ -153,6 +171,10 @@ ref_data_sage_known_hotspots_somatic  = get_file_object(params.ref_data_sage_kno
 ref_data_sage_pon_file                = get_file_object(params.ref_data_sage_pon_file)
 // LILAC
 ref_data_lilac_resource_dir           = get_file_object(params.ref_data_lilac_resource_dir)
+// VIRUSBreakend, Virus Interpreter
+ref_data_virusbreakenddb              = get_file_object(params.ref_data_virusbreakenddb)
+ref_data_virus_taxonomy               = get_file_object(params.ref_data_virus_taxonomy)
+ref_data_virus_reporting              = get_file_object(params.ref_data_virus_reporting)
 // Other
 ref_data_purple_germline_del          = get_file_object(params.ref_data_purple_germline_del)
 ref_data_clinvar_vcf                  = get_file_object(params.ref_data_clinvar_vcf)
@@ -181,23 +203,54 @@ workflow HMFTOOLS {
   // Set up channel with common inputs for several stages
   def run_amber = Constants.Stage.AMBER in stages
   def run_cobalt = Constants.Stage.COBALT in stages
-  def run_pave = Constants.Stage.PAVE in stages
   def run_lilac = Constants.Stage.LILAC in stages
-  if (run_amber || run_cobalt || run_pave || run_lilac) {
+  def run_pave = Constants.Stage.PAVE in stages
+  def run_teal = Constants.Stage.TEAL in stages
+  if (run_amber || run_cobalt || run_pave || run_lilac || run_teal) {
     // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
     ch_bams_and_indices = ch_inputs
       .map { meta ->
-        def tumor_bam = meta.get(['bam', 'tumor'])
-        def normal_bam = meta.get(['bam', 'normal'])
+        def tumor_bam = meta.get(['bam_wgs', 'tumor'])
+        def normal_bam = meta.get(['bam_wgs', 'normal'])
         [meta, tumor_bam, normal_bam, "${tumor_bam}.bai", "${normal_bam}.bai"]
       }
+  }
+
+  // channel (present): [val(meta)]
+  // channel (absent): [val(meta)]
+  ch_inputs_wts = ch_inputs
+    .branch { meta ->
+      def key = ['bam_wts', 'tumor']
+      present: meta.containsKey(key)
+        return meta
+      absent: ! meta.containsKey(key)
+        return meta
+    }
+
+
+  //
+  // MODULE: Run Isofox to analyse WTS data
+  //
+  ch_isofox_out = Channel.empty()
+  if (Constants.Stage.ISOFOX in stages) {
+    // channel: [meta, tumor_bam_wts]
+    ch_isofox_inputs = ch_inputs_wts.present
+      .map { meta ->
+        return [meta, meta.get(['bam_wts', 'tumor'])]
+      }
+    ISOFOX(
+      ch_isofox_inputs,
+      ref_data_rna_exp_counts,
+      ref_data_rna_exp_gc_ratios,
+    )
+    ch_versions = ch_versions.mix(ISOFOX.out.versions)
+    ch_isofox_out = ch_isofox_out.mix(ISOFOX.out.isofox_dir)
   }
 
   //
   // MODULE: Run COLLECTWGSMETRICS to generate stats required for downstream processes
   //
-  run_teal = Constants.Stage.TEAL in stages
-  run_cuppa = Constants.Stage.TEAL in stages
+  def run_cuppa = Constants.Stage.TEAL in stages
   if (run_cuppa || run_teal) {
 
     // NOTE(SW): CUPPA only requires collectwgsmetrics for the tumor sample in
@@ -209,7 +262,7 @@ workflow HMFTOOLS {
         def sample_types = run_teal ? ['tumor', 'normal'] : ['tumor']
         return sample_types
           .collect { sample_type ->
-            def bam = meta.get(['bam', sample_type])
+            def bam = meta.get(['bam_wgs', sample_type])
             def sample_name = meta.get(['sample_name', sample_type])
             def meta_cwm = [
               id: sample_name,
@@ -449,16 +502,16 @@ workflow HMFTOOLS {
           return [
             meta,
             *fps,
-            meta.get(['smlv', 'tumor'], []),
-            meta.get(['smlv', 'normal'], []),
+            meta.get(['vcf_smlv', 'tumor'], []),
+            meta.get(['vcf_smlv', 'normal'], []),
           ]
         }
     // Mode: purple
     } else {
       ch_purple_inputs = ch_inputs
         .map { meta ->
-          def sv_hard_vcf = meta[['gripss_hard_sv', 'tumor']]
-          def sv_soft_vcf = meta[['gripss_soft_sv', 'tumor']]
+          def sv_hard_vcf = meta[['vcf_sv_gripss_hard', 'tumor']]
+          def sv_soft_vcf = meta[['vcf_sv_gripss_soft', 'tumor']]
           return [
             meta,
             meta[['amber_dir', 'tumor']],
@@ -467,8 +520,8 @@ workflow HMFTOOLS {
             "${sv_hard_vcf}.tbi",
             sv_soft_vcf,
             "${sv_soft_vcf}.tbi",
-            meta.get(['smlv', 'tumor'], []),
-            meta.get(['smlv', 'normal'], []),
+            meta.get(['vcf_smlv', 'tumor'], []),
+            meta.get(['vcf_smlv', 'normal'], []),
           ]
         }
     }
@@ -494,14 +547,6 @@ workflow HMFTOOLS {
   // MODULE: Run TEAL to characterise teleomeres
   //
   if (run_teal) {
-
-    // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
-    ch_teal_inputs_bams = ch_inputs
-      .map { meta ->
-        def tumor_bam = meta.get(['bam', 'tumor'])
-        def normal_bam = meta.get(['bam', 'normal'])
-        [meta, tumor_bam, normal_bam, "${tumor_bam}.bai", "${normal_bam}.bai"]
-      }
 
     // Mode: full
     // channel: [val(meta), cobalt_dir, purple_dir]
@@ -532,7 +577,7 @@ workflow HMFTOOLS {
 
     // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai, tumor_wgs_metrics, normal_wgs_metrics, cobalt_dir, purple_dir]
     ch_teal_inputs = WorkflowHmftools.group_by_meta(
-      ch_teal_inputs_bams,
+      ch_bams_and_indices,
       ch_teal_inputs_metrics,
       ch_teal_inputs_other,
     )
@@ -571,6 +616,55 @@ workflow HMFTOOLS {
   }
 
   //
+  // MODULE: Run VIRUSBreakend and Virus Interpreter to quantify viral content
+  //
+  // NOTE(SW): kept separate from CUPPA conditional block since we'll allow users to run this independently
+  ch_virusinterpreter_out = Channel.empty()
+  if (Constants.Stage.CUPPA in stages) {
+
+    // TODO(SW): PURPLE from difference sources
+
+    // channel: [val(meta), tumor_bam]
+    ch_virusbreakend_inputs = ch_inputs.map { meta -> [meta, meta.get(['bam_wgs', 'tumor'])] }
+
+    VIRUSBREAKEND(
+      ch_virusbreakend_inputs,
+      ref_data_virusbreakenddb,
+      gridss_config,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_dict,
+      ref_data_genome_bwa_index,
+      ref_data_genome_bwa_index_image,
+      ref_data_genome_gridss_index,
+    )
+    ch_versions = ch_versions.mix(VIRUSBREAKEND.out.versions)
+
+    // channel: [val(meta), purple_purity, purple_qc]
+    ch_virusinterpreter_inputs_purple = PURPLE.out.purple_dir
+      .map { meta, purple_dir ->
+        def purple_purity = file(purple_dir).resolve("${meta.get(['sample_name', 'tumor'])}.purple.purity.tsv")
+        def purple_qc = file(purple_dir).resolve("${meta.get(['sample_name', 'tumor'])}.purple.qc")
+        return [meta, purple_purity, purple_qc]
+      }
+
+    // channel: [val(meta), virus_tsv, purple_purity, purple_qc, wgs_metrics]
+    ch_virusinterpreter_inputs = WorkflowHmftools.group_by_meta(
+      VIRUSBREAKEND.out.tsv,
+      ch_virusinterpreter_inputs_purple,
+      ch_cwm_output.tumor,
+    )
+
+    VIRUSINTERPRETER(
+      ch_virusinterpreter_inputs,
+      ref_data_virus_taxonomy,
+      ref_data_virus_reporting,
+    )
+    ch_versions = ch_versions.mix(VIRUSINTERPRETER.out.versions)
+    ch_virusinterpreter_out = ch_virusinterpreter_out.mix(VIRUSINTERPRETER.out.virusinterpreter_dir)
+  }
+
+  //
   // SUBWORKFLOW: Group structural variants into higher order events with LINX
   //
   // channel: [val(meta), linx_annotation_dir, linx_visuliaser_dir]
@@ -585,7 +679,7 @@ workflow HMFTOOLS {
     } else {
       ch_linx_germline_inputs = ch_inputs
         .map { meta ->
-          def sv = meta.get(['gripss_hard_sv', 'normal'], false)
+          def sv = meta.get(['vcf_sv_gripss_hard', 'normal'], false)
           return sv ? [meta, sv] : false
         }
         .filter { it }
@@ -612,6 +706,41 @@ workflow HMFTOOLS {
       ch_linx_somatic_out,
     )
     ch_versions = ch_versions.mix(LINX_REPORT.out.versions)
+  }
+
+  //
+  // MODULE: Run CUPPA predict tissue of origin
+  //
+  if (Constants.Stage.CUPPA in stages) {
+
+    // channel: [val(meta), isofox_dir]
+    ch_cuppa_inputs_wts = Channel.empty()
+      .mix(
+        ch_inputs_wts.absent.map { meta -> [meta, []] },
+        ch_isofox_out,
+      )
+
+    // channel: [val(meta), isofox_dir, purple_dir, linx_dir, virusinterpreter_dir]
+    // NOTE(SW): the Groovy Collection.flatten method used in
+    // WorkflowHmftools.group_by_meta removes optional Isofox input; flattening
+    // done manually below to preserve
+    ch_cuppa_inputs = WorkflowHmftools.group_by_meta(
+      ch_cuppa_inputs_wts,
+      ch_purple_out,
+      ch_linx_somatic_out.map { meta, anno_dir, vis_dir -> [meta, anno_dir]},
+      ch_virusinterpreter_out,
+      flatten: false,
+    )
+      .map { data ->
+        def meta = data[0]
+        def inputs = data[1..-1].collect { it[0] }
+        return [meta, *inputs]
+      }
+
+    CUPPA(
+      ch_cuppa_inputs,
+      ref_data_cuppa,
+    )
   }
 
   //

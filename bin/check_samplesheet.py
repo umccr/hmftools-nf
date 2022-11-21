@@ -51,7 +51,7 @@ FILETYPES_EXPECTED = {
             (SampleType.NORMAL, FileType.SV_VCF),
         ],
     },
-    'gridss-purple-linx': {
+    'gridss_purple_linx': {
         'required': [
             (SampleType.TUMOR, FileType.BAM),
             (SampleType.NORMAL, FileType.BAM),

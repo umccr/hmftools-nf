@@ -1,3 +1,7 @@
+import Stages
+import Constants
+
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   VALIDATE INPUTS
@@ -156,7 +160,7 @@ ref_data_known_fusions                = get_file_object(params.ref_data_known_fu
 ref_data_mappability_bed              = get_file_object(params.ref_data_mappability_bed)
 
 // Set stages to run
-stages = WorkflowHmftools.set_stages(params.mode, log)
+stages = Stages.set_stages(params.mode, log)
 
 workflow HMFTOOLS {
   // Create channel for versions
@@ -172,10 +176,10 @@ workflow HMFTOOLS {
   ch_inputs = WorkflowHmftools.prepare_inputs(CHECK_SAMPLESHEET.out, workflow.stubRun, log)
 
   // Set up channel with common inputs for several stages
-  def run_amber = WorkflowHmftools.Stage.AMBER in stages
-  def run_cobalt = WorkflowHmftools.Stage.COBALT in stages
-  def run_pave = WorkflowHmftools.Stage.PAVE in stages
-  def run_lilac = WorkflowHmftools.Stage.LILAC in stages
+  def run_amber = Constants.Stage.AMBER in stages
+  def run_cobalt = Constants.Stage.COBALT in stages
+  def run_pave = Constants.Stage.PAVE in stages
+  def run_lilac = Constants.Stage.LILAC in stages
   if (run_amber || run_cobalt || run_pave || run_lilac) {
     // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
     ch_bams_and_indices = ch_inputs
@@ -219,7 +223,7 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), gridss_vcf]
   ch_gridss_out = Channel.empty()
-  if (WorkflowHmftools.Stage.GRIDSS in stages) {
+  if (Constants.Stage.GRIDSS in stages) {
     if (params.no_svprep) {
       gridss_inputs = ch_inputs
         .map { meta ->
@@ -267,7 +271,7 @@ workflow HMFTOOLS {
   ch_gripss_germline_out = Channel.empty()
   // channel: [val(meta), hard_vcf, hard_tbi, soft_vcf, soft_tbi]
   ch_gripss_somatic_out = Channel.empty()
-  if (WorkflowHmftools.Stage.GRIPSS in stages) {
+  if (Constants.Stage.GRIPSS in stages) {
     GRIPSS(
       ch_gridss_out,
       ref_data_genome_fa,
@@ -290,7 +294,7 @@ workflow HMFTOOLS {
   ch_sage_germline_out = Channel.empty()
   // channel: [val(meta), sage_vcf]
   ch_sage_somatic_out = Channel.empty()
-  if (WorkflowHmftools.Stage.SAGE in stages) {
+  if (Constants.Stage.SAGE in stages) {
     SAGE(
       ch_bams_and_indices,
       ref_data_genome_fa,
@@ -343,10 +347,10 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), purple_dir]
   ch_purple_out = Channel.empty()
-  if (WorkflowHmftools.Stage.PURPLE in stages) {
+  if (Constants.Stage.PURPLE in stages) {
 
     // Mode: full
-    if (WorkflowHmftools.Stage.PAVE in stages) {
+    if (Constants.Stage.PAVE in stages) {
       ch_purple_inputs = WorkflowHmftools.group_by_meta(
         ch_amber_out,
         ch_cobalt_out,
@@ -355,7 +359,7 @@ workflow HMFTOOLS {
         ch_pave_germline_out,
       )
     // Mode: gridss-purple-linx
-    } else if (WorkflowHmftools.Stage.AMBER in stages && WorkflowHmftools.Stage.COBALT in stages) {
+    } else if (Constants.Stage.AMBER in stages && Constants.Stage.COBALT in stages) {
       ch_purple_inputs = WorkflowHmftools.group_by_meta(
         ch_amber_out,
         ch_cobalt_out,
@@ -411,7 +415,7 @@ workflow HMFTOOLS {
   //
   // SUBWORKFLOW: Characterise teleomeres with TEAL
   //
-  if (WorkflowHmftools.Stage.TEAL in stages) {
+  if (Constants.Stage.TEAL in stages) {
 
     ch_teal_inputs_bams = ch_inputs
       .map { meta ->
@@ -421,7 +425,7 @@ workflow HMFTOOLS {
       }
 
     // Mode: full
-    if (run_cobalt && WorkflowHmftools.Stage.PURPLE in stages) {
+    if (run_cobalt && Constants.Stage.PURPLE in stages) {
       ch_teal_inputs_other = WorkflowHmftools.group_by_meta(
         ch_cobalt_out,
         ch_purple_out,
@@ -452,7 +456,7 @@ workflow HMFTOOLS {
   if (run_lilac) {
 
     // Mode: full
-    if (WorkflowHmftools.Stage.PURPLE in stages) {
+    if (Constants.Stage.PURPLE in stages) {
       ch_lilac_inputs_purple_dir = ch_purple_out
     // Mode: lilac
     } else {
@@ -478,10 +482,10 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), linx_annotation_dir, linx_visuliaser_dir]
   ch_linx_somatic_out = Channel.empty()
-  if (WorkflowHmftools.Stage.LINX in stages) {
+  if (Constants.Stage.LINX in stages) {
 
     // Mode: full
-    if (WorkflowHmftools.Stage.PURPLE in stages && WorkflowHmftools.Stage.GRIPSS in stages) {
+    if (Constants.Stage.PURPLE in stages && Constants.Stage.GRIPSS in stages) {
       ch_linx_germline_inputs = ch_gripss_germline_out.map { meta, h, hi, s, si -> [meta, h] }
       ch_linx_somatic_inputs = ch_purple_out
     // Mode: linx

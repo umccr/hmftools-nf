@@ -16,7 +16,7 @@ process CUPPA_VISUALISER {
   def args = task.ext.args ?: ''
 
   """
-  python software/cuppa_chart/cuppa-chart.py \\
+  python ${task.ext.pythonPath} \\
     -sample ${meta.get(['sample_name', 'tumor'])} \\
     -sample_data ${cuppa_csv} \\
     -output_dir ./

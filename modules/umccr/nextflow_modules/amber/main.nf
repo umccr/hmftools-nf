@@ -4,6 +4,7 @@ process AMBER {
 
   input:
   tuple val(meta), path(tumor_bam), path(normal_bam), path(tumor_bai), path(normal_bai)
+  val ref_genome_ver
   path loci
 
   output:
@@ -25,7 +26,7 @@ process AMBER {
       -tumor_bam "${tumor_bam}" \
       -reference "${meta.get(['sample_name', 'normal'])}" \
       -reference_bam "${normal_bam}" \
-      -ref_genome_version 38 \
+      -ref_genome_version ${ref_genome_ver} \
       -output_dir amber/ \
       -threads "${task.cpus}" \
       -loci "${loci}"

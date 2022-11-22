@@ -15,14 +15,14 @@ process TEAL {
   script:
   def args = task.ext.args ?: ''
   def tumor_args = normal_bam ? """
-    -tumor ${meta.get(['sample_name', 'tumor'])} \
-    -tumor_bam ${tumor_bam} \
-    -tumor_wgs_metrics ${tumor_wgs_metrics} \
+    -tumor ${meta.get(['sample_name', 'tumor'])}
+    -tumor_bam ${tumor_bam}
+    -tumor_wgs_metrics ${tumor_wgs_metrics}
   """ : ''
   def reference_args = normal_bam ? """
-    -reference ${meta.get(['sample_name', 'normal'])} \
-    -reference_bam ${normal_bam} \
-    -reference_wgs_metrics ${normal_wgs_metrics} \
+    -reference ${meta.get(['sample_name', 'normal'])}
+    -reference_bam ${normal_bam}
+    -reference_wgs_metrics ${normal_wgs_metrics}
   """ : ''
 
   """

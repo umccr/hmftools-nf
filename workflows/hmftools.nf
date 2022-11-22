@@ -111,7 +111,6 @@ include { LILAC         } from '../subworkflows/local/lilac'
 include { LINX          } from '../subworkflows/local/linx'
 include { PAVE          } from '../subworkflows/local/pave'
 include { SAGE          } from '../subworkflows/local/sage'
-include { TEAL          } from '../subworkflows/local/teal'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,6 +240,10 @@ workflow HMFTOOLS {
       }
     ISOFOX(
       ch_isofox_inputs,
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_version,
+      ref_data_ensembl_data_dir,
       ref_data_rna_exp_counts,
       ref_data_rna_exp_gc_ratios,
     )
@@ -330,6 +333,7 @@ workflow HMFTOOLS {
   if (run_amber) {
     AMBER(
       ch_bams_and_indices,
+      ref_data_genome_version,
       ref_data_amber_loci,
     )
     ch_versions = ch_versions.mix(AMBER.out.versions)
@@ -359,8 +363,8 @@ workflow HMFTOOLS {
     if (params.no_svprep) {
       gridss_inputs = ch_inputs
         .map { meta ->
-          def tumor_bam = meta.get(['bam', 'tumor'])
-          def normal_bam = meta.get(['bam', 'normal'])
+          def tumor_bam = meta.get(['bam_wgs', 'tumor'])
+          def normal_bam = meta.get(['bam_wgs', 'normal'])
           [meta, tumor_bam, normal_bam]
         }
       GRIDSS(

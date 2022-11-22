@@ -6,6 +6,10 @@ process ISOFOX {
 
   input:
   tuple val(meta), path(bam)
+  path genome_fa
+  path genome_fai
+  val genome_ver
+  path ensembl_data_dir
   path exp_counts
   path exp_gc_ratios
 
@@ -18,14 +22,15 @@ process ISOFOX {
 
   script:
   def args = task.ext.args ?: ''
-  def functions_arg = functions ?: 'TRANSCRIPT_COUNTS;ALT_SPLICE_JUNCTIONS;FUSIONS'
 
   """
+  mkdir -p isofox/
+
   java \\
     -Xmx${task.memory.giga}g \\
     -jar ${task.ext.jarPath} \\
-      -sample ${meta.id} \\
-      -functions ${function_arg} \\
+      ${args} \
+      -sample ${meta.get(['sample_name', 'tumor'])} \\
       -bam_file ${bam} \\
       -ref_genome ${genome_fa} \\
       -ref_genome_version ${genome_ver} \\
@@ -34,7 +39,6 @@ process ISOFOX {
       -exp_gc_ratios_file ${exp_gc_ratios} \\
       -output_dir ./isofox/ \\
       -threads ${task.cpus}
-
 
   cat <<-END_VERSIONS > versions.yml
   "${task.process}":

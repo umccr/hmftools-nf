@@ -48,7 +48,7 @@ process PREPROCESS {
 
   stub:
   """
-  mkdir -p gridss_preprocess/${bam.name}.gridss.working/
+  mkdir -p gridss_preprocess/${meta.id}.sv_prep.sorted.bam.gridss.working/
   echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
   """
 }

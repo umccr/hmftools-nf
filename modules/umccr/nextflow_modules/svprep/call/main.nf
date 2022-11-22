@@ -83,7 +83,7 @@ process CALL {
   stub:
   """
   mkdir -p gridss_call/
-  cat <<EOF > gridss_call/sv_vcf.vcf.gz
+  cat <<EOF > gridss_call/sv.svprep.gridss.vcf.gz
   ##fileformat=VCFv4.1
   ##contig=<ID=.>
   #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO

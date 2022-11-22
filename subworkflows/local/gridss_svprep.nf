@@ -34,7 +34,7 @@ workflow GRIDSS_SVPREP {
     ch_svprep_tumor_inputs = ch_inputs
       .map { meta ->
         def meta_svprep = [id: meta.get(['sample_name', 'tumor']), meta_full: meta]
-        def bam = meta.get(['bam', 'tumor'])
+        def bam = meta.get(['bam_wgs', 'tumor'])
         def bai = "${bam}.bai"
         return [meta_svprep, bam, bai, []]
       }
@@ -57,7 +57,7 @@ workflow GRIDSS_SVPREP {
       .map { meta_tumor_svprep, junctions_tumor ->
         def meta = meta_tumor_svprep['meta_full']
         def meta_svprep = [id: meta.get(['sample_name', 'normal']), meta_full: meta]
-        def bam_normal = meta.get(['bam', 'normal'])
+        def bam_normal = meta.get(['bam_wgs', 'normal'])
         return [meta_svprep, bam_normal, "${bam_normal}.bai", junctions_tumor]
       }
 
@@ -191,8 +191,8 @@ workflow GRIDSS_SVPREP {
       GRIDSS_CALL.out.vcf.map { meta, vcf -> [meta.id, vcf] },
     )
       .map { id, meta, vcf ->
-        def tbam = meta.get(['bam', 'tumor'])
-        def nbam = meta.get(['bam', 'normal'])
+        def tbam = meta.get(['bam_wgs', 'tumor'])
+        def nbam = meta.get(['bam_wgs', 'normal'])
         return [
           meta,
           [nbam, tbam],

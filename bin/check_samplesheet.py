@@ -48,6 +48,7 @@ FILETYPES_EXPECTED = {
             (SampleType.NORMAL, FileType.BAM_WGS),
         ],
         'optional': [
+            (SampleType.TUMOR, FileType.BAM_WTS),
             (SampleType.TUMOR, FileType.VCF_SV),
             (SampleType.NORMAL, FileType.VCF_SV),
         ],
@@ -195,7 +196,7 @@ def check_bam_sample_names(records, bam_filetype):
         elif record['sample_type_enum'] == SampleType.NORMAL:
             record_normal_bam = record
 
-    if record_tumor_bam is None and record_normal_bam is None:
+    if record_tumor_bam is None or record_normal_bam is None:
         return
 
     if record_tumor_bam['sample_name'] == record_normal_bam['sample_name']:

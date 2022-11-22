@@ -1,3 +1,6 @@
+// NOTE(SW): the --db argument for the virusbreakend command must have a trailing slash if it is a
+// symlink
+
 process VIRUSBREAKEND {
   container 'docker.io/scwatts/gridss:2.13.2--3'
 
@@ -28,7 +31,7 @@ process VIRUSBREAKEND {
     --jar ${task.ext.jarPath} \\
     --gridssargs "--jvmheap ${task.memory.giga}g" \\
     --threads ${task.cpus} \\
-    --db ${virusbreakenddb} \\
+    --db ${virusbreakenddb.toString().replaceAll("/\$", "")}/ \\
     --output ${meta.id}.virusbreakend.vcf \\
     --reference ${genome_fa} \\
     ${bam}

@@ -7,8 +7,8 @@ process VIRUSINTERPRETER {
   path virus_reporting
 
   output:
-  tuple val(meta), path('virus_interpreter'), emit: virusinterpreter_dir
-  path 'versions.yml'                       , emit: versions
+  tuple val(meta), path('virusinterpreter'), emit: virusinterpreter_dir
+  path 'versions.yml'                      , emit: versions
 
   when:
   task.ext.when == null || task.ext.when
@@ -17,6 +17,8 @@ process VIRUSINTERPRETER {
   def args = task.ext.args ?: ''
 
   """
+  mkdir -p virusinterpreter/
+
   java \\
     -Xmx${task.memory.giga}g \\
     -jar ${task.ext.jarPath} \\
@@ -37,7 +39,7 @@ process VIRUSINTERPRETER {
 
   stub:
   """
-  mkdir virus_interpreter/
+  mkdir virusinterpreter/
   echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
   """
 }

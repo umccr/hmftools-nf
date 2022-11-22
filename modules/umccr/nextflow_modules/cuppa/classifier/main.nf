@@ -6,8 +6,8 @@ process CUPPA_CLASSIFIER {
   path reference_data
 
   output:
-  tuple val(meta), path('cuppa/*csv'), emit: csv
-  path 'versions.yml'                , emit: versions
+  tuple val(meta), path('*csv'), emit: csv
+  path 'versions.yml'          , emit: versions
 
   when:
   task.ext.when == null || task.ext.when
@@ -28,7 +28,7 @@ process CUPPA_CLASSIFIER {
       -ref_data_dir ${reference_data} \\
       -sample_data ${meta.id} \\
       -sample_data_dir sample_data/ \\
-      -output_dir cuppa/
+      -output_dir ./
 
   # NOTE(SW): hard coded since there is no reliable way to obtain version information.
   cat <<-END_VERSIONS > versions.yml
@@ -39,8 +39,7 @@ process CUPPA_CLASSIFIER {
 
   stub:
   """
-  mkdir -p cuppa/
-  touch cuppa/${meta.get(['sample_name', 'tumor'])}.cup.data.csv
+  touch ${meta.get(['sample_name', 'tumor'])}.cup.data.csv
   echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
   """
 }

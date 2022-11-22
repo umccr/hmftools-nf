@@ -1,4 +1,4 @@
-process CUPPA {
+process CUPPA_CLASSIFIER {
   container 'docker.io/scwatts/cuppa:1.7--0'
 
   input:
@@ -6,8 +6,8 @@ process CUPPA {
   path reference_data
 
   output:
-  tuple val(meta), path('cuppa/'), emit: cuppa_dir
-  path 'versions.yml'            , emit: versions
+  tuple val(meta), path('cuppa/*csv'), emit: csv
+  path 'versions.yml'                , emit: versions
 
   when:
   task.ext.when == null || task.ext.when
@@ -40,6 +40,7 @@ process CUPPA {
   stub:
   """
   mkdir -p cuppa/
+  touch cuppa/${meta.get(['sample_name', 'tumor'])}.cup.data.csv
   echo -e '${task.process}:\\n  stub: noversions\\n' > versions.yml
   """
 }

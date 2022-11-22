@@ -90,7 +90,8 @@ include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet/main'
 
 include { AMBER            } from '../modules/umccr/nextflow_modules/amber/main'
 include { COBALT           } from '../modules/umccr/nextflow_modules/cobalt/main'
-include { CUPPA            } from '../modules/umccr/nextflow_modules/cuppa/main'
+include { CUPPA_CLASSIFIER } from '../modules/umccr/nextflow_modules/cuppa/classifier/main'
+include { CUPPA_VISUALISER } from '../modules/umccr/nextflow_modules/cuppa/visualiser/main'
 include { ISOFOX           } from '../modules/umccr/nextflow_modules/isofox/main'
 include { LINX_REPORT      } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
 include { PURPLE           } from '../modules/umccr/nextflow_modules/purple/main'
@@ -737,10 +738,16 @@ workflow HMFTOOLS {
         return [meta, *inputs]
       }
 
-    CUPPA(
+    CUPPA_CLASSIFIER(
       ch_cuppa_inputs,
       ref_data_cuppa,
     )
+    ch_versions = ch_versions.mix(CUPPA_CLASSIFIER.out.versions)
+
+    CUPPA_VISUALISER(
+      CUPPA_CLASSIFIER.out.csv,
+    )
+    ch_versions = ch_versions.mix(CUPPA_VISUALISER.out.versions)
   }
 
   //

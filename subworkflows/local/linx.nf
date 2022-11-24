@@ -8,8 +8,8 @@ include { VISUALISER    } from '../../modules/umccr/nextflow_modules/linx/visual
 
 workflow LINX {
   take:
-    ch_linx_germline_inputs     // channel: [val(meta), purple]
-    ch_linx_somatic_inputs      // channel: [val(meta), gripss_hard_vcf]
+    ch_linx_germline_inputs     // channel: [val(meta), gripss_hard_vcf]
+    ch_linx_somatic_inputs      // channel: [val(meta), purple_dir]
     ref_data_genome_version     //     val: genome version
     ref_data_linx_fragile_sites //    file: /path/to/linx_fragile_sites
     ref_data_linx_lines         //    file: /path/to/linx_lines

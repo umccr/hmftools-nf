@@ -158,4 +158,8 @@ class WorkflowHmftools {
   public static group_by_meta(... channels) {
     return group_by_meta([:], *channels)
   }
+
+  public static get_input(ch, key) {
+    return ch.map { meta -> [meta, meta.getAt(key)] }
+  }
 }

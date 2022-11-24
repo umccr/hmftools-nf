@@ -1,18 +1,16 @@
 class Constants {
 
-  static enum WorkflowType {
+  static enum PipelineMode {
     FULL,
+    MANUAL,
     GRIDSS_PURPLE_LINX,
-    GRIDSS,
-    PURPLE,
-    LINX,
-    LILAC,
-    TEAL,
+    CUPPA,
   }
 
-  static enum Stage {
+  static enum Process {
     AMBER,
     COBALT,
+    COLLECTWGSMETRICS,
     CUPPA,
     GRIDSS,
     GRIPSS,
@@ -24,6 +22,7 @@ class Constants {
     SAGE,
     SVPREP,
     TEAL,
+    VIRUSINTERPRETER,
   }
 
 }

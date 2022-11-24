@@ -1,4 +1,4 @@
-import Stages
+import Processes
 import Constants
 
 
@@ -88,16 +88,16 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 //
 include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet/main'
 
-include { AMBER            } from '../modules/umccr/nextflow_modules/amber/main'
-include { COBALT           } from '../modules/umccr/nextflow_modules/cobalt/main'
-include { CUPPA_CLASSIFIER } from '../modules/umccr/nextflow_modules/cuppa/classifier/main'
-include { CUPPA_VISUALISER } from '../modules/umccr/nextflow_modules/cuppa/visualiser/main'
-include { ISOFOX           } from '../modules/umccr/nextflow_modules/isofox/main'
-include { LINX_REPORT      } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
-include { PURPLE           } from '../modules/umccr/nextflow_modules/purple/main'
-include { TEAL             } from '../modules/umccr/nextflow_modules/teal/main'
-include { VIRUSBREAKEND    } from '../modules/umccr/nextflow_modules/virusbreakend/main'
-include { VIRUSINTERPRETER } from '../modules/umccr/nextflow_modules/virusinterpreter/main'
+include { AMBER             } from '../modules/umccr/nextflow_modules/amber/main'
+include { COBALT            } from '../modules/umccr/nextflow_modules/cobalt/main'
+include { CUPPA_CLASSIFIER  } from '../modules/umccr/nextflow_modules/cuppa/classifier/main'
+include { CUPPA_VISUALISER  } from '../modules/umccr/nextflow_modules/cuppa/visualiser/main'
+include { ISOFOX            } from '../modules/umccr/nextflow_modules/isofox/main'
+include { LINX_REPORT       } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
+include { PURPLE            } from '../modules/umccr/nextflow_modules/purple/main'
+include { TEAL              } from '../modules/umccr/nextflow_modules/teal/main'
+include { VIRUSBREAKEND     } from '../modules/umccr/nextflow_modules/virusbreakend/main'
+include { VIRUSINTERPRETER  } from '../modules/umccr/nextflow_modules/virusinterpreter/main'
 
 include { PICARD_COLLECTWGSMETRICS as COLLECTWGSMETRICS } from '../modules/nf-core/modules/picard/collectwgsmetrics/main'
 
@@ -184,8 +184,20 @@ ref_data_known_fusion_data            = get_file_object(params.ref_data_known_fu
 ref_data_known_fusions                = get_file_object(params.ref_data_known_fusions)
 ref_data_mappability_bed              = get_file_object(params.ref_data_mappability_bed)
 
-// Set stages to run
-stages = Stages.set_stages(params.mode, log)
+// Set processes to run
+processes = Processes.set_processes(params.mode, log)
+
+processes_include = Processes.get_process_list(params.processes_include, log)
+processes_exclude = Processes.get_process_list(params.processes_exclude, log)
+Processes.check_include_exclude_list(processes_include, processes_exclude, log)
+
+processes.addAll(processes_include)
+processes.removeAll(processes_exclude)
+
+run = Constants.Process
+  .values()
+  .collectEntries { p -> [p.name().toLowerCase(), p in processes] }
+
 
 workflow HMFTOOLS {
   // Create channel for versions
@@ -200,13 +212,9 @@ workflow HMFTOOLS {
   // channel: [val(meta)]
   ch_inputs = WorkflowHmftools.prepare_inputs(CHECK_SAMPLESHEET.out, workflow.stubRun, log)
 
-  // Set up channel with common inputs for several stages
-  def run_amber = Constants.Stage.AMBER in stages
-  def run_cobalt = Constants.Stage.COBALT in stages
-  def run_lilac = Constants.Stage.LILAC in stages
-  def run_pave = Constants.Stage.PAVE in stages
-  def run_teal = Constants.Stage.TEAL in stages
-  if (run_amber || run_cobalt || run_pave || run_lilac || run_teal) {
+  // Set up channel with common inputs for several processes
+  if (run.amber || run.cobalt || run.pave || run.lilac || run.teal) {
+
     // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai]
     ch_bams_and_indices = ch_inputs
       .map { meta ->
@@ -227,12 +235,12 @@ workflow HMFTOOLS {
         return meta
     }
 
-
   //
   // MODULE: Run Isofox to analyse WTS data
   //
   ch_isofox_out = Channel.empty()
-  if (Constants.Stage.ISOFOX in stages) {
+  if (run.isofox) {
+
     // channel: [meta, tumor_bam_wts]
     ch_isofox_inputs = ch_inputs_wts.present
       .map { meta ->
@@ -254,8 +262,7 @@ workflow HMFTOOLS {
   //
   // MODULE: Run COLLECTWGSMETRICS to generate stats required for downstream processes
   //
-  def run_cuppa = Constants.Stage.TEAL in stages
-  if (run_cuppa || run_teal) {
+  if (run.virusinterpreter || run.teal) {
 
     // NOTE(SW): CUPPA only requires collectwgsmetrics for the tumor sample in
     // the upstream process Virus Interpreter but TEAL currently requires
@@ -263,7 +270,7 @@ workflow HMFTOOLS {
     // channel: [val(meta_cwm), bam]
     ch_cwm_inputs_all = ch_inputs
       .flatMap { meta ->
-        def sample_types = run_teal ? ['tumor', 'normal'] : ['tumor']
+        def sample_types = run.teal ? ['tumor', 'normal'] : ['tumor']
         return sample_types
           .collect { sample_type ->
             def bam = meta.get(['bam_wgs', sample_type])
@@ -330,7 +337,8 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), amber_dir]
   ch_amber_out = Channel.empty()
-  if (run_amber) {
+  if (run.amber) {
+
     AMBER(
       ch_bams_and_indices,
       ref_data_genome_version,
@@ -345,7 +353,8 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), cobalt_dir]
   ch_cobalt_out = Channel.empty()
-  if (run_cobalt) {
+  if (run.cobalt) {
+
     COBALT(
       ch_bams_and_indices,
       ref_data_cobalt_gc_profile,
@@ -359,28 +368,9 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), gridss_vcf]
   ch_gridss_out = Channel.empty()
-  if (Constants.Stage.GRIDSS in stages) {
-    if (params.no_svprep) {
-      gridss_inputs = ch_inputs
-        .map { meta ->
-          def tumor_bam = meta.get(['bam_wgs', 'tumor'])
-          def normal_bam = meta.get(['bam_wgs', 'normal'])
-          [meta, tumor_bam, normal_bam]
-        }
-      GRIDSS(
-        gridss_inputs,
-        gridss_config,
-        ref_data_genome_fa,
-        ref_data_genome_fai,
-        ref_data_genome_dict,
-        ref_data_genome_bwa_index,
-        ref_data_genome_bwa_index_image,
-        ref_data_genome_gridss_index,
-        ref_data_gridss_blacklist,
-      )
-      ch_versions = ch_versions.mix(GRIDSS.out.versions)
-      ch_gridss_out = ch_gridss_out.mix(GRIDSS.out.results)
-    } else {
+  if (run.gridss) {
+
+    if (run.svprep) {
       GRIDSS_SVPREP(
         ch_inputs,
         gridss_config,
@@ -397,6 +387,26 @@ workflow HMFTOOLS {
       )
       ch_versions = ch_versions.mix(GRIDSS_SVPREP.out.versions)
       ch_gridss_out = ch_gridss_out.mix(GRIDSS_SVPREP.out.results)
+    } else {
+      ch_gridss_inputs = ch_inputs
+        .map { meta ->
+          def tumor_bam = meta.get(['bam_wgs', 'tumor'])
+          def normal_bam = meta.get(['bam_wgs', 'normal'])
+          [meta, tumor_bam, normal_bam]
+        }
+      GRIDSS(
+        ch_gridss_inputs,
+        gridss_config,
+        ref_data_genome_fa,
+        ref_data_genome_fai,
+        ref_data_genome_dict,
+        ref_data_genome_bwa_index,
+        ref_data_genome_bwa_index_image,
+        ref_data_genome_gridss_index,
+        ref_data_gridss_blacklist,
+      )
+      ch_versions = ch_versions.mix(GRIDSS.out.versions)
+      ch_gridss_out = ch_gridss_out.mix(GRIDSS.out.results)
     }
   }
 
@@ -407,9 +417,10 @@ workflow HMFTOOLS {
   ch_gripss_germline_out = Channel.empty()
   // channel: [val(meta), hard_vcf, hard_tbi, soft_vcf, soft_tbi]
   ch_gripss_somatic_out = Channel.empty()
-  if (Constants.Stage.GRIPSS in stages) {
+  if (run.gripss) {
+
     GRIPSS(
-      ch_gridss_out,
+      run.gridss ? ch_gridss_out : WorkflowHmftools.get_input(ch_inputs, ['gridss_vcf', 'tumor_normal']),
       ref_data_genome_fa,
       ref_data_genome_fai,
       ref_data_genome_version,
@@ -430,7 +441,8 @@ workflow HMFTOOLS {
   ch_sage_germline_out = Channel.empty()
   // channel: [val(meta), sage_vcf]
   ch_sage_somatic_out = Channel.empty()
-  if (Constants.Stage.SAGE in stages) {
+  if (run.sage) {
+
     SAGE(
       ch_bams_and_indices,
       ref_data_genome_fa,
@@ -458,10 +470,11 @@ workflow HMFTOOLS {
   ch_pave_germline_out = Channel.empty()
   // channel: [val(meta), pave_vcf]
   ch_pave_somatic_out = Channel.empty()
-  if (run_pave) {
+  if (run.pave) {
+
     PAVE(
-      ch_sage_germline_out,
-      ch_sage_somatic_out,
+      run.sage ? ch_sage_germline_out : WorkflowHmftools.get_input(ch_inputs, ['sage_vcf', 'normal']),
+      run.sage ? ch_sage_somatic_out : WorkflowHmftools.get_input(ch_inputs, ['sage_vcf', 'tumor']),
       ref_data_genome_fa,
       ref_data_genome_fai,
       ref_data_genome_version,
@@ -483,53 +496,34 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), purple_dir]
   ch_purple_out = Channel.empty()
-  if (Constants.Stage.PURPLE in stages) {
+  if (run.purple) {
 
-    // Mode: full
-    if (Constants.Stage.PAVE in stages) {
-      ch_purple_inputs = WorkflowHmftools.group_by_meta(
-        ch_amber_out,
-        ch_cobalt_out,
-        ch_gripss_somatic_out,
-        ch_pave_somatic_out,
-        ch_pave_germline_out,
-      )
-    // Mode: gridss-purple-linx
-    } else if (Constants.Stage.AMBER in stages && Constants.Stage.COBALT in stages) {
-      ch_purple_inputs = WorkflowHmftools.group_by_meta(
-        ch_amber_out,
-        ch_cobalt_out,
-        ch_gripss_somatic_out,
-      )
-        .map { data ->
-          def meta = data[0]
-          def fps = data[1..-1]
-          return [
-            meta,
-            *fps,
-            meta.get(['vcf_smlv', 'tumor'], []),
-            meta.get(['vcf_smlv', 'normal'], []),
-          ]
-        }
-    // Mode: purple
+    // channel: [val(meta), sv_hard_vcf, sv_hard_tbi, sv_soft_vcf, sv_soft_tbi]
+    if (run.gripss) {
+      ch_purple_inputs_sv = ch_gripss_somatic_out
     } else {
-      ch_purple_inputs = ch_inputs
+      ch_purple_inputs_sv = ch_inputs
         .map { meta ->
           def sv_hard_vcf = meta[['vcf_sv_gripss_hard', 'tumor']]
           def sv_soft_vcf = meta[['vcf_sv_gripss_soft', 'tumor']]
           return [
             meta,
-            meta[['amber_dir', 'tumor']],
-            meta[['cobalt_dir', 'tumor']],
             sv_hard_vcf,
             "${sv_hard_vcf}.tbi",
             sv_soft_vcf,
             "${sv_soft_vcf}.tbi",
-            meta.get(['vcf_smlv', 'tumor'], []),
-            meta.get(['vcf_smlv', 'normal'], []),
           ]
         }
     }
+
+    // channel: [val(meta), amber_dir, cobalt_dir, sv_hard_vcf, sv_hard_tbi, sv_soft_vcf, sv_soft_tbi, smlv_tumor_vcf, smlv_normal_vcf]
+    ch_purple_inputs = WorkflowHmftools.group_by_meta(
+      run.amber ? ch_amber_out : WorkflowHmftools.get_input(ch_inputs, ['amber_dir', 'tumor_normal']),
+      run.cobalt ? ch_cobalt_out : WorkflowHmftools.get_input(ch_inputs, ['cobalt_dir', 'tumor_normal']),
+      ch_purple_inputs_sv,
+      run.pave ? ch_pave_somatic_out : WorkflowHmftools.get_input(ch_inputs, ['vcf_smlv', 'tumor']),
+      run.pave ? ch_pave_germline_out : WorkflowHmftools.get_input(ch_inputs, ['vcf_smlv', 'normal']),
+    )
 
     PURPLE(
       ch_purple_inputs,
@@ -551,40 +545,16 @@ workflow HMFTOOLS {
   //
   // MODULE: Run TEAL to characterise teleomeres
   //
-  if (run_teal) {
-
-    // Mode: full
-    // channel: [val(meta), cobalt_dir, purple_dir]
-    if (run_cobalt && Constants.Stage.PURPLE in stages) {
-      ch_teal_inputs_other = WorkflowHmftools.group_by_meta(
-        ch_cobalt_out,
-        ch_purple_out,
-      )
-    // Mode: teal
-    } else {
-      ch_teal_inputs_other = ch_inputs
-        .map { meta ->
-          return [
-            meta,
-            meta.get(['cobalt_dir', 'tumor']),
-            meta.get(['purple_dir', 'tumor']),
-          ]
-        }
-    }
-
-    // channel: [val(meta), tumor_wgs_metrics, normal_wgs_metrics]
-    // NOTE(SW): assuming here that TEAL is being run in tumor/normal mode and
-    // so we expect a tumor metrics file and normal metrics file
-    ch_teal_inputs_metrics = WorkflowHmftools.group_by_meta(
-      ch_cwm_output.tumor,
-      ch_cwm_output.normal,
-    )
+  if (run.teal) {
 
     // channel: [val(meta), tumor_bam, normal_bam, tumor_bai, normal_bai, tumor_wgs_metrics, normal_wgs_metrics, cobalt_dir, purple_dir]
+    // NOTE(SW): assuming here that TEAL is being run in tumor/normal mode and so we expect a tumor metrics file and normal metrics file
     ch_teal_inputs = WorkflowHmftools.group_by_meta(
       ch_bams_and_indices,
-      ch_teal_inputs_metrics,
-      ch_teal_inputs_other,
+      run.collectwgsmetrics ? ch_cwm_output.tumor : WorkflowHmftools.get_input(ch_inputs, ['collectmetrics', 'tumor']),
+      run.collectwgsmetrics ? ch_cwm_output.normal : WorkflowHmftools.get_input(ch_inputs, ['collectmetrics', 'normal']),
+      run.purple ? ch_purple_out : WorkflowHmftools.get_input(ch_inputs, ['purple_dir', 'tumor_normal']),
+      run.cobalt ? ch_cobalt_out : WorkflowHmftools.get_input(ch_inputs, ['cobalt_dir', 'tumor_normal']),
     )
 
     TEAL(
@@ -596,22 +566,11 @@ workflow HMFTOOLS {
   //
   // SUBWORKFLOW: Run LILAC for HLA typing and somatic CNV and SNV calling
   //
-  if (run_lilac) {
-
-    // Mode: full
-    if (Constants.Stage.PURPLE in stages) {
-      ch_lilac_inputs_purple_dir = ch_purple_out
-    // Mode: lilac
-    } else {
-      ch_lilac_inputs_purple_dir = ch_inputs
-        .map { meta ->
-          return [meta, meta.get(['purple_dir', 'tumor'])]
-        }
-    }
+  if (run.lilac) {
 
     LILAC(
       ch_bams_and_indices,
-      ch_lilac_inputs_purple_dir,
+      run.purple ? ch_purple_out : WorkflowHmftools.get_input(['purple_dir', 'tumor_normal']),
       ref_data_genome_fa,
       ref_data_genome_fai,
       ref_data_genome_version,
@@ -625,9 +584,7 @@ workflow HMFTOOLS {
   //
   // NOTE(SW): kept separate from CUPPA conditional block since we'll allow users to run this independently
   ch_virusinterpreter_out = Channel.empty()
-  if (Constants.Stage.CUPPA in stages) {
-
-    // TODO(SW): PURPLE from difference sources
+  if (run.virusinterpreter) {
 
     // channel: [val(meta), tumor_bam]
     ch_virusbreakend_inputs = ch_inputs.map { meta -> [meta, meta.get(['bam_wgs', 'tumor'])] }
@@ -646,7 +603,7 @@ workflow HMFTOOLS {
     ch_versions = ch_versions.mix(VIRUSBREAKEND.out.versions)
 
     // channel: [val(meta), purple_purity, purple_qc]
-    ch_virusinterpreter_inputs_purple = PURPLE.out.purple_dir
+    ch_virusinterpreter_inputs_purple = ch_purple_out
       .map { meta, purple_dir ->
         def purple_purity = file(purple_dir).resolve("${meta.get(['sample_name', 'tumor'])}.purple.purity.tsv")
         def purple_qc = file(purple_dir).resolve("${meta.get(['sample_name', 'tumor'])}.purple.qc")
@@ -674,26 +631,14 @@ workflow HMFTOOLS {
   //
   // channel: [val(meta), linx_annotation_dir, linx_visuliaser_dir]
   ch_linx_somatic_out = Channel.empty()
-  if (Constants.Stage.LINX in stages) {
+  if (run.linx) {
 
-    // Mode: full
-    if (Constants.Stage.PURPLE in stages && Constants.Stage.GRIPSS in stages) {
-      ch_linx_germline_inputs = ch_gripss_germline_out.map { meta, h, hi, s, si -> [meta, h] }
-      ch_linx_somatic_inputs = ch_purple_out
-    // Mode: linx
-    } else {
-      ch_linx_germline_inputs = ch_inputs
-        .map { meta ->
-          def sv = meta.get(['vcf_sv_gripss_hard', 'normal'], false)
-          return sv ? [meta, sv] : false
-        }
-        .filter { it }
-      ch_linx_somatic_inputs = ch_inputs.map { meta -> [meta, meta.get(['purple_dir', 'tumor'], []) ] }
-    }
+    // channel: [val(meta), vcf]
+    ch_gripps_germline_hard = ch_gripss_germline_out.map { meta, h, hi, s, si -> [meta, h] }
 
     LINX(
-      ch_linx_germline_inputs,
-      ch_linx_somatic_inputs,
+      run.gripss ? ch_gripps_germline_hard : WorkflowHmftools.get_input(ch_inputs, ['vcf_sv_gripss_hard', 'normal']),
+      run.purple ? ch_purple_out : WorkflowHmftools.get_input(ch_inputs, ['purple_dir', 'tumor_normal']),
       ref_data_genome_version,
       ref_data_linx_fragile_sites,
       ref_data_linx_lines,
@@ -716,24 +661,32 @@ workflow HMFTOOLS {
   //
   // MODULE: Run CUPPA predict tissue of origin
   //
-  if (Constants.Stage.CUPPA in stages) {
+  if (run.cuppa) {
 
     // channel: [val(meta), isofox_dir]
-    ch_cuppa_inputs_wts = Channel.empty()
-      .mix(
-        ch_inputs_wts.absent.map { meta -> [meta, []] },
-        ch_isofox_out,
-      )
+    if (run.isofox) {
+      ch_cuppa_inputs_isofox = Channel.empty()
+        .mix(
+          ch_inputs_wts.absent.map { meta -> [meta, []] },
+          ch_isofox_out,
+        )
+    } else {
+      ch_cuppa_inputs_isofox = ch_inputs
+        .map { meta -> [meta, meta.get(['isofox_dir', 'tumor'], [])] }
+    }
+
+    // channel: [val(meta), linx_somatic_annotation_dir]
+    ch_linx_anno = ch_linx_somatic_out.map { meta, anno_dir, vis_dir -> [meta, anno_dir]}
 
     // channel: [val(meta), isofox_dir, purple_dir, linx_dir, virusinterpreter_dir]
     // NOTE(SW): the Groovy Collection.flatten method used in
     // WorkflowHmftools.group_by_meta removes optional Isofox input; flattening
     // done manually below to preserve
     ch_cuppa_inputs = WorkflowHmftools.group_by_meta(
-      ch_cuppa_inputs_wts,
-      ch_purple_out,
-      ch_linx_somatic_out.map { meta, anno_dir, vis_dir -> [meta, anno_dir]},
-      ch_virusinterpreter_out,
+      ch_cuppa_inputs_isofox,
+      run.purple ? ch_purple_out : WorkflowHmftools.get_input(ch_inputs, ['purple_dir', 'tumor_normal']),
+      run.linx ? ch_linx_anno : WorkflowHmftools.get_input(ch_inputs, ['linx_dir', 'tumor']),
+      run.virusinterpreter ? ch_virusinterpreter_out : WorkflowHmftools.get_input(ch_inputs, ['virusinterpreter', 'tumor']),
       flatten: false,
     )
       .map { data ->

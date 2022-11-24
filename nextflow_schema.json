@@ -49,13 +49,6 @@
           "description": "Pipeline mode to use.",
           "fa_icon": "fas fa-diagram-project"
         },
-        "no_svprep": {
-          "type": "boolean",
-          "default": false,
-          "description": "Run pipeline without SV Prep.",
-          "fa_icon": "fas fa-cogs",
-          "hidden": true
-        },
         "gridss_config": {
           "type": "string",
           "description": "Path to GRIDSS configuration file.",

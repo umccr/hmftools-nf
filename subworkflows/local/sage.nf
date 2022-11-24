@@ -2,8 +2,8 @@
 // SAGE is a precise and highly sensitive somatic SNV, MNV and small INDEL caller.
 //
 
-include { SAGE_GERMLINE } from '../../modules/umccr/nextflow_modules/sage/germline/main'
-include { SAGE_SOMATIC  } from '../../modules/umccr/nextflow_modules/sage/somatic/main'
+include { SAGE_GERMLINE } from '../../modules/local/sage/germline/main'
+include { SAGE_SOMATIC  } from '../../modules/local/sage/somatic/main'
 
 workflow SAGE {
   take:

@@ -88,16 +88,16 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 //
 include { CHECK_SAMPLESHEET } from '../modules/local/check_samplesheet/main'
 
-include { AMBER             } from '../modules/umccr/nextflow_modules/amber/main'
-include { COBALT            } from '../modules/umccr/nextflow_modules/cobalt/main'
-include { CUPPA_CLASSIFIER  } from '../modules/umccr/nextflow_modules/cuppa/classifier/main'
-include { CUPPA_VISUALISER  } from '../modules/umccr/nextflow_modules/cuppa/visualiser/main'
-include { ISOFOX            } from '../modules/umccr/nextflow_modules/isofox/main'
-include { LINX_REPORT       } from '../modules/umccr/nextflow_modules/gpgr/linx_report/main'
-include { PURPLE            } from '../modules/umccr/nextflow_modules/purple/main'
-include { TEAL              } from '../modules/umccr/nextflow_modules/teal/main'
-include { VIRUSBREAKEND     } from '../modules/umccr/nextflow_modules/virusbreakend/main'
-include { VIRUSINTERPRETER  } from '../modules/umccr/nextflow_modules/virusinterpreter/main'
+include { AMBER             } from '../modules/local/amber/main'
+include { COBALT            } from '../modules/local/cobalt/main'
+include { CUPPA_CLASSIFIER  } from '../modules/local/cuppa/classifier/main'
+include { CUPPA_VISUALISER  } from '../modules/local/cuppa/visualiser/main'
+include { ISOFOX            } from '../modules/local/isofox/main'
+include { LINX_REPORT       } from '../modules/local/gpgr/linx_report/main'
+include { PURPLE            } from '../modules/local/purple/main'
+include { TEAL              } from '../modules/local/teal/main'
+include { VIRUSBREAKEND     } from '../modules/local/virusbreakend/main'
+include { VIRUSINTERPRETER  } from '../modules/local/virusinterpreter/main'
 
 include { PICARD_COLLECTWGSMETRICS as COLLECTWGSMETRICS } from '../modules/nf-core/modules/picard/collectwgsmetrics/main'
 

@@ -2,9 +2,9 @@
 // GRIDSS is a software suite containing tools useful for the detection of genomic rearrangements.
 //
 
-include { ASSEMBLE          } from '../../modules/umccr/nextflow_modules/gridss/assemble/main'
-include { CALL              } from '../../modules/umccr/nextflow_modules/gridss/call/main'
-include { PREPROCESS        } from '../../modules/umccr/nextflow_modules/gridss/preprocess/main'
+include { ASSEMBLE          } from '../../modules/local/gridss/assemble/main'
+include { CALL              } from '../../modules/local/gridss/call/main'
+include { PREPROCESS        } from '../../modules/local/gridss/preprocess/main'
 
 workflow GRIDSS {
   take:

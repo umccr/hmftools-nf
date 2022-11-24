@@ -2,8 +2,8 @@
 // PAVE annotates somatic and germline variant VCFs with gene and transcript coding and protein effects.
 //
 
-include { PAVE_GERMLINE } from '../../modules/umccr/nextflow_modules/pave/germline/main'
-include { PAVE_SOMATIC  } from '../../modules/umccr/nextflow_modules/pave/somatic/main'
+include { PAVE_GERMLINE } from '../../modules/local/pave/germline/main'
+include { PAVE_SOMATIC  } from '../../modules/local/pave/somatic/main'
 
 workflow PAVE {
   take:

@@ -3,12 +3,12 @@
 // GRIDSS is a software suite containing tools useful for the detection of genomic rearrangements.
 //
 
-include { ASSEMBLE        as GRIDSS_ASSEMBLE        } from '../../modules/umccr/nextflow_modules/svprep/assemble/main'
-include { CALL            as GRIDSS_CALL            } from '../../modules/umccr/nextflow_modules/svprep/call/main'
-include { PREPROCESS      as GRIDSS_PREPROCESS      } from '../../modules/umccr/nextflow_modules/svprep/preprocess/main'
-include { SVPREP          as SVPREP_NORMAL          } from '../../modules/umccr/nextflow_modules/svprep/svprep/main'
-include { SVPREP          as SVPREP_TUMOR           } from '../../modules/umccr/nextflow_modules/svprep/svprep/main'
-include { DEPTH_ANNOTATOR as SVPREP_DEPTH_ANNOTATOR } from '../../modules/umccr/nextflow_modules/svprep/depth_annotator/main'
+include { ASSEMBLE        as GRIDSS_ASSEMBLE        } from '../../modules/local/svprep/assemble/main'
+include { CALL            as GRIDSS_CALL            } from '../../modules/local/svprep/call/main'
+include { PREPROCESS      as GRIDSS_PREPROCESS      } from '../../modules/local/svprep/preprocess/main'
+include { SVPREP          as SVPREP_NORMAL          } from '../../modules/local/svprep/svprep/main'
+include { SVPREP          as SVPREP_TUMOR           } from '../../modules/local/svprep/svprep/main'
+include { DEPTH_ANNOTATOR as SVPREP_DEPTH_ANNOTATOR } from '../../modules/local/svprep/depth_annotator/main'
 
 workflow GRIDSS_SVPREP {
   take:

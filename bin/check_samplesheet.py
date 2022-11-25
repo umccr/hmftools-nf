@@ -18,15 +18,17 @@ HEADER_COLS = (
 
 class FileType(enum.Enum):
 
+    AMBER_DIR = 'amber_dir'
     BAM_WGS = 'bam_wgs'
     BAM_WTS = 'bam_wts'
-    VCF_SV = 'vcf_sv'
-    SMLV_VCF = 'vcf_smlv'
-    VCF_SV_GRIPSS_SOFT = 'vcf_sv_gripss_soft'
-    VCF_SV_GRIPSS_HARD = 'vcf_sv_gripss_hard'
-    AMBER_DIR = 'amber_dir'
     COBALT_DIR = 'cobalt_dir'
+    FASTQ_WTS_FWD = 'fastq_wts_fwd'
+    FASTQ_WTS_REV = 'fastq_wts_rev'
     PURPLE_DIR = 'purple_dir'
+    SMLV_VCF = 'vcf_smlv'
+    VCF_SV = 'vcf_sv'
+    VCF_SV_GRIPSS_HARD = 'vcf_sv_gripss_hard'
+    VCF_SV_GRIPSS_SOFT = 'vcf_sv_gripss_soft'
 
     def __repr__(self):
         return self.value
@@ -49,6 +51,8 @@ FILETYPES_EXPECTED = {
         ],
         'optional': [
             (SampleType.TUMOR, FileType.BAM_WTS),
+            (SampleType.TUMOR, FileType.FASTQ_WTS_FWD),
+            (SampleType.TUMOR, FileType.FASTQ_WTS_REV),
             (SampleType.TUMOR, FileType.VCF_SV),
             (SampleType.NORMAL, FileType.VCF_SV),
         ],
@@ -65,53 +69,31 @@ FILETYPES_EXPECTED = {
             (SampleType.NORMAL, FileType.SMLV_VCF)
         ],
     },
-    'gridss': {
+    'cuppa': {
         'required': [
             (SampleType.TUMOR, FileType.BAM_WGS),
             (SampleType.NORMAL, FileType.BAM_WGS),
         ],
         'optional': [
+            (SampleType.TUMOR, FileType.BAM_WTS),
+            (SampleType.TUMOR, FileType.FASTQ_WTS_FWD),
+            (SampleType.TUMOR, FileType.FASTQ_WTS_REV),
             (SampleType.TUMOR, FileType.VCF_SV),
             (SampleType.NORMAL, FileType.VCF_SV),
         ],
     },
-    'purple': {
-        'required': [
-            (SampleType.TUMOR, FileType.AMBER_DIR),
-            (SampleType.TUMOR, FileType.COBALT_DIR),
-            (SampleType.TUMOR, FileType.VCF_SV_GRIPSS_HARD),
-            (SampleType.TUMOR, FileType.VCF_SV_GRIPSS_SOFT),
-        ],
+    'manual': {
+        'required': [],
+        # NOTE(SW): this should be all file types, will be resolved during refactor/port
         'optional': [
-            (SampleType.TUMOR, FileType.SMLV_VCF),
-            (SampleType.NORMAL, FileType.SMLV_VCF),
-        ],
-    },
-    # NOTE(SW): expectation that we always at least want to run LINX somatic
-    'linx': {
-        'required': [
-            (SampleType.TUMOR, FileType.PURPLE_DIR),
-        ],
-        'optional': [
-            (SampleType.NORMAL, FileType.VCF_SV_GRIPSS_HARD),
-        ],
-    },
-    'lilac': {
-        'required': [
             (SampleType.TUMOR, FileType.BAM_WGS),
             (SampleType.NORMAL, FileType.BAM_WGS),
-            (SampleType.TUMOR, FileType.PURPLE_DIR),
+            (SampleType.TUMOR, FileType.BAM_WTS),
+            (SampleType.TUMOR, FileType.FASTQ_WTS_FWD),
+            (SampleType.TUMOR, FileType.FASTQ_WTS_REV),
+            (SampleType.TUMOR, FileType.VCF_SV),
+            (SampleType.NORMAL, FileType.VCF_SV),
         ],
-        'optional': [],
-    },
-    'teal': {
-        'required': [
-            (SampleType.TUMOR, FileType.BAM_WGS),
-            (SampleType.NORMAL, FileType.BAM_WGS),
-            (SampleType.TUMOR, FileType.COBALT_DIR),
-            (SampleType.TUMOR, FileType.PURPLE_DIR),
-        ],
-        'optional': [],
     },
 }
 

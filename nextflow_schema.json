@@ -109,6 +109,12 @@
           "description": "Path to reference genome GRIDSS index file.",
           "fa_icon": "far fa-file-code"
         },
+        "ref_data_genome_star_index": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "Path to directory containing reference genome STAR index.",
+          "fa_icon": "far fa-file-code"
+        },
         "ref_data_amber_loci": {
           "type": "string",
           "format": "file-path",

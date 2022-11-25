@@ -1,3 +1,6 @@
+// NOTE(SW): nf-core/modules picard/markduplicates (5e34754) has namespace clash for input/output
+// with samtools/sort (cf5b9c3) hence moved to local and modified.
+
 process PICARD_MARKDUPLICATES {
     tag "$meta.id"
     label 'process_medium'
@@ -34,7 +37,7 @@ process PICARD_MARKDUPLICATES {
         MarkDuplicates \\
         $args \\
         --INPUT $bam \\
-        --OUTPUT ${prefix}.bam \\
+        --OUTPUT ${prefix}.md.bam \\
         --METRICS_FILE ${prefix}.MarkDuplicates.metrics.txt
 
     cat <<-END_VERSIONS > versions.yml
@@ -46,8 +49,8 @@ process PICARD_MARKDUPLICATES {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.bam
-    touch ${prefix}.bam.bai
+    touch ${prefix}.md.bam
+    touch ${prefix}.md.bam.bai
     touch ${prefix}.MarkDuplicates.metrics.txt
 
     cat <<-END_VERSIONS > versions.yml

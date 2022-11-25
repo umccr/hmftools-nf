@@ -24,6 +24,7 @@ def checkPathParamList = [
   params.ref_data_genome_bwa_index_image,
   params.ref_data_genome_gridss_index,
   params.ref_data_genome_star_index,
+  params.ref_data_genome_genes_gtf,
   // AMBER and COBALT
   params.ref_data_amber_loci,
   params.ref_data_cobalt_gc_profile,
@@ -145,6 +146,7 @@ ref_data_genome_bwa_index             = get_file_object(params.ref_data_genome_b
 ref_data_genome_bwa_index_image       = get_file_object(params.ref_data_genome_bwa_index_image)
 ref_data_genome_gridss_index          = get_file_object(params.ref_data_genome_gridss_index)
 ref_data_genome_star_index            = get_file_object(params.ref_data_genome_star_index)
+ref_data_genome_genes_gtf             = get_file_object(params.ref_data_genome_genes_gtf)
 // AMBER and COBALT
 ref_data_amber_loci                   = get_file_object(params.ref_data_amber_loci)
 ref_data_cobalt_gc_profile            = get_file_object(params.ref_data_cobalt_gc_profile)

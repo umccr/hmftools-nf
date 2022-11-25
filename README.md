@@ -7,7 +7,7 @@
 
 # HMF tools
 
-A comprehensive WGS analysis pipeline from the Hartwig Medical Foundation.
+A comprehensive WGS/WTS cancer analysis and reporting pipeline from the Hartwig Medical Foundation.
 
 ## Table of contents
 

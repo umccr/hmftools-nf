@@ -20,6 +20,7 @@ class Constants {
     PAVE,
     PURPLE,
     SAGE,
+    STAR,
     SVPREP,
     TEAL,
     VIRUSINTERPRETER,

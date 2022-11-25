@@ -43,6 +43,7 @@ class Processes {
           Constants.Process.ISOFOX,
           Constants.Process.LINX,
           Constants.Process.PURPLE,
+          Constants.Process.STAR,
           Constants.Process.SVPREP,
           Constants.Process.VIRUSINTERPRETER,
         ]

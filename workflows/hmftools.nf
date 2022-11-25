@@ -113,6 +113,7 @@ include { LILAC         } from '../subworkflows/local/lilac'
 include { LINX          } from '../subworkflows/local/linx'
 include { PAVE          } from '../subworkflows/local/pave'
 include { SAGE          } from '../subworkflows/local/sage'
+include { STAR          } from '../subworkflows/local/star'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,6 +217,65 @@ workflow HMFTOOLS {
   // channel: [val(meta)]
   ch_inputs = WorkflowHmftools.prepare_inputs(CHECK_SAMPLESHEET.out, workflow.stubRun, log)
 
+  // Determine which samples have WTS input data
+  def filetypes_wts = null
+  if (run.star) {
+    filetypes_wts = ['fastq_wts_fwd', 'fastq_wts_rev']
+  } else if (run.isofox) {
+    filetypes_wts = ['bam_wts']
+  }
+  // channel: [val(meta)]
+  ch_inputs_wts = ch_inputs
+    .branch { meta ->
+      def contains_all = filetypes_wts
+        .collect { t -> meta.containsKey([t, 'tumor']) }
+        .every()
+      present: contains_all
+        return meta
+      absent: ! contains_all
+        return meta
+    }
+
+  // channel: [val(meta), bam_wts]
+  ch_star_out = Channel.empty()
+  if (run.star) {
+
+    // channel: [val(meta), [fastq_wts_fwd, fastq_wts_rev]]
+    ch_star_inputs = ch_inputs_wts.present
+      .map { meta ->
+        def reads = [meta.get(['fastq_wts_fwd', 'tumor']), meta.get(['fastq_wts_rev', 'tumor'])]
+        return [meta, reads]
+      }
+
+    STAR(
+      ch_star_inputs,
+      ref_data_genome_star_index,
+      ref_data_genome_genes_gtf,
+    )
+
+    ch_versions = ch_versions.mix(STAR.out.versions)
+    ch_star_out = ch_star_out.mix(STAR.out.bam)
+  }
+
+  //
+  // MODULE: Run Isofox to analyse WTS data
+  //
+  ch_isofox_out = Channel.empty()
+  if (run.isofox) {
+
+    ISOFOX(
+      run.star ? ch_star_out : WorkflowHmftools.get_input(ch_inputs_wts.present, ['bam_wts', 'tumor']),
+      ref_data_genome_fa,
+      ref_data_genome_fai,
+      ref_data_genome_version,
+      ref_data_ensembl_data_dir,
+      ref_data_rna_exp_counts,
+      ref_data_rna_exp_gc_ratios,
+    )
+    ch_versions = ch_versions.mix(ISOFOX.out.versions)
+    ch_isofox_out = ch_isofox_out.mix(ISOFOX.out.isofox_dir)
+  }
+
   // Set up channel with common inputs for several processes
   if (run.amber || run.cobalt || run.pave || run.lilac || run.teal) {
 
@@ -226,41 +286,6 @@ workflow HMFTOOLS {
         def normal_bam = meta.get(['bam_wgs', 'normal'])
         [meta, tumor_bam, normal_bam, "${tumor_bam}.bai", "${normal_bam}.bai"]
       }
-  }
-
-  // channel (present): [val(meta)]
-  // channel (absent): [val(meta)]
-  ch_inputs_wts = ch_inputs
-    .branch { meta ->
-      def key = ['bam_wts', 'tumor']
-      present: meta.containsKey(key)
-        return meta
-      absent: ! meta.containsKey(key)
-        return meta
-    }
-
-  //
-  // MODULE: Run Isofox to analyse WTS data
-  //
-  ch_isofox_out = Channel.empty()
-  if (run.isofox) {
-
-    // channel: [meta, tumor_bam_wts]
-    ch_isofox_inputs = ch_inputs_wts.present
-      .map { meta ->
-        return [meta, meta.get(['bam_wts', 'tumor'])]
-      }
-    ISOFOX(
-      ch_isofox_inputs,
-      ref_data_genome_fa,
-      ref_data_genome_fai,
-      ref_data_genome_version,
-      ref_data_ensembl_data_dir,
-      ref_data_rna_exp_counts,
-      ref_data_rna_exp_gc_ratios,
-    )
-    ch_versions = ch_versions.mix(ISOFOX.out.versions)
-    ch_isofox_out = ch_isofox_out.mix(ISOFOX.out.isofox_dir)
   }
 
   //

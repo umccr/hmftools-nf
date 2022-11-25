@@ -99,7 +99,7 @@ include { TEAL              } from '../modules/local/teal/main'
 include { VIRUSBREAKEND     } from '../modules/local/virusbreakend/main'
 include { VIRUSINTERPRETER  } from '../modules/local/virusinterpreter/main'
 
-include { PICARD_COLLECTWGSMETRICS as COLLECTWGSMETRICS } from '../modules/nf-core/modules/picard/collectwgsmetrics/main'
+include { PICARD_COLLECTWGSMETRICS as COLLECTWGSMETRICS } from '../modules/nf-core/picard/collectwgsmetrics/main'
 
 //
 // SUBWORKFLOWS
@@ -121,7 +121,7 @@ include { SAGE          } from '../subworkflows/local/sage'
 //
 // MODULES
 //
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/modules/custom/dumpsoftwareversions/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

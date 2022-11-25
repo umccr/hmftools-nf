@@ -40,6 +40,7 @@ class Processes {
           Constants.Process.CUPPA,
           Constants.Process.GRIDSS,
           Constants.Process.GRIPSS,
+          Constants.Process.ISOFOX,
           Constants.Process.LINX,
           Constants.Process.PURPLE,
           Constants.Process.SVPREP,

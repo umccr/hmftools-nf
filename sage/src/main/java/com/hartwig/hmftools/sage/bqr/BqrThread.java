@@ -3,22 +3,28 @@ package com.hartwig.hmftools.sage.bqr;
 import static com.hartwig.hmftools.sage.SageCommon.SG_LOGGER;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
 import com.hartwig.hmftools.sage.SageConfig;
 import com.hartwig.hmftools.sage.common.PartitionTask;
 
-import htsjdk.samtools.SamReader;
-import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.*;
 import htsjdk.samtools.cram.ref.ReferenceSource;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
+
+// htsget
+import htsjdk.samtools.util.htsget.HtsgetRequest;
+import htsjdk.samtools.util.htsget.HtsgetResponse;
 
 public class BqrThread extends Thread
 {
     private final IndexedFastaSequenceFile mRefGenome;
     private final SageConfig mConfig;
     private final SamReader mBamReader;
+    private static HtsgetBAMFileReader bamFileReaderHtsgetAsync;
 
     private final Queue<PartitionTask> mRegions;
     private final BaseQualityResults mResults;
@@ -27,17 +33,28 @@ public class BqrThread extends Thread
 
     public BqrThread(
             final SageConfig config, final IndexedFastaSequenceFile refGenome, final String bamFile,
-            final Queue<PartitionTask> regions, final BaseQualityResults results, final BqrRecordWriter recordWriter)
-    {
+            final Queue<PartitionTask> regions, final BaseQualityResults results, final BqrRecordWriter recordWriter)  {
         mRefGenome = refGenome;
         mConfig = config;
         mRegions = regions;
         mResults = results;
+        mBamReader = null;
 
-        mBamReader = SamReaderFactory.makeDefault()
-                .validationStringency(mConfig.BamStringency)
-                .referenceSource(new ReferenceSource(mRefGenome))
-                .open(new File(bamFile));
+        if (bamFile.contains("htsget")) {
+            try {
+                URI endpoint = URI.create(bamFile);
+                bamFileReaderHtsgetAsync = new HtsgetBAMFileReader(endpoint, true, ValidationStringency.DEFAULT_STRINGENCY, DefaultSAMRecordFactory.getInstance(), true);
+                mBamReader = bamFileReaderHtsgetAsync;
+            } catch (IOException e) {
+                SG_LOGGER.info("htsget: error during fetch: {}", e.toString());
+            }
+        } else {
+            mBamReader = SamReaderFactory.makeDefault()
+                    .validationStringency(mConfig.BamStringency)
+                    .referenceSource(new ReferenceSource(mRefGenome))
+                    .open(new File(bamFile));
+
+        }
 
         mRegionCounter = new BqrRegionReader(mConfig, mBamReader, mRefGenome, mResults, recordWriter);
 

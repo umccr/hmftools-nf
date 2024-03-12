@@ -5,12 +5,12 @@
     <parent>
         <artifactId>hmftools</artifactId>
         <groupId>com.hartwig</groupId>
-        <version>local-SNAPSHOT</version>
+        <version>sage-6.6.6</version>
     </parent>
 
     <artifactId>sage</artifactId>
     <packaging>jar</packaging>
-    <version>${sage.version}</version>
+    <version>6.6.6</version>
     <name>HMF Tools - SAGE</name>
 
     <dependencies>

@@ -236,6 +236,9 @@ public class SageConfig
 
         for(String referenceBam : ReferenceBams)
         {
+            if (referenceBam.contains("htsget")) {
+                return true;
+            }
             if(!new File(referenceBam).exists())
             {
                 SG_LOGGER.error("Unable to locate reference bam({})", referenceBam);

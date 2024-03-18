@@ -15,9 +15,6 @@ import htsjdk.samtools.*;
 import htsjdk.samtools.cram.ref.ReferenceSource;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 
-// htsget
-import htsjdk.samtools.util.htsget.HtsgetRequest;
-import htsjdk.samtools.util.htsget.HtsgetResponse;
 
 public class BqrThread extends Thread
 {
@@ -30,6 +27,7 @@ public class BqrThread extends Thread
     private final BaseQualityResults mResults;
 
     private final BqrRegionReader mRegionCounter; // will be reused for each region
+    //private final htsjdk.samtools.InputResource.Type InputResource = htsjdk.samtools.InputResource.Type.HTSGET;
 
     public BqrThread(
             final SageConfig config, final IndexedFastaSequenceFile refGenome, final String bamFile,
@@ -38,23 +36,11 @@ public class BqrThread extends Thread
         mConfig = config;
         mRegions = regions;
         mResults = results;
-        mBamReader = null;
 
-        if (bamFile.contains("htsget")) {
-            try {
-                URI endpoint = URI.create(bamFile);
-                bamFileReaderHtsgetAsync = new HtsgetBAMFileReader(endpoint, true, ValidationStringency.DEFAULT_STRINGENCY, DefaultSAMRecordFactory.getInstance(), true);
-                mBamReader = bamFileReaderHtsgetAsync;
-            } catch (IOException e) {
-                SG_LOGGER.info("htsget: error during fetch: {}", e.toString());
-            }
-        } else {
-            mBamReader = SamReaderFactory.makeDefault()
-                    .validationStringency(mConfig.BamStringency)
-                    .referenceSource(new ReferenceSource(mRefGenome))
-                    .open(new File(bamFile));
-
-        }
+        mBamReader = SamReaderFactory.makeDefault()
+                .validationStringency(mConfig.BamStringency)
+                .referenceSource(new ReferenceSource(mRefGenome))
+                .open(SamInputResource.of(bamFile));
 
         mRegionCounter = new BqrRegionReader(mConfig, mBamReader, mRefGenome, mResults, recordWriter);
 

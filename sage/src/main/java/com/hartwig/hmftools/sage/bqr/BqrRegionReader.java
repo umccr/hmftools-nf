@@ -30,10 +30,7 @@ import com.hartwig.hmftools.sage.SageConfig;
 import com.hartwig.hmftools.sage.common.IndexedBases;
 import com.hartwig.hmftools.sage.common.RefSequence;
 
-import htsjdk.samtools.CigarElement;
-import htsjdk.samtools.CigarOperator;
-import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.SamReader;
+import htsjdk.samtools.*;
 import htsjdk.samtools.reference.ReferenceSequenceFile;
 
 public class BqrRegionReader implements CigarHandler

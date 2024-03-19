@@ -17,6 +17,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
 
+import htsjdk.samtools.SamInputResource;
 import org.apache.logging.log4j.util.Strings;
 
 public class SageCallConfig
@@ -81,14 +82,15 @@ public class SageCallConfig
             return false;
         }
 
-        for(String tumorBam : TumorBams)
-        {
-            if(!new File(tumorBam).exists())
-            {
-                SG_LOGGER.error("Unable to locate tumor bam({})", tumorBam);
-                return false;
-            }
-        }
+//        for(String tumorBam : TumorBams)
+//        {
+//            //if(!new File(tumorBam).exists())
+////            if(SamInputResource.of(tumorBam).toString() != null) // FIXME: No equivalent .exists() method?
+////            {
+////                SG_LOGGER.error("Unable to locate tumor bam({})", tumorBam);
+////                return false;
+////            }
+//        }
 
         if(TumorIds.isEmpty())
         {

@@ -38,7 +38,7 @@ public class BqrThread extends Thread
         mBamReader = SamReaderFactory.makeDefault()
                 .validationStringency(mConfig.BamStringency)
                 .referenceSource(new ReferenceSource(mRefGenome))
-                .open(SamInputResource.of(bamFile));
+                .open(SamInputResource.of(URI.create(bamFile), null));
 
         mRegionCounter = new BqrRegionReader(mConfig, mBamReader, mRefGenome, mResults, recordWriter);
 

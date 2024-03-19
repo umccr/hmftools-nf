@@ -235,14 +235,14 @@ public class SageConfig
             return false;
         }
 
-        for(String referenceBam : ReferenceBams)
-        {
-            if(SamInputResource.of(referenceBam).toString() != null) // FIXME, no equivalent .exists() method
-            {
-                SG_LOGGER.error("Unable to locate reference bam({})", referenceBam);
-                return false;
-            }
-        }
+//        for(String referenceBam : ReferenceBams)
+//        {
+//            if(SamInputResource.of(referenceBam).toString() != null) // FIXME, no equivalent .exists() method
+//            {
+//                SG_LOGGER.error("Unable to locate reference bam({})", referenceBam);
+//                return false;
+//            }
+//        }
 
         if(RefGenomeFile.isEmpty())
         {

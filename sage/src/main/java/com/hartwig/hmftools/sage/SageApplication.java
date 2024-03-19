@@ -6,6 +6,7 @@ import static com.hartwig.hmftools.sage.SageCommon.SG_LOGGER;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
@@ -108,7 +109,7 @@ public class SageApplication implements AutoCloseable
         SamReader tumorReader = SamReaderFactory.makeDefault()
                 .validationStringency(mConfig.Common.BamStringency)
                 .referenceSource(new ReferenceSource(mRefData.RefGenome))
-                .open(SamInputResource.of(bam));
+                .open(SamInputResource.of(URI.create(bam), null));
 
         SAMSequenceDictionary dictionary = tumorReader.getFileHeader().getSequenceDictionary();
 

@@ -5,6 +5,7 @@ import static java.lang.Math.max;
 import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeSource.loadRefGenome;
 
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -56,12 +57,13 @@ public class BamSampler
         if(mRefGenome == null)
             return false;
 
-        if(!Files.exists(Paths.get(bamFile)))
-            return false;
+        // FIXME: Assumes files, can be htsget too...
+//        if(!Files.exists(Paths.get(bamFile)))
+//            return false;
 
         SamReader samReader = SamReaderFactory.makeDefault()
                 .referenceSource(new ReferenceSource(mRefGenome.refGenomeFile()))
-                .open(SamInputResource.of(bamFile));
+                .open(SamInputResource.of(URI.create(bamFile), null));
 
         mSlicer.slice(samReader, sampleRegion, this::processRecord);
 

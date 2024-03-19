@@ -4,6 +4,7 @@ import static com.hartwig.hmftools.sage.SageCommon.SG_LOGGER;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ public class SamSlicerFactory
             SamReader bamReader = SamReaderFactory.makeDefault()
                     .validationStringency(config.BamStringency)
                     .referenceSource(new ReferenceSource(refGenome))
-                    .open(SamInputResource.of(bamFile));
+                    .open(SamInputResource.of(URI.create(bamFile), null));
 
             mBamReaders.put(sample, bamReader);
         }

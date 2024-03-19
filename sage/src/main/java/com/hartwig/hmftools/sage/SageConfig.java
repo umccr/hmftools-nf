@@ -52,6 +52,7 @@ import com.hartwig.hmftools.sage.filter.FilterConfig;
 import com.hartwig.hmftools.sage.quality.QualityConfig;
 import com.hartwig.hmftools.sage.vis.VisConfig;
 
+import htsjdk.samtools.SamInputResource;
 import org.apache.logging.log4j.util.Strings;
 
 import htsjdk.samtools.ValidationStringency;
@@ -236,10 +237,7 @@ public class SageConfig
 
         for(String referenceBam : ReferenceBams)
         {
-            if (referenceBam.contains("htsget")) {
-                return true;
-            }
-            if(!new File(referenceBam).exists())
+            if(SamInputResource.of(referenceBam).toString() != null) // FIXME, no equivalent .exists() method
             {
                 SG_LOGGER.error("Unable to locate reference bam({})", referenceBam);
                 return false;

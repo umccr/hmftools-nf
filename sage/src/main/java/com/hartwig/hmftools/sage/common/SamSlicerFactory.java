@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.hmftools.common.region.ChrBaseRegion;
 import com.hartwig.hmftools.sage.SageConfig;
 
+import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.cram.ref.ReferenceSource;
@@ -62,7 +63,7 @@ public class SamSlicerFactory
             SamReader bamReader = SamReaderFactory.makeDefault()
                     .validationStringency(config.BamStringency)
                     .referenceSource(new ReferenceSource(refGenome))
-                    .open(new File(bamFile));
+                    .open(SamInputResource.of(bamFile));
 
             mBamReaders.put(sample, bamReader);
         }

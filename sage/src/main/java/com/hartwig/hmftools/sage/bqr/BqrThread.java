@@ -21,8 +21,6 @@ public class BqrThread extends Thread
     private final IndexedFastaSequenceFile mRefGenome;
     private final SageConfig mConfig;
     private final SamReader mBamReader;
-    private static HtsgetBAMFileReader bamFileReaderHtsgetAsync;
-
     private final Queue<PartitionTask> mRegions;
     private final BaseQualityResults mResults;
 

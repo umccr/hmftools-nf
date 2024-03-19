@@ -12,6 +12,7 @@ import com.hartwig.hmftools.common.genome.refgenome.RefGenomeSource;
 import com.hartwig.hmftools.common.region.ChrBaseRegion;
 
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.cram.ref.ReferenceSource;
@@ -60,7 +61,7 @@ public class BamSampler
 
         SamReader samReader = SamReaderFactory.makeDefault()
                 .referenceSource(new ReferenceSource(mRefGenome.refGenomeFile()))
-                .open(new File(bamFile));
+                .open(SamInputResource.of(bamFile));
 
         mSlicer.slice(samReader, sampleRegion, this::processRecord);
 

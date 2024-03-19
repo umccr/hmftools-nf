@@ -58,8 +58,12 @@ public class BamSampler
             return false;
 
         // FIXME: Assumes files, can be htsget too...
-//        if(!Files.exists(Paths.get(bamFile)))
-//            return false;
+        //  if(!Files.exists(Paths.get(bamFile)))
+        //     return false;
+        //
+        // FIXME: The chunk of code below needs to promote sage/utils/InputResource class to hmftools-common.
+        // Therefore we have to consider the interface a bit more carefully (since it can/will (inevitably?)
+        // be used by other hmftool modules we'd have to test accordingly)
 
         SamReader samReader = SamReaderFactory.makeDefault()
                 .referenceSource(new ReferenceSource(mRefGenome.refGenomeFile()))

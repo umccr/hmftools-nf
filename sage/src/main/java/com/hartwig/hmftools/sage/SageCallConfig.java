@@ -11,12 +11,14 @@ import static com.hartwig.hmftools.sage.SageCommon.SG_LOGGER;
 import static com.hartwig.hmftools.sage.SageConfig.registerCommonConfig;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
 
+import com.hartwig.hmftools.sage.utils.InputResource;
 import htsjdk.samtools.SamInputResource;
 import org.apache.logging.log4j.util.Strings;
 
@@ -82,15 +84,11 @@ public class SageCallConfig
             return false;
         }
 
-//        for(String tumorBam : TumorBams)
-//        {
-//            //if(!new File(tumorBam).exists())
-////            if(SamInputResource.of(tumorBam).toString() != null) // FIXME: No equivalent .exists() method?
-////            {
-////                SG_LOGGER.error("Unable to locate tumor bam({})", tumorBam);
-////                return false;
-////            }
-//        }
+        for(String tumorBam : TumorBams)
+        {
+            boolean valid = new InputResource(tumorBam).isValid();
+            if (!valid) { return false; }
+        }
 
         if(TumorIds.isEmpty())
         {
@@ -142,8 +140,4 @@ public class SageCallConfig
         OldIndelDedup = false;
         mResourceDir = "";
     }
-
-
-
-
 }

@@ -18,8 +18,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
 
-import com.hartwig.hmftools.sage.utils.InputResource;
-import htsjdk.samtools.SamInputResource;
+import com.hartwig.hmftools.common.utils.InputResource;
 import org.apache.logging.log4j.util.Strings;
 
 public class SageCallConfig

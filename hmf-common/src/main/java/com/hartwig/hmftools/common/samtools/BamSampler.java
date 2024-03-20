@@ -1,5 +1,6 @@
 package com.hartwig.hmftools.common.samtools;
 
+import static com.hartwig.hmftools.common.utils.InputResource.*;
 import static java.lang.Math.max;
 
 import static com.hartwig.hmftools.common.genome.refgenome.RefGenomeSource.loadRefGenome;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import com.hartwig.hmftools.common.genome.refgenome.RefGenomeSource;
 import com.hartwig.hmftools.common.region.ChrBaseRegion;
 
+import com.hartwig.hmftools.common.utils.InputResource;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
@@ -57,18 +59,7 @@ public class BamSampler
         if(mRefGenome == null)
             return false;
 
-        // FIXME: Assumes files, can be htsget too...
-        //  if(!Files.exists(Paths.get(bamFile)))
-        //     return false;
-        //
-        // FIXME: The chunk of code below needs to promote sage/utils/InputResource class to hmftools-common.
-        // Therefore we have to consider the interface a bit more carefully (since it can/will (inevitably?)
-        // be used by other hmftool modules we'd have to test accordingly)
-
-        SamReader samReader = SamReaderFactory.makeDefault()
-                .referenceSource(new ReferenceSource(mRefGenome.refGenomeFile()))
-                .open(SamInputResource.of(URI.create(bamFile), null));
-
+        SamReader samReader = new InputResource.reader(mRefGenome, bamFile);
         mSlicer.slice(samReader, sampleRegion, this::processRecord);
 
         return mReadCount > 0 && mMaxReadCount > 0;

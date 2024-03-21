@@ -11,6 +11,7 @@ import java.util.Queue;
 import com.hartwig.hmftools.sage.SageConfig;
 import com.hartwig.hmftools.sage.common.PartitionTask;
 
+import htsjdk.io.HtsPath;
 import htsjdk.samtools.*;
 import htsjdk.samtools.cram.ref.ReferenceSource;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
@@ -35,10 +36,12 @@ public class BqrThread extends Thread
         mRegions = regions;
         mResults = results;
 
+        HtsPath path = new HtsPath(bamFile);
+
         mBamReader = SamReaderFactory.makeDefault()
                 .validationStringency(mConfig.BamStringency)
                 .referenceSource(new ReferenceSource(mRefGenome))
-                .open(SamInputResource.of(URI.create(bamFile), null));
+                .open(SamInputResource.of(path.getURI()));
 
         mRegionCounter = new BqrRegionReader(mConfig, mBamReader, mRefGenome, mResults, recordWriter);
 

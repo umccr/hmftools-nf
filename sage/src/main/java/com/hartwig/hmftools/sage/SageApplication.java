@@ -19,6 +19,7 @@ import com.hartwig.hmftools.sage.bqr.BaseQualityRecalibration;
 import com.hartwig.hmftools.sage.bqr.BqrRecordMap;
 import com.hartwig.hmftools.sage.vcf.VcfWriter;
 
+import htsjdk.io.HtsPath;
 import htsjdk.samtools.*;
 import htsjdk.samtools.cram.ref.ReferenceSource;
 
@@ -106,10 +107,12 @@ public class SageApplication implements AutoCloseable
     {
         final String bam = mConfig.Common.ReferenceBams.isEmpty() ? mConfig.TumorBams.get(0) : mConfig.Common.ReferenceBams.get(0);
 
+        HtsPath path = new HtsPath(bam);
+
         SamReader tumorReader = SamReaderFactory.makeDefault()
                 .validationStringency(mConfig.Common.BamStringency)
                 .referenceSource(new ReferenceSource(mRefData.RefGenome))
-                .open(SamInputResource.of(URI.create(bam), null));
+                .open(SamInputResource.of(path.getURI()));
 
         SAMSequenceDictionary dictionary = tumorReader.getFileHeader().getSequenceDictionary();
 

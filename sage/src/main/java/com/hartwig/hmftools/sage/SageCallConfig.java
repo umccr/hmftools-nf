@@ -11,14 +11,17 @@ import static com.hartwig.hmftools.sage.SageCommon.SG_LOGGER;
 import static com.hartwig.hmftools.sage.SageConfig.registerCommonConfig;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder;
 
-import com.hartwig.hmftools.common.utils.InputResource;
+import htsjdk.io.HtsPath;
+import htsjdk.samtools.SamInputResource;
+import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.cram.ref.ReferenceSource;
 import org.apache.logging.log4j.util.Strings;
 
 public class SageCallConfig
@@ -85,8 +88,14 @@ public class SageCallConfig
 
         for(String tumorBam : TumorBams)
         {
-            boolean valid = new InputResource(tumorBam).isValid();
-            if (!valid) { return false; }
+            HtsPath tumorPath = new HtsPath(tumorBam);
+
+            // TODO: Delay remote file access for later or try it here? (slow)
+            if(tumorPath.isPath() && !new File(tumorBam).exists())
+            {
+                SG_LOGGER.error("Unable to locate tumor bam({})", tumorBam);
+                return false;
+            }
         }
 
         if(TumorIds.isEmpty())

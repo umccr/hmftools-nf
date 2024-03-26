@@ -90,7 +90,7 @@ public class SageCallConfig
         {
             HtsPath tumorPath = new HtsPath(tumorBam);
 
-            // TODO: Delay remote file access for later or try it here? (slow)
+            // Delay remote file access checks for later when SamInputReader is instantiated
             if(tumorPath.isPath() && !new File(tumorBam).exists())
             {
                 SG_LOGGER.error("Unable to locate tumor bam({})", tumorBam);

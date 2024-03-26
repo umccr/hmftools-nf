@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Maps;
 import com.hartwig.hmftools.common.region.ChrBaseRegion;
 
+import htsjdk.io.HtsPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,7 @@ import htsjdk.tribble.readers.LineIterator;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
 import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFReader;
 
 public class VcfFileReader
 {
@@ -49,6 +51,13 @@ public class VcfFileReader
         mGenotypeOrdinals = Maps.newHashMap();
         mReferenceOrdinal = NO_GENOTYPE_INDEX;
         mTumorOrdinal = NO_GENOTYPE_INDEX;
+
+        HtsPath htsPath = new HtsPath(filename);
+
+        // Is a URI, i.e htsget
+        if(!htsPath.isPath()) {
+            // FIXME: Looking for suitable VCFInputReader implementations in htsjdk (a la SamInputReader.of())
+        }
 
         if(Files.exists(Paths.get(filename)))
         {

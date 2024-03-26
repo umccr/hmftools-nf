@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.hmftools.common.utils.version.VersionInfo;
 
+import htsjdk.io.HtsPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -205,6 +206,8 @@ public class ConfigBuilder
 
     public boolean isValid()
     {
+        HtsPath itemHtsPath = null;
+
         for(ConfigItem item : mItems)
         {
             if(item.missing())
@@ -253,6 +256,11 @@ public class ConfigBuilder
 
         for(String path : paths)
         {
+            // It's not a path and/or contains a URI scheme, i.e: htsget://
+            HtsPath htsPath = new HtsPath(path);
+            if(!htsPath.isPath() && htsPath.toString().contains("://")) { continue; }
+
+            // It's a local filesystem path
             if(pathPrefixConfigItem != null && pathPrefixConfigItem.hasValue())
             {
                 String pathPrefix = checkAddDirSeparator(pathPrefixConfigItem.value());

@@ -1,9 +1,7 @@
+<h2 align='center'>This repository has been archived and superseded by <a href="https://github.com/nf-core/oncoanalyser">nf-core/oncoanalyser</a></h2>
 &nbsp;
 &nbsp;
 &nbsp;
-<p align="center">
-🚧🚨 <em>Under development</em> 🚨🚧
-</p>
 
 # HMF tools
 
